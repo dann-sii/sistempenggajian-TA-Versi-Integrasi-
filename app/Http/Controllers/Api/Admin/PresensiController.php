@@ -8,10 +8,9 @@ use Illuminate\Http\Request;
 
 class PresensiController extends Controller
 {
-    public function index(Request $request)
+    public static function getPresensiData(): array
     {
-        // Mock data for attendance based on wireframe columns
-        $allPresensi = [
+        return [
             ['id' => 1, 'nama' => 'Budi Santoso', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
             ['id' => 2, 'nama' => 'Siti Aminah', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
             ['id' => 3, 'nama' => 'Andi Wijaya', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
@@ -33,6 +32,12 @@ class PresensiController extends Controller
             ['id' => 19, 'nama' => 'Puji Astuti', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
             ['id' => 20, 'nama' => 'Qomarudin', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
         ];
+    }
+
+    public function index(Request $request)
+    {
+        // Mock data for attendance based on wireframe columns
+        $allPresensi = self::getPresensiData();
 
         $fullDataset = $allPresensi;
         $search = $request->get('search');
@@ -76,6 +81,6 @@ class PresensiController extends Controller
         $perPage = 10;
         $presensi = array_slice($allPresensi, ($page - 1) * $perPage, $perPage);
 
-        return view('admin_penggajian.presensi.presensi', compact('presensi', 'page'));
+        return view('admin_penggajian.presensi', compact('presensi', 'page'));
     }
 }

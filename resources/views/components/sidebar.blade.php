@@ -53,8 +53,7 @@
                 $menuItems = [
                     ['name' => 'Data Karyawan', 'route' => 'karyawan.index', 'icon' => 'users'],
                     ['name' => 'Data Presensi', 'route' => 'presensi.index', 'icon' => 'calendar-check'],
-                    ['name' => 'Gaji Pokok', 'route' => 'gaji_pokok.index', 'icon' => 'cash'],
-                    ['name' => 'Gaji Lembur', 'route' => 'gaji_lembur.index', 'icon' => 'clock-play'],
+                    ['name' => 'Gaji Pokok & Lembur', 'route' => 'gaji_pokok.index', 'icon' => 'cash'],
                     ['name' => 'Gaji Bonus', 'route' => 'gaji_bonus.index', 'icon' => 'gift'],
                     ['name' => 'Potongan Gaji', 'route' => 'potongan_gaji.index', 'icon' => 'cash-off'],
                     ['name' => 'Penggajian', 'route' => 'penggajian.index', 'icon' => 'report-money'],

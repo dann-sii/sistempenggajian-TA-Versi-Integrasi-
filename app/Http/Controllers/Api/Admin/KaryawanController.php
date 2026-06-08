@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class KaryawanController extends Controller
 {
-    private function getInitialData() 
+    public static function getInitialData(): array
     {
-        return [
+        $data = [
             ['id' => 1, 'nik' => '1234567890', 'nama' => 'Budi Santoso', 'npwp' => '12.345.678.9-000.000', 'alamat' => 'Jl. Merdeka No. 10, Yogyakarta', 'no_telp' => '08123456789', 'status' => 'Aktif'],
             ['id' => 2, 'nik' => '0987654321', 'nama' => 'Siti Aminah', 'npwp' => '98.765.432.1-000.000', 'alamat' => 'Jl. Mawar No. 5, Yogyakarta', 'no_telp' => '08129876543', 'status' => 'Inaktif'],
             ['id' => 3, 'nik' => '1122334455', 'nama' => 'Andi Wijaya', 'npwp' => '11.223.344.5-000.000', 'alamat' => 'Jl. Melati No. 2, Yogyakarta', 'no_telp' => '08131122334', 'status' => 'Inaktif'],
@@ -32,15 +32,29 @@ class KaryawanController extends Controller
             ['id' => 19, 'nik' => '9988001122', 'nama' => 'Puji Astuti', 'npwp' => '99.880.011.2-000.000', 'alamat' => 'Jl. Singa No. 3, Magelang', 'no_telp' => '08199880011', 'status' => 'Aktif'],
             ['id' => 20, 'nik' => '0099112233', 'nama' => 'Qomarudin', 'npwp' => '00.991.122.3-000.000', 'alamat' => 'Jl. Beruang No. 7, Yogyakarta', 'no_telp' => '08100991122', 'status' => 'Aktif'],
         ];
+
+        return self::withDefaultBagian($data);
+    }
+
+    public static function withDefaultBagian(array $karyawans): array
+    {
+        return array_map(function ($k) {
+            if (!isset($k['bagian'])) {
+                $k['bagian'] = ((int) $k['id'] <= 12) ? 'Produksi' : 'Peternakan';
+            }
+
+            return $k;
+        }, $karyawans);
     }
 
     public function index(Request $request)
     {
         if (!session()->has('karyawan_data')) {
-            session()->put('karyawan_data', $this->getInitialData());
+            session()->put('karyawan_data', self::getInitialData());
         }
 
-        $allKaryawan = session('karyawan_data');
+        $allKaryawan = self::withDefaultBagian(session('karyawan_data'));
+        session()->put('karyawan_data', $allKaryawan);
 
         $status = $request->query('status');
         if ($status) {
@@ -56,6 +70,7 @@ class KaryawanController extends Controller
                     || stripos((string) $k['nik'], $search) !== false
                     || stripos((string) $k['nama'], $search) !== false
                     || stripos((string) $k['npwp'], $search) !== false
+                    || stripos((string) ($k['bagian'] ?? ''), $search) !== false
                     || stripos((string) $k['alamat'], $search) !== false
                     || stripos((string) $k['no_telp'], $search) !== false
                     || stripos((string) $k['status'], $search) !== false;
@@ -73,7 +88,7 @@ class KaryawanController extends Controller
 
         $karyawan = array_slice($allKaryawan, ($page - 1) * $perPage, $perPage);
 
-        return view('admin_penggajian.karyawan.data_karyawan', compact('karyawan', 'page', 'totalPages', 'status', 'search'));
+        return view('admin_penggajian.data_karyawan', compact('karyawan', 'page', 'totalPages', 'status', 'search'));
     }
 
     public function store(Request $request)
@@ -82,6 +97,7 @@ class KaryawanController extends Controller
             'nik' => 'required|string',
             'nama' => 'required|string',
             'npwp' => 'required|string',
+            'bagian' => 'required|in:Produksi,Peternakan',
             'no_telp' => ['nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'alamat' => 'required|string',
             'nama_bank' => 'required|string',
@@ -96,6 +112,7 @@ class KaryawanController extends Controller
             'nik' => $data['nik'],
             'nama' => $data['nama'],
             'npwp' => $data['npwp'],
+            'bagian' => $data['bagian'],
             'alamat' => $data['alamat'],
             'no_telp' => $data['no_telp'] ?? '-',
             'status' => 'Aktif',
@@ -115,6 +132,7 @@ class KaryawanController extends Controller
             'nik' => 'required|string',
             'nama' => 'required|string',
             'npwp' => 'required|string',
+            'bagian' => 'required|in:Produksi,Peternakan',
             'no_telp' => ['nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'alamat' => 'required|string',
             'status' => 'required|string',
@@ -129,6 +147,7 @@ class KaryawanController extends Controller
                 $k['nik'] = $data['nik'];
                 $k['nama'] = $data['nama'];
                 $k['npwp'] = $data['npwp'];
+                $k['bagian'] = $data['bagian'];
                 $k['alamat'] = $data['alamat'];
                 $k['no_telp'] = $data['no_telp'] ?? '-';
                 $k['status'] = $data['status'];

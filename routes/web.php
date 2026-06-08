@@ -33,6 +33,7 @@ Route::put('/karyawan/{id}', [KaryawanController::class , 'update'])->name('kary
 Route::delete('/karyawan/{id}', [KaryawanController::class , 'destroy'])->name('karyawan.destroy');
 Route::get('/presensi', [PresensiController::class , 'index'])->name('presensi.index');
 Route::get('/gaji-pokok', [GajiPokokController::class , 'index'])->name('gaji_pokok.index');
+Route::post('/gaji-pokok', [GajiPokokController::class , 'store'])->name('gaji_pokok.store');
 Route::get('/gaji-lembur', [GajiLemburController::class , 'index'])->name('gaji_lembur.index');
 Route::get('/gaji-bonus', [GajiBonusController::class , 'index'])->name('gaji_bonus.index');
 Route::get('/potongan-gaji', [PotonganGajiController::class , 'index'])->name('potongan_gaji.index');

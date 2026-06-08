@@ -70,6 +70,7 @@
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">NPWP</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">ALAMAT</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">NO. TELP</th>
+                    <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">BAGIAN</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">STATUS</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">AKSI</th>
                 </tr>
@@ -83,6 +84,18 @@
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-800 max-w-xs truncate">{{ $k['alamat'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['no_telp'] }}</td>
+                        <td class="px-6 py-5 text-center text-base">
+                            @php
+                                $bagianColor = match($k['bagian'] ?? '') {
+                                    'Produksi' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                    'Peternakan' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                    default => 'bg-gray-50 text-gray-700 border-gray-200',
+                                };
+                            @endphp
+                            <span class="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm {{ $bagianColor }}">
+                                {{ $k['bagian'] ?? '-' }}
+                            </span>
+                        </td>
                         <td class="px-6 py-5 text-center text-base">
                             @php
                                 $statusColor = match($k['status']) {
@@ -178,6 +191,18 @@
                         <label for="no_telp" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">No. Telp</label>
                         <input type="text" id="no_telp" name="no_telp" pattern="08\d{8,11}" title="Harus diawali dengan 08" minlength="10" maxlength="13" oninput="let v=this.value.replace(/\D/g, ''); if(v.length>0 && v[0]!=='0') v='08'+v; if(v.length>1 && v[1]!=='8') v='08'+v.slice(2); this.value=v.slice(0,13);" placeholder="08XXXXXXXXXX" class="w-full px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50">
                     </div>
+                    <!-- BAGIAN -->
+                    <div class="space-y-1.5 relative col-span-2">
+                        <label for="bagian" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Bagian <span class="text-rose-500">*</span></label>
+                        <select id="bagian" name="bagian" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
+                            <option value="" disabled selected>Pilih Bagian</option>
+                            <option value="Produksi">Produksi</option>
+                            <option value="Peternakan">Peternakan</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
+                            <x-tabler-chevron-down class="h-4 w-4" />
+                        </div>
+                    </div>
                     <!-- ALAMAT (Full width) -->
                     <div class="space-y-1.5 col-span-2">
                         <label for="alamat" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Alamat <span class="text-rose-500">*</span></label>
@@ -257,6 +282,10 @@
                     <p id="detail-npwp" class="text-base font-semibold text-carbon-black-900">-</p>
                 </div>
                 <div class="space-y-1">
+                    <p class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Bagian</p>
+                    <p id="detail-bagian" class="text-base font-semibold text-carbon-black-900">-</p>
+                </div>
+                <div class="space-y-1">
                     <p class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Alamat</p>
                     <p id="detail-alamat" class="text-base font-semibold text-carbon-black-900">-</p>
                 </div>
@@ -311,6 +340,16 @@
                     <div class="space-y-1.5">
                         <label for="edit_no_telp" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">No. Telp</label>
                         <input type="text" id="edit_no_telp" name="no_telp" pattern="08\d{8,11}" title="Harus diawali dengan 08" minlength="10" maxlength="13" oninput="let v=this.value.replace(/\D/g, ''); if(v.length>0 && v[0]!=='0') v='08'+v; if(v.length>1 && v[1]!=='8') v='08'+v.slice(2); this.value=v.slice(0,13);" placeholder="08XXXXXXXXXX" class="w-full px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50">
+                    </div>
+                    <div class="space-y-1.5 relative col-span-2">
+                        <label for="edit_bagian" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Bagian <span class="text-rose-500">*</span></label>
+                        <select id="edit_bagian" name="bagian" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
+                            <option value="Produksi">Produksi</option>
+                            <option value="Peternakan">Peternakan</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
+                            <x-tabler-chevron-down class="h-4 w-4" />
+                        </div>
                     </div>
                     <div class="space-y-1.5 col-span-2">
                         <label for="edit_alamat" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Alamat <span class="text-rose-500">*</span></label>
@@ -549,6 +588,7 @@
         document.getElementById('detail-nama').textContent = data.nama || '-';
         document.getElementById('detail-npwp').textContent = data.npwp || '-';
         document.getElementById('detail-notelp').textContent = data.no_telp || '-';
+        document.getElementById('detail-bagian').textContent = data.bagian || '-';
         document.getElementById('detail-alamat').textContent = data.alamat || '-';
         
         let statusEl = document.getElementById('detail-status');
@@ -602,6 +642,7 @@
         document.getElementById('edit_nama').value = data.nama || '';
         document.getElementById('edit_npwp').value = data.npwp || '';
         document.getElementById('edit_no_telp').value = data.no_telp !== '-' ? data.no_telp : '';
+        document.getElementById('edit_bagian').value = data.bagian || 'Produksi';
         document.getElementById('edit_alamat').value = data.alamat || '';
         document.getElementById('edit_status').value = data.status || 'Aktif';
 

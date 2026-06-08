@@ -28,6 +28,6 @@ class PotonganGajiController extends Controller
             }));
         }
 
-        return view('admin_penggajian.potongan_gaji.potongan_gaji', compact('allPotongan', 'search'));
+        return view('admin_penggajian.potongan_gaji', compact('allPotongan', 'search'));
     }
 }

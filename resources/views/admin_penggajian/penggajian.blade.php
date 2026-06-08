@@ -57,21 +57,48 @@
                     </div>
                 </div>
                 <!-- Nama Karyawan -->
+                <div class="relative" id="karyawan-combobox">
+                    <input type="hidden" name="karyawan_id" id="karyawan-select">
+                    <input type="text" id="karyawan-search" placeholder="Cari nama karyawan..."
+                        class="w-full px-4 py-3.5 pr-12 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 placeholder-carbon-black-400 rounded-xl hover:border-carbon-black-300"
+                        autocomplete="off">
+                    <button type="button" id="karyawan-search-toggle"
+                        class="absolute inset-y-0 right-2 my-auto h-9 w-9 inline-flex items-center justify-center rounded-lg text-carbon-black-400 hover:text-hunter-green-600 hover:bg-hunter-green-50 transition-colors"
+                        title="Cari karyawan">
+                        <x-tabler-search class="h-4 w-4" />
+                    </button>
+                    <div id="karyawan-options"
+                        class="hidden absolute z-50 w-full mt-2 bg-white border border-carbon-black-100 rounded-xl shadow-xl overflow-hidden">
+                        <div id="karyawan-options-list" class="max-h-64 overflow-y-auto custom-scrollbar py-2">
+                            @if(isset($karyawans))
+                                @foreach($karyawans as $karyawan)
+                                    @if($karyawan['status'] === 'Aktif')
+                                        <button type="button"
+                                            class="karyawan-option w-full px-4 py-3 text-left hover:bg-hunter-green-50 transition-colors"
+                                            data-karyawan-option
+                                            data-karyawan-id="{{ $karyawan['id'] }}"
+                                            data-karyawan-name="{{ $karyawan['nama'] }}"
+                                            data-karyawan-nik="{{ $karyawan['nik'] }}">
+                                            <span class="block text-sm font-semibold text-carbon-black-900">{{ $karyawan['nama'] }}</span>
+                                            <span class="block mt-0.5 text-xs font-semibold text-carbon-black-400">NIK: {{ $karyawan['nik'] }}</span>
+                                        </button>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                        <div id="karyawan-no-results" class="hidden px-4 py-4 text-sm font-semibold text-carbon-black-400">
+                            Karyawan tidak ditemukan.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian Karyawan (auto-fill dari Data Karyawan) -->
                 <div class="relative">
-                    <select name="karyawan_id" id="karyawan-select"
-                        class="w-full appearance-none px-4 py-3.5 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-xl hover:border-carbon-black-300">
-                        <option value="" disabled selected>Pilih Karyawan</option>
-                        @if(isset($karyawans))
-                            @foreach($karyawans as $karyawan)
-                                @if($karyawan['status'] === 'Aktif')
-                                    <option value="{{ $karyawan['id'] }}">{{ $karyawan['nama'] }} ({{ $karyawan['nik'] }})</option>
-                                @endif
-                            @endforeach
-                        @endif
-                    </select>
-                    <div
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-carbon-black-400">
-                        <x-tabler-chevron-down class="h-4 w-4" />
+                    <input type="text" id="input-bagian-karyawan" name="bagian_karyawan" placeholder="Bagian Karyawan (otomatis)"
+                        class="w-full px-4 py-3.5 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
+                        readonly>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-4 text-blue-500">
+                        <x-tabler-user class="h-4 w-4" />
                     </div>
                 </div>
 
@@ -132,11 +159,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="relative">
                         <input type="text" id="bonus-summary" name="bonus_summary" placeholder="Jenis Bonus"
-                            class="w-full px-4 py-3.5 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
+                            class="w-full px-4 py-3.5 pr-12 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
                             readonly>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 text-hunter-green-500">
-                            <x-tabler-gift class="h-4 w-4" />
-                        </div>
+                        <button type="button" id="edit-bonus-selection"
+                            class="hidden absolute inset-y-0 right-2 my-auto h-8 w-8 items-center justify-center rounded-lg text-hunter-green-600 hover:bg-hunter-green-50 transition-colors disabled:pointer-events-none disabled:opacity-40"
+                            title="Edit bonus" disabled>
+                            <x-tabler-pencil class="h-4 w-4" />
+                        </button>
                     </div>
                     <input type="text" id="bonus-total-display" name="bonus_total" placeholder="Pemakaian"
                         class="w-full px-4 py-3.5 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
@@ -165,11 +194,13 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="relative">
                         <input type="text" id="potongan-summary" name="potongan_summary" placeholder="Jenis Potongan"
-                            class="w-full px-4 py-3.5 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
+                            class="w-full px-4 py-3.5 pr-12 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
                             readonly>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 text-rose-500">
-                            <x-tabler-cash-off class="h-4 w-4" />
-                        </div>
+                        <button type="button" id="edit-potongan-selection"
+                            class="hidden absolute inset-y-0 right-2 my-auto h-8 w-8 items-center justify-center rounded-lg text-rose-600 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:opacity-40"
+                            title="Edit potongan" disabled>
+                            <x-tabler-pencil class="h-4 w-4" />
+                        </button>
                     </div>
                     <input type="text" id="potongan-total-display" name="potongan_total" placeholder="Total Potongan"
                         class="w-full px-4 py-3.5 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-600 placeholder-carbon-black-400 rounded-xl cursor-not-allowed"
@@ -181,9 +212,6 @@
             <div class="flex-1 min-h-0 flex flex-col gap-6">
                 <!-- Total Gaji Card -->
                 <div class="bg-white border border-carbon-black-100 rounded-2xl p-8 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow flex-1 min-h-0 flex flex-col">
-                    <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <x-tabler-wallet class="w-48 h-48 text-carbon-black-900" />
-                    </div>
                     <p class="text-xs font-black text-carbon-black-400 uppercase tracking-widest mb-2 relative z-10">Total Gaji</p>
                     <h3 class="text-4xl md:text-5xl font-black tracking-tight text-carbon-black-900 relative z-10 mt-2">
                         Rp <span id="total-gaji">-</span>
@@ -201,21 +229,21 @@
                         <x-tabler-cash-banknote class="w-32 h-32 text-white" />
                     </div>
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                    <p class="text-xs font-black text-white/60 uppercase tracking-widest mb-2 relative z-10">Total Gaji Bersih</p>
-                    <h3 class="text-3xl font-black tracking-tight text-white relative z-10">
-                        Rp <span id="total-gaji-bersih">-</span>
-                    </h3>
+                    <div class="relative z-10 flex items-end justify-between gap-6">
+                        <div>
+                            <p class="text-xs font-black text-white/60 uppercase tracking-widest mb-2">Total Gaji Bersih</p>
+                            <h3 class="text-3xl font-black tracking-tight text-white">
+                                Rp <span id="total-gaji-bersih">-</span>
+                            </h3>
+                        </div>
+                        <button
+                            class="bg-gradient-to-r from-hunter-green-500 to-hunter-green-600 text-white px-10 h-12 text-sm font-black rounded-xl shadow-[0_8px_20px_rgba(98,164,91,0.3)] hover:shadow-[0_8px_25px_rgba(98,164,91,0.5)] hover:-translate-y-0.5 transition-all duration-300 active:scale-95 uppercase tracking-widest flex items-center gap-2 shrink-0">
+                            <x-tabler-check class="w-5 h-5" />
+                            <span>PROSES PENGGAJIAN</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Bayar Gaji Button (Aligned Right) -->
-        <div class="flex flex-shrink-0 justify-end">
-            <button
-                class="bg-gradient-to-r from-hunter-green-500 to-hunter-green-600 text-white px-10 h-12 text-sm font-black rounded-xl shadow-[0_8px_20px_rgba(98,164,91,0.3)] hover:shadow-[0_8px_25px_rgba(98,164,91,0.5)] hover:-translate-y-0.5 transition-all duration-300 active:scale-95 uppercase tracking-widest flex items-center gap-2">
-                <x-tabler-check class="w-5 h-5" />
-                <span>PROSES PENGGAJIAN</span>
-            </button>
         </div>
     </div>
 
@@ -225,7 +253,7 @@
             <div class="px-6 py-5 border-b border-carbon-black-100 flex justify-between items-center">
                 <div>
                     <h3 class="text-xl font-black uppercase tracking-wide text-carbon-black-900">Isian Bonus Karyawan</h3>
-                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Isi selisih penggunaan bahan baku di luar batas normal.</p>
+                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Pilih jenis bonus, lalu isi jumlah atau selisih sesuai ketentuan bonus.</p>
                 </div>
                 <button type="button" class="text-carbon-black-400 hover:text-rose-600 transition-colors" onclick="closeBonusModal(false)">
                     <x-tabler-x class="w-6 h-6" />
@@ -402,6 +430,13 @@
             }
 
             const karyawanSelect = document.getElementById('karyawan-select');
+            const karyawanCombobox = document.getElementById('karyawan-combobox');
+            const karyawanSearch = document.getElementById('karyawan-search');
+            const karyawanSearchToggle = document.getElementById('karyawan-search-toggle');
+            const karyawanOptions = document.getElementById('karyawan-options');
+            const karyawanOptionButtons = Array.from(document.querySelectorAll('[data-karyawan-option]'));
+            const karyawanNoResults = document.getElementById('karyawan-no-results');
+            const inputBagianKaryawan = document.getElementById('input-bagian-karyawan');
             const inputHariKerja = document.getElementById('input-hari-kerja');
             const inputGajiPokok = document.getElementById('input-gaji-pokok');
             const inputLembur = document.getElementById('input-lembur');
@@ -411,6 +446,7 @@
             const salaryDetailList = document.getElementById('salary-detail-list');
             const bonusSelect = document.getElementById('bonus-select');
             const bonusSummary = document.getElementById('bonus-summary');
+            const editBonusSelectionButton = document.getElementById('edit-bonus-selection');
             const bonusTotalDisplay = document.getElementById('bonus-total-display');
             const bonusModal = document.getElementById('bonus-modal');
             const bonusModalInner = bonusModal.querySelector('div');
@@ -421,6 +457,7 @@
             const bonusData = @json($gajiBonus ?? []);
             const potonganSelect = document.getElementById('potongan-select');
             const potonganSummary = document.getElementById('potongan-summary');
+            const editPotonganSelectionButton = document.getElementById('edit-potongan-selection');
             const potonganTotalDisplay = document.getElementById('potongan-total-display');
             const potonganModal = document.getElementById('potongan-modal');
             const potonganModalInner = potonganModal.querySelector('div');
@@ -431,6 +468,7 @@
             const potonganData = @json($potonganGaji ?? []);
 
             let activeKaryawanData = null;
+            let selectedKaryawanLabel = '';
             let currentBaseTotal = 0;
             let currentBonusTotal = 0;
             let currentPotonganTotal = 0;
@@ -449,6 +487,12 @@
                     select.classList.toggle('text-carbon-black-500', !isEnabled);
                     select.classList.toggle('cursor-not-allowed', !isEnabled);
                 });
+            }
+
+            function toggleEditButton(button, isVisible) {
+                button.disabled = !isVisible;
+                button.classList.toggle('hidden', !isVisible);
+                button.classList.toggle('inline-flex', isVisible);
             }
 
             function formatNumber(value) {
@@ -491,22 +535,27 @@
                 }
 
                 const hariKerja = Number(activeKaryawanData.hari_kerja || 0);
-                const jamKerjaPokok = hariKerja * 8;
                 const tarifPokok = Number(activeKaryawanData.gaji_pokok || 0);
-                const totalGajiPokok = jamKerjaPokok * tarifPokok;
+                const satuanGajiPokok = activeKaryawanData.satuan_gaji_pokok || 'Jam';
+                const totalGajiPokok = Number(activeKaryawanData.total_gaji_pokok || 0);
                 const jamLembur = Number(activeKaryawanData.jam_lembur || 0);
                 const tarifLembur = Number(activeKaryawanData.tarif_lembur || 0);
                 const totalLembur = Number(activeKaryawanData.total_lembur || 0);
+                const gajiPokokDetail = satuanGajiPokok === 'Hari'
+                    ? `${formatNumber(hariKerja)} hari x ${formatRupiah(tarifPokok)}`
+                    : `${formatNumber(hariKerja)} hari x 8 jam x ${formatRupiah(tarifPokok)}`;
 
                 const rows = [
                     detailRow(
                         'Gaji Pokok',
-                        `${formatNumber(hariKerja)} hari x 8 jam x ${formatRupiah(tarifPokok)}`,
+                        gajiPokokDetail,
                         totalGajiPokok
                     ),
                     detailRow(
                         'Lembur',
-                        jamLembur > 0
+                        activeKaryawanData.lembur_aktif === false
+                            ? 'Tidak berlaku untuk bagian Peternakan.'
+                            : jamLembur > 0
                             ? `${formatNumber(jamLembur)} jam x ${formatRupiah(tarifLembur)}`
                             : 'Tidak ada jam lembur pada periode ini.',
                         totalLembur
@@ -548,6 +597,7 @@
                 bonusSummary.value = '-';
                 bonusTotalDisplay.value = formatRupiah(0);
                 bonusRows.innerHTML = '';
+                toggleEditButton(editBonusSelectionButton, false);
                 updateSalaryTotals();
             }
 
@@ -559,6 +609,7 @@
                 potonganSummary.value = '-';
                 potonganTotalDisplay.value = formatRupiah(0);
                 potonganRows.innerHTML = '';
+                toggleEditButton(editPotonganSelectionButton, false);
                 updateSalaryTotals();
             }
 
@@ -585,9 +636,13 @@
                     return;
                 }
 
-                const isAttendanceBonus = bonus.satuan.toLowerCase() === 'hari';
+                const satuan = bonus.satuan.toLowerCase();
+                const isAttendanceBonus = satuan === 'hari';
+                const isFixedBonus = satuan === 'kali';
                 usageInput.disabled = false;
-                usageInput.placeholder = isAttendanceBonus ? 'Otomatis dari hari kerja' : 'Selisih ' + bonus.satuan.toLowerCase();
+                usageInput.placeholder = isAttendanceBonus
+                    ? 'Otomatis dari hari kerja'
+                    : (isFixedBonus ? 'Otomatis' : 'Selisih ' + satuan);
 
                 if (isAttendanceBonus) {
                     const hariKerja = Number(activeKaryawanData?.hari_kerja ?? 0);
@@ -595,6 +650,11 @@
                     usageInput.readOnly = true;
                     usageInput.classList.add('bg-carbon-black-100', 'cursor-not-allowed');
                     usageHint.textContent = 'Bonus kehadiran dihitung otomatis jika hadir lebih dari ' + bonus.batas_normal + ' hari.';
+                } else if (isFixedBonus) {
+                    usageInput.value = 1;
+                    usageInput.readOnly = true;
+                    usageInput.classList.add('bg-carbon-black-100', 'cursor-not-allowed');
+                    usageHint.textContent = 'Bonus ini dihitung 1 kali sesuai nominal tarif yang tercatat.';
                 } else {
                     usageInput.readOnly = false;
                     usageInput.classList.remove('bg-carbon-black-100', 'cursor-not-allowed');
@@ -632,9 +692,12 @@
                     }
 
                     const amount = usage * Number(bonus.tarif);
+                    const isFixedBonus = bonus.satuan.toLowerCase() === 'kali';
                     details.push({
                         title: bonus.nama,
-                        description: `Sejumlah ${formatUsageValue(usage, bonus.satuan)} x ${formatRupiah(bonus.tarif)}`,
+                        description: isFixedBonus
+                            ? `Dihitung 1 kali sebesar ${formatRupiah(bonus.tarif)}`
+                            : `Sejumlah ${formatUsageValue(usage, bonus.satuan)} x ${formatRupiah(bonus.tarif)}`,
                         amount,
                     });
                 });
@@ -642,8 +705,34 @@
                 return details;
             }
 
-            function createBonusOptions(selectedId = '') {
+            function getSelectedIds(container, selectClass, exceptSelect = null) {
+                return Array.from(container.querySelectorAll(selectClass))
+                    .filter(select => select !== exceptSelect && select.value)
+                    .map(select => String(select.value));
+            }
+
+            function refreshUniqueOptions(container, selectClass, data, placeholderText, createOptionsCallback) {
+                container.querySelectorAll(selectClass).forEach(select => {
+                    const currentValue = select.value;
+                    select.innerHTML = `
+                        <option value="" disabled ${currentValue ? '' : 'selected'}>${placeholderText}</option>
+                        ${createOptionsCallback(currentValue, select)}
+                    `;
+                    select.value = currentValue;
+                });
+            }
+
+            function refreshBonusOptions() {
+                refreshUniqueOptions(bonusRows, '.bonus-type', bonusData, 'Jenis Bonus', createBonusOptions);
+            }
+
+            function createBonusOptions(selectedId = '', currentSelect = null) {
+                const selectedIds = getSelectedIds(bonusRows, '.bonus-type', currentSelect);
                 return bonusData.map(item => {
+                    if (selectedIds.includes(String(item.id)) && String(item.id) !== String(selectedId)) {
+                        return '';
+                    }
+
                     const selected = String(item.id) === String(selectedId) ? 'selected' : '';
                     return `<option value="${item.id}" ${selected}>${item.nama}</option>`;
                 }).join('');
@@ -660,7 +749,7 @@
                         </select>
                         <p class="bonus-usage-hint text-[11px] font-semibold text-carbon-black-400 mt-1">Pilih jenis bonus terlebih dahulu.</p>
                     </div>
-                    <input type="number" min="0" step="0.01" class="bonus-usage w-full px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 placeholder-carbon-black-400 rounded-lg" placeholder="Selisih" disabled>
+                    <input type="number" min="0" step="0.01" class="bonus-usage w-full px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 placeholder-carbon-black-400 rounded-lg" placeholder="Jumlah" disabled>
                     <div class="px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 rounded-lg text-sm font-black text-carbon-black-800">
                         <span class="bonus-subtotal">Rp 0</span>
                     </div>
@@ -670,19 +759,25 @@
                 `;
 
                 bonusRows.appendChild(row);
-                row.querySelector('.bonus-type').addEventListener('change', () => updateBonusRow(row));
+                row.querySelector('.bonus-type').addEventListener('change', () => {
+                    updateBonusRow(row);
+                    refreshBonusOptions();
+                });
                 row.querySelector('.bonus-usage').addEventListener('input', () => updateBonusRow(row));
                 row.querySelector('.remove-bonus-row').addEventListener('click', () => {
                     row.remove();
                     if (!bonusRows.querySelector('.bonus-row')) {
                         addBonusRow();
                     }
+                    refreshBonusOptions();
                     updateBonusModalTotal();
                 });
 
                 if (selectedId) {
                     updateBonusRow(row);
                 }
+
+                refreshBonusOptions();
             }
 
             function openBonusModal() {
@@ -719,10 +814,20 @@
                 currentBonusTotal = updateBonusModalTotal();
                 currentBonusDetails = collectBonusDetails();
                 savedBonusCount = bonusRows.querySelectorAll('.bonus-row').length;
-                bonusSummary.value = savedBonusCount + ' bonus dipilih';
+                bonusSummary.value = savedBonusCount + ' Bonus dipilih';
                 bonusTotalDisplay.value = formatRupiah(currentBonusTotal);
+                toggleEditButton(editBonusSelectionButton, savedBonusCount > 0);
                 updateSalaryTotals();
                 closeBonusModal(true);
+            });
+
+            editBonusSelectionButton.addEventListener('click', function() {
+                if (!activeKaryawanData || savedBonusCount === 0) {
+                    return;
+                }
+
+                bonusSelect.value = 'Ada';
+                openBonusModal();
             });
 
             bonusSelect.addEventListener('change', function() {
@@ -815,8 +920,17 @@
                 return details;
             }
 
-            function createPotonganOptions(selectedId = '') {
+            function refreshPotonganOptions() {
+                refreshUniqueOptions(potonganRows, '.potongan-type', potonganData, 'Jenis Potongan', createPotonganOptions);
+            }
+
+            function createPotonganOptions(selectedId = '', currentSelect = null) {
+                const selectedIds = getSelectedIds(potonganRows, '.potongan-type', currentSelect);
                 return potonganData.map(item => {
+                    if (selectedIds.includes(String(item.id)) && String(item.id) !== String(selectedId)) {
+                        return '';
+                    }
+
                     const selected = String(item.id) === String(selectedId) ? 'selected' : '';
                     return `<option value="${item.id}" ${selected}>${item.nama}</option>`;
                 }).join('');
@@ -843,19 +957,25 @@
                 `;
 
                 potonganRows.appendChild(row);
-                row.querySelector('.potongan-type').addEventListener('change', () => updatePotonganRow(row));
+                row.querySelector('.potongan-type').addEventListener('change', () => {
+                    updatePotonganRow(row);
+                    refreshPotonganOptions();
+                });
                 row.querySelector('.potongan-jumlah').addEventListener('input', () => updatePotonganRow(row));
                 row.querySelector('.remove-potongan-row').addEventListener('click', () => {
                     row.remove();
                     if (!potonganRows.querySelector('.potongan-row')) {
                         addPotonganRow();
                     }
+                    refreshPotonganOptions();
                     updatePotonganModalTotal();
                 });
 
                 if (selectedId) {
                     updatePotonganRow(row);
                 }
+
+                refreshPotonganOptions();
             }
 
             function openPotonganModal() {
@@ -892,10 +1012,20 @@
                 currentPotonganTotal = updatePotonganModalTotal();
                 currentPotonganDetails = collectPotonganDetails();
                 savedPotonganCount = potonganRows.querySelectorAll('.potongan-row').length;
-                potonganSummary.value = savedPotonganCount + ' potongan dipilih';
+                potonganSummary.value = savedPotonganCount + ' Potongan dipilih';
                 potonganTotalDisplay.value = formatRupiah(currentPotonganTotal);
+                toggleEditButton(editPotonganSelectionButton, savedPotonganCount > 0);
                 updateSalaryTotals();
                 closePotonganModal(true);
+            });
+
+            editPotonganSelectionButton.addEventListener('click', function() {
+                if (!activeKaryawanData || savedPotonganCount === 0) {
+                    return;
+                }
+
+                potonganSelect.value = 'Ada';
+                openPotonganModal();
             });
 
             potonganSelect.addEventListener('change', function() {
@@ -909,6 +1039,110 @@
                 }
             });
 
+            function openKaryawanOptions() {
+                if (!karyawanOptions) {
+                    return;
+                }
+
+                filterKaryawanOptions();
+                karyawanOptions.classList.remove('hidden');
+            }
+
+            function closeKaryawanOptions() {
+                if (!karyawanOptions) {
+                    return;
+                }
+
+                karyawanOptions.classList.add('hidden');
+            }
+
+            function filterKaryawanOptions() {
+                const query = (karyawanSearch.value || '').trim().toLowerCase();
+                let visibleCount = 0;
+
+                karyawanOptionButtons.forEach(button => {
+                    const searchableText = `${button.dataset.karyawanName || ''} ${button.dataset.karyawanNik || ''}`.toLowerCase();
+                    const isVisible = searchableText.includes(query);
+                    button.classList.toggle('hidden', !isVisible);
+
+                    if (isVisible) {
+                        visibleCount++;
+                    }
+                });
+
+                if (karyawanNoResults) {
+                    karyawanNoResults.classList.toggle('hidden', visibleCount > 0);
+                }
+            }
+
+            function resetSelectedKaryawanOnTyping() {
+                if (!karyawanSelect.value) {
+                    return;
+                }
+
+                const currentText = (karyawanSearch.value || '').trim().toLowerCase();
+                if (currentText === selectedKaryawanLabel.toLowerCase()) {
+                    return;
+                }
+
+                karyawanSelect.value = '';
+                selectedKaryawanLabel = '';
+                karyawanSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            function selectKaryawan(button) {
+                const name = button.dataset.karyawanName || '';
+                const nik = button.dataset.karyawanNik || '';
+
+                selectedKaryawanLabel = `${name} (${nik})`;
+                karyawanSearch.value = selectedKaryawanLabel;
+                karyawanSelect.value = button.dataset.karyawanId || '';
+                closeKaryawanOptions();
+                karyawanSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            if (karyawanSearch) {
+                karyawanSearch.addEventListener('focus', openKaryawanOptions);
+                karyawanSearch.addEventListener('input', function() {
+                    resetSelectedKaryawanOnTyping();
+                    openKaryawanOptions();
+                });
+
+                karyawanSearch.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeKaryawanOptions();
+                        return;
+                    }
+
+                    if (event.key === 'Enter') {
+                        const firstVisibleOption = karyawanOptionButtons.find(button => !button.classList.contains('hidden'));
+                        if (firstVisibleOption) {
+                            event.preventDefault();
+                            selectKaryawan(firstVisibleOption);
+                        }
+                    }
+                });
+            }
+
+            if (karyawanSearchToggle) {
+                karyawanSearchToggle.addEventListener('click', function() {
+                    karyawanSearch.focus();
+                    openKaryawanOptions();
+                });
+            }
+
+            karyawanOptionButtons.forEach(button => {
+                button.addEventListener('click', () => selectKaryawan(button));
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!karyawanCombobox || karyawanCombobox.contains(event.target)) {
+                    return;
+                }
+
+                closeKaryawanOptions();
+            });
+
             if (karyawanSelect) {
                 karyawanSelect.addEventListener('change', function() {
                     const selectedId = this.value;
@@ -917,12 +1151,15 @@
 
                     if (data) {
                         setAdjustmentSelectsEnabled(true);
+                        inputBagianKaryawan.value = data.bagian || '-';
                         inputHariKerja.value = data.hari_kerja + ' hari';
-                        inputGajiPokok.value = formatRupiah(data.gaji_pokok) + ' / jam';
+                        inputGajiPokok.value = formatRupiah(data.gaji_pokok) + ' / ' + String(data.satuan_gaji_pokok || 'Jam').toLowerCase();
                         inputLembur.value = data.lembur;
-                        inputLamanyaLembur.value = Number(data.jam_lembur).toLocaleString('id-ID') + ' jam';
+                        inputLamanyaLembur.value = data.lembur_aktif === false
+                            ? '-'
+                            : Number(data.jam_lembur).toLocaleString('id-ID') + ' jam';
 
-                        const totalGajiPokok = Number(data.hari_kerja) * 8 * Number(data.gaji_pokok);
+                        const totalGajiPokok = Number(data.total_gaji_pokok);
                         const totalLembur = Number(data.total_lembur);
                         currentBaseTotal = totalGajiPokok + totalLembur;
 
@@ -936,7 +1173,7 @@
                         updateSalaryTotals();
 
                         // Animasi highlight
-                        [inputHariKerja, inputGajiPokok, inputLembur, inputLamanyaLembur].forEach(el => {
+                        [inputBagianKaryawan, inputHariKerja, inputGajiPokok, inputLembur, inputLamanyaLembur].forEach(el => {
                             el.classList.add('border-hunter-green-400', 'bg-hunter-green-50');
                             setTimeout(() => {
                                 el.classList.remove('border-hunter-green-400', 'bg-hunter-green-50');
@@ -944,6 +1181,7 @@
                         });
                     } else {
                         inputHariKerja.value = '';
+                        inputBagianKaryawan.value = '';
                         inputGajiPokok.value = '';
                         inputLembur.value = '';
                         inputLamanyaLembur.value = '';

@@ -17,6 +17,6 @@ class DashboardController extends Controller
             'karyawan_inaktif' => 1,
         ];
 
-        return view('pimpinan.dashboard.dashboard', compact('stats'));
+        return view('pimpinan.dashboard', compact('stats'));
     }
 }

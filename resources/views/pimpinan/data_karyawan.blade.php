@@ -50,6 +50,7 @@
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">NPWP</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">ALAMAT</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">NO. TELP</th>
+                    <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">BAGIAN</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">STATUS</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">AKSI</th>
                 </tr>
@@ -63,6 +64,18 @@
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-800 max-w-xs truncate">{{ $k['alamat'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['no_telp'] }}</td>
+                        <td class="px-6 py-5 text-center text-base">
+                            @php
+                                $bagianColor = match($k['bagian'] ?? '') {
+                                    'Produksi' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                    'Peternakan' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                    default => 'bg-gray-50 text-gray-700 border-gray-200',
+                                };
+                            @endphp
+                            <span class="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm {{ $bagianColor }}">
+                                {{ $k['bagian'] ?? '-' }}
+                            </span>
+                        </td>
                         <td class="px-6 py-5 text-center text-base">
                             @php
                                 $statusColor = match($k['status']) {
@@ -143,6 +156,10 @@
                 <div class="space-y-1">
                     <p class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">NPWP</p>
                     <p id="detail-npwp" class="text-base font-semibold text-carbon-black-900">-</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Bagian</p>
+                    <p id="detail-bagian" class="text-base font-semibold text-carbon-black-900">-</p>
                 </div>
                 <div class="space-y-1">
                     <p class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Alamat</p>
@@ -238,6 +255,7 @@
         document.getElementById('detail-nama').textContent = data.nama || '-';
         document.getElementById('detail-npwp').textContent = data.npwp || '-';
         document.getElementById('detail-notelp').textContent = data.no_telp || '-';
+        document.getElementById('detail-bagian').textContent = data.bagian || '-';
         document.getElementById('detail-alamat').textContent = data.alamat || '-';
         
         let statusEl = document.getElementById('detail-status');
