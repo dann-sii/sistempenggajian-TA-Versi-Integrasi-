@@ -20,7 +20,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Periode Bulan -->
                     <div class="relative">
-                        <select
+                        <select id="periode-bulan-select"
                             class="w-full appearance-none px-4 py-3.5 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-xl hover:border-carbon-black-300">
                             @php
                                 $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -355,6 +355,7 @@
                         text.classList.remove('text-carbon-black-400');
                         text.classList.add('text-carbon-black-800');
                         input.value = y;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
                         closeMenu();
                     });
                     fragment.appendChild(li);
@@ -380,6 +381,7 @@
                     text.classList.remove('text-carbon-black-400');
                     text.classList.add('text-carbon-black-800');
                     input.value = y;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
                     closeMenu();
                 });
                 list.appendChild(li);
@@ -436,6 +438,8 @@
             const karyawanOptions = document.getElementById('karyawan-options');
             const karyawanOptionButtons = Array.from(document.querySelectorAll('[data-karyawan-option]'));
             const karyawanNoResults = document.getElementById('karyawan-no-results');
+            const periodeBulanSelect = document.getElementById('periode-bulan-select');
+            const periodeTahunInput = document.getElementById('periode-tahun-input');
             const inputBagianKaryawan = document.getElementById('input-bagian-karyawan');
             const inputHariKerja = document.getElementById('input-hari-kerja');
             const inputGajiPokok = document.getElementById('input-gaji-pokok');
@@ -598,6 +602,42 @@
                 bonusTotalDisplay.value = formatRupiah(0);
                 bonusRows.innerHTML = '';
                 toggleEditButton(editBonusSelectionButton, false);
+                updateSalaryTotals();
+            }
+
+            function getSelectedPeriodKey() {
+                const month = String((periodeBulanSelect?.selectedIndex ?? new Date().getMonth()) + 1).padStart(2, '0');
+                const year = periodeTahunInput?.value || new Date().getFullYear();
+                return `${year}-${month}`;
+            }
+
+            function applyAutomaticProductionBonus() {
+                if (!activeKaryawanData) {
+                    return;
+                }
+
+                const periodBonus = activeKaryawanData.bonus_produksi_by_period?.[getSelectedPeriodKey()] || {
+                    total: 0,
+                    details: [],
+                };
+
+                currentBonusTotal = Number(periodBonus.total || 0);
+                currentBonusDetails = periodBonus.details || [];
+                savedBonusCount = currentBonusDetails.length;
+                bonusRows.innerHTML = '';
+
+                if (savedBonusCount > 0 && currentBonusTotal > 0) {
+                    bonusSelect.value = 'Ada';
+                    bonusSummary.value = savedBonusCount + ' bonus otomatis';
+                    bonusTotalDisplay.value = formatRupiah(currentBonusTotal);
+                    toggleEditButton(editBonusSelectionButton, true);
+                } else {
+                    bonusSelect.value = 'Tidak Ada';
+                    bonusSummary.value = '-';
+                    bonusTotalDisplay.value = formatRupiah(0);
+                    toggleEditButton(editBonusSelectionButton, false);
+                }
+
                 updateSalaryTotals();
             }
 
@@ -1163,14 +1203,7 @@
                         const totalLembur = Number(data.total_lembur);
                         currentBaseTotal = totalGajiPokok + totalLembur;
 
-                        if (bonusSelect.value === 'Ada') {
-                            bonusRows.querySelectorAll('.bonus-row').forEach(row => updateBonusRow(row));
-                            currentBonusTotal = updateBonusModalTotal();
-                            currentBonusDetails = collectBonusDetails();
-                            bonusTotalDisplay.value = formatRupiah(currentBonusTotal);
-                        }
-
-                        updateSalaryTotals();
+                        applyAutomaticProductionBonus();
 
                         // Animasi highlight
                         [inputBagianKaryawan, inputHariKerja, inputGajiPokok, inputLembur, inputLamanyaLembur].forEach(el => {
@@ -1192,6 +1225,14 @@
                         setAdjustmentSelectsEnabled(false);
                     }
                 });
+            }
+
+            if (periodeBulanSelect) {
+                periodeBulanSelect.addEventListener('change', applyAutomaticProductionBonus);
+            }
+
+            if (periodeTahunInput) {
+                periodeTahunInput.addEventListener('change', applyAutomaticProductionBonus);
             }
 
             resetBonusState();

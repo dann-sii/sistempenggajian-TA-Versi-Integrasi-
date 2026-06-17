@@ -36,8 +36,33 @@ class PresensiController extends Controller
 
     public function index(Request $request)
     {
+        if (!session()->has('karyawan_data')) {
+            session()->put('karyawan_data', KaryawanController::getInitialData());
+        }
+
+        $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data'));
+        session()->put('karyawan_data', $karyawans);
+
+        $statusKaryawanMap = [];
+        foreach ($karyawans as $karyawan) {
+            $statusKaryawanMap[$karyawan['nama']] = $karyawan['status'] ?? 'Aktif';
+        }
+
         // Mock data for attendance based on wireframe columns
         $allPresensi = self::getPresensiData();
+
+        foreach ($allPresensi as &$row) {
+            $row['status_karyawan'] = $statusKaryawanMap[$row['nama']] ?? 'Aktif';
+            $row['is_inactive'] = strtolower($row['status_karyawan']) === 'inaktif';
+
+            if ($row['is_inactive']) {
+                $row['jam_masuk'] = '';
+                $row['jam_keluar'] = '';
+                $row['kehadiran'] = '';
+                $row['jam_lembur'] = '0';
+            }
+        }
+        unset($row);
 
         $fullDataset = $allPresensi;
         $search = $request->get('search');
@@ -55,16 +80,26 @@ class PresensiController extends Controller
             });
         }
 
+        usort($allPresensi, function ($a, $b) {
+            if ($a['is_inactive'] === $b['is_inactive']) {
+                return $a['id'] <=> $b['id'];
+            }
+
+            return $a['is_inactive'] ? 1 : -1;
+        });
+
         // Calculate summary across the entire mock dataset for the current month
         foreach ($allPresensi as &$p) {
             $H = 0; $I = 0; $S = 0; $C = 0; $A = 0;
             $history = [];
             foreach ($fullDataset as $ap) {
                 if ($ap['nama'] === $p['nama']) {
-                    $history[] = [
-                        'date' => $ap['tanggal'],
-                        'status' => $ap['kehadiran']
-                    ];
+                    if ($ap['kehadiran'] !== '') {
+                        $history[] = [
+                            'date' => $ap['tanggal'],
+                            'status' => $ap['kehadiran']
+                        ];
+                    }
                     
                     if ($ap['kehadiran'] === 'Hadir') $H++;
                     elseif ($ap['kehadiran'] === 'Izin') $I++;

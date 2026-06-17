@@ -51,8 +51,11 @@
                 ];
             } else {
                 $menuItems = [
+                    ['name' => 'Dashboard', 'route' => 'dashboard.index', 'icon' => 'dashboard'],
                     ['name' => 'Data Karyawan', 'route' => 'karyawan.index', 'icon' => 'users'],
                     ['name' => 'Data Presensi', 'route' => 'presensi.index', 'icon' => 'calendar-check'],
+                    ['name' => 'Data Produk', 'route' => 'resep_produk.index', 'icon' => 'package'],
+                    ['name' => 'Aktivitas Karyawan', 'route' => 'aktivitas_karyawan.index', 'icon' => 'clipboard-list'],
                     ['name' => 'Gaji Pokok & Lembur', 'route' => 'gaji_pokok.index', 'icon' => 'cash'],
                     ['name' => 'Gaji Bonus', 'route' => 'gaji_bonus.index', 'icon' => 'gift'],
                     ['name' => 'Potongan Gaji', 'route' => 'potongan_gaji.index', 'icon' => 'cash-off'],

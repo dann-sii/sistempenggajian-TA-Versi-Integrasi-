@@ -67,16 +67,26 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-carbon-black-100">
-                @foreach($presensi as $p)
-                    <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
-                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $p['id'] }}</td>
-                        <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $p['nama'] }}</td>
+                @foreach($presensi as $index => $p)
+                    @php
+                        $isInactive = $p['is_inactive'] ?? false;
+                    @endphp
+                    <tr class="{{ $isInactive ? 'bg-carbon-black-50/70 opacity-75' : 'hover:bg-hunter-green-50' }} transition-colors duration-150 group">
+                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ (($page - 1) * 10) + $index + 1 }}</td>
+                        <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">
+                            <div class="flex flex-col items-start gap-1">
+                                <span>{{ $p['nama'] }}</span>
+                                @if($isInactive)
+                                    <span class="inline-flex rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-rose-600">Inaktif</span>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ date('d M Y', strtotime($p['tanggal'])) }}</td>
                         <td class="px-6 py-5 text-center">
-                            <input type="time" id="masuk_{{ $p['id'] }}" name="jam_masuk_{{ $p['id'] }}" value="{{ $p['jam_masuk'] }}" onchange="calculateLembur('{{ $p['id'] }}')" title="Ubah Jam Masuk" class="w-[105px] text-center text-base font-semibold text-carbon-black-800 bg-transparent border-0 focus:ring-1 focus:ring-hunter-green-400 focus:outline-none cursor-pointer hover:bg-carbon-black-50 px-1 py-1 rounded transition-colors">
+                            <input type="time" id="masuk_{{ $p['id'] }}" name="jam_masuk_{{ $p['id'] }}" value="{{ $p['jam_masuk'] }}" onchange="calculateLembur('{{ $p['id'] }}')" title="{{ $isInactive ? 'Karyawan inaktif' : 'Ubah Jam Masuk' }}" class="w-[105px] text-center text-base font-semibold text-carbon-black-800 bg-transparent border-0 focus:ring-1 focus:ring-hunter-green-400 focus:outline-none {{ $isInactive ? 'cursor-not-allowed text-carbon-black-400' : 'cursor-pointer hover:bg-carbon-black-50' }} px-1 py-1 rounded transition-colors" {{ $isInactive ? 'disabled' : '' }}>
                         </td>
                         <td class="px-6 py-5 text-center">
-                            <input type="time" id="keluar_{{ $p['id'] }}" name="jam_keluar_{{ $p['id'] }}" value="{{ $p['jam_keluar'] }}" onchange="calculateLembur('{{ $p['id'] }}')" title="Ubah Jam Keluar" class="w-[105px] text-center text-base font-semibold text-carbon-black-800 bg-transparent border-0 focus:ring-1 focus:ring-hunter-green-400 focus:outline-none cursor-pointer hover:bg-carbon-black-50 px-1 py-1 rounded transition-colors">
+                            <input type="time" id="keluar_{{ $p['id'] }}" name="jam_keluar_{{ $p['id'] }}" value="{{ $p['jam_keluar'] }}" onchange="calculateLembur('{{ $p['id'] }}')" title="{{ $isInactive ? 'Karyawan inaktif' : 'Ubah Jam Keluar' }}" class="w-[105px] text-center text-base font-semibold text-carbon-black-800 bg-transparent border-0 focus:ring-1 focus:ring-hunter-green-400 focus:outline-none {{ $isInactive ? 'cursor-not-allowed text-carbon-black-400' : 'cursor-pointer hover:bg-carbon-black-50' }} px-1 py-1 rounded transition-colors" {{ $isInactive ? 'disabled' : '' }}>
                         </td>
                         <td class="px-6 py-5">
                             <div class="flex items-center justify-center space-x-2.5">
@@ -91,11 +101,12 @@
                                     $currentStatus = $p['kehadiran'] === 'Alfa' ? 'Alpha' : $p['kehadiran'];
                                 @endphp
                                 @foreach($options as $val => $opt)
-                                    <label class="flex items-center space-x-1 cursor-pointer group/radio" title="{{ $val }}">
+                                    <label class="flex items-center space-x-1 {{ $isInactive ? 'cursor-not-allowed' : 'cursor-pointer group/radio' }}" title="{{ $isInactive ? 'Karyawan inaktif' : $val }}">
                                         <input type="radio" name="kehadiran_{{ $p['id'] }}" value="{{ $val }}" 
-                                            class="w-4 h-4 {{ $opt['accent'] }} cursor-pointer" 
-                                            {{ $currentStatus === $val ? 'checked' : '' }}>
-                                        <span class="text-xs font-black text-carbon-black-500 group-hover/radio:text-carbon-black-900 transition-colors">{{ $opt['label'] }}</span>
+                                            class="w-4 h-4 {{ $opt['accent'] }} {{ $isInactive ? 'cursor-not-allowed' : 'cursor-pointer' }}" 
+                                            {{ $currentStatus === $val ? 'checked' : '' }}
+                                            {{ $isInactive ? 'disabled' : '' }}>
+                                        <span class="text-xs font-black text-carbon-black-500 {{ $isInactive ? '' : 'group-hover/radio:text-carbon-black-900' }} transition-colors">{{ $opt['label'] }}</span>
                                     </label>
                                 @endforeach
                             </div>
@@ -322,6 +333,13 @@
             document.getElementById('detail-alpha').textContent = '0';
         }
         
+        let calendarEl = document.getElementById('employee-calendar');
+        if(window.empCalendar) {
+            window.empCalendar.destroy();
+            window.empCalendar = null;
+        }
+        calendarEl.innerHTML = '<div class="rounded-lg bg-carbon-black-50 px-4 py-8 text-center text-sm font-bold text-carbon-black-400">Tidak ada data presensi aktif.</div>';
+
         if (data.history && data.history.length > 0) {
             const colorMap = {
                 'Hadir': '#059669', // emerald
@@ -338,10 +356,7 @@
                 allDay: true
             }));
 
-            let calendarEl = document.getElementById('employee-calendar');
-            if(window.empCalendar) {
-                window.empCalendar.destroy();
-            }
+            calendarEl.innerHTML = '';
 
             window.empCalendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',

@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\Admin\PotonganGajiController;
 use App\Http\Controllers\Api\Admin\PenggajianController;
 use App\Http\Controllers\Api\Admin\DetailPenggajianController;
 use App\Http\Controllers\Api\Admin\LaporanPenggajianController;
+use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\AktivitasKaryawanController;
+use App\Http\Controllers\Api\Admin\ResepProdukController;
 use App\Http\Controllers\Api\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Api\Pimpinan\KaryawanController as PimpinanKaryawanController;
 use App\Http\Controllers\AuthController;
@@ -20,6 +23,7 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Pimpinan Routes
@@ -27,6 +31,10 @@ Route::get('/pimpinan/dashboard', [PimpinanDashboardController::class, 'index'])
 Route::get('/pimpinan/karyawan', [PimpinanKaryawanController::class, 'index'])->name('pimpinan.karyawan.index');
 Route::get('/pimpinan/laporan-penggajian', [\App\Http\Controllers\Api\Pimpinan\LaporanPenggajianController::class, 'index'])->name('pimpinan.laporan_penggajian.index');
 
+Route::get('/dashboard', [DashboardController::class , 'index'])->name('dashboard.index');
+Route::get('/resep-produk', [ResepProdukController::class , 'index'])->name('resep_produk.index');
+Route::get('/aktivitas-karyawan', [AktivitasKaryawanController::class , 'index'])->name('aktivitas_karyawan.index');
+Route::post('/aktivitas-karyawan', [AktivitasKaryawanController::class , 'store'])->name('aktivitas_karyawan.store');
 Route::get('/karyawan', [KaryawanController::class , 'index'])->name('karyawan.index');
 Route::post('/karyawan', [KaryawanController::class , 'store'])->name('karyawan.store');
 Route::put('/karyawan/{id}', [KaryawanController::class , 'update'])->name('karyawan.update');
