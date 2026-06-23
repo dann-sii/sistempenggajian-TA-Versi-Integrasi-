@@ -54,18 +54,17 @@ class KaryawanController extends Controller
         }
 
         $allKaryawan = self::withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $allKaryawan);
 
         $status = $request->query('status');
         if ($status) {
-            $allKaryawan = array_values(array_filter($allKaryawan, function($k) use ($status) {
+            $allKaryawan = array_values(array_filter($allKaryawan, function ($k) use ($status) {
                 return strtolower($k['status']) === strtolower($status);
             }));
         }
 
         $search = $request->query('search');
         if ($search) {
-            $allKaryawan = array_values(array_filter($allKaryawan, function($k) use ($search) {
+            $allKaryawan = array_values(array_filter($allKaryawan, function ($k) use ($search) {
                 return stripos((string) $k['id'], $search) !== false
                     || stripos((string) $k['nik'], $search) !== false
                     || stripos((string) $k['nama'], $search) !== false
@@ -81,7 +80,7 @@ class KaryawanController extends Controller
         $perPage = 10;
         $total = count($allKaryawan);
         $totalPages = max(1, ceil($total / $perPage));
-        
+
         if ($page > $totalPages) {
             $page = $totalPages;
         }
@@ -106,7 +105,7 @@ class KaryawanController extends Controller
 
         $allKaryawan = session('karyawan_data', []);
         $newId = count($allKaryawan) > 0 ? max(array_column($allKaryawan, 'id')) + 1 : 1;
-        
+
         $newKaryawan = [
             'id' => $newId,
             'nik' => $data['nik'],
@@ -126,7 +125,7 @@ class KaryawanController extends Controller
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil ditambahkan.');
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $data = $request->validate([
             'nik' => 'required|string',
@@ -141,7 +140,7 @@ class KaryawanController extends Controller
         ]);
 
         $allKaryawan = session('karyawan_data', []);
-        
+
         foreach ($allKaryawan as &$k) {
             if ($k['id'] == $id) {
                 $k['nik'] = $data['nik'];
@@ -156,17 +155,17 @@ class KaryawanController extends Controller
                 break;
             }
         }
-        
+
         session()->put('karyawan_data', $allKaryawan);
 
         return redirect()->route('karyawan.index')->with('success', 'Data karyawan berhasil diubah.');
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $allKaryawan = session('karyawan_data', []);
-        
-        $allKaryawan = array_filter($allKaryawan, function($k) use ($id) {
+
+        $allKaryawan = array_filter($allKaryawan, function ($k) use ($id) {
             return $k['id'] != $id;
         });
 

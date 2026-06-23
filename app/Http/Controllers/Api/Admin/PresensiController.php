@@ -63,7 +63,7 @@ class PresensiController extends Controller
                 if ($row['kehadiran'] === 'Hadir' && !empty($row['jam_masuk']) && !empty($row['jam_keluar'])) {
                     $masuk = strtotime($row['tanggal'] . ' ' . $row['jam_masuk']);
                     $keluar = strtotime($row['tanggal'] . ' ' . $row['jam_keluar']);
-                    
+
                     $durasiAktual = 0;
                     if ($keluar >= $masuk) {
                         $durasiAktual = ($keluar - $masuk) / 3600;
@@ -97,11 +97,10 @@ class PresensiController extends Controller
         }
 
         $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $karyawans);
 
         // Mock data for attendance based on wireframe columns
         $allPresensi = self::getCalculatedPresensiData();
-        
+
         $standarJamNormal = 7;
         $standarJamSabtu = 5;
 
@@ -110,13 +109,13 @@ class PresensiController extends Controller
         $date = $request->get('date');
 
         if ($search) {
-            $allPresensi = array_filter($allPresensi, function($p) use ($search) {
+            $allPresensi = array_filter($allPresensi, function ($p) use ($search) {
                 return stripos($p['nama'], $search) !== false;
             });
         }
 
         if ($date) {
-            $allPresensi = array_filter($allPresensi, function($p) use ($date) {
+            $allPresensi = array_filter($allPresensi, function ($p) use ($date) {
                 return $p['tanggal'] === $date;
             });
         }
@@ -129,29 +128,53 @@ class PresensiController extends Controller
             return $a['is_inactive'] ? 1 : -1;
         });
 
-        // Calculate summary across the entire mock dataset for the current month
-        foreach ($allPresensi as &$p) {
-            $H = 0; $I = 0; $S = 0; $C = 0; $A = 0;
-            $history = [];
-            foreach ($fullDataset as $ap) {
-                if ($ap['nama'] === $p['nama']) {
-                    if ($ap['kehadiran'] !== '') {
-                        $history[] = [
-                            'date' => $ap['tanggal'],
-                            'status' => $ap['kehadiran']
-                        ];
-                    }
-                    
-                    if ($ap['kehadiran'] === 'Hadir') $H++;
-                    elseif ($ap['kehadiran'] === 'Izin') $I++;
-                    elseif ($ap['kehadiran'] === 'Sakit') $S++;
-                    elseif ($ap['kehadiran'] === 'Cuti') $C++;
-                    elseif ($ap['kehadiran'] === 'Alpha') $A++;
-                }
+        $summaryByNama = [];
+        foreach ($fullDataset as $ap) {
+            $nama = $ap['nama'];
+
+            if (!isset($summaryByNama[$nama])) {
+                $summaryByNama[$nama] = [
+                    'H' => 0,
+                    'I' => 0,
+                    'S' => 0,
+                    'C' => 0,
+                    'A' => 0,
+                    'history' => [],
+                ];
             }
-            $p['summary'] = compact('H', 'I', 'S', 'C', 'A');
-            $p['history'] = $history;
+
+            if ($ap['kehadiran'] !== '') {
+                $summaryByNama[$nama]['history'][] = [
+                    'date' => $ap['tanggal'],
+                    'status' => $ap['kehadiran'],
+                ];
+            }
+
+            if ($ap['kehadiran'] === 'Hadir') {
+                $summaryByNama[$nama]['H']++;
+            } elseif ($ap['kehadiran'] === 'Izin') {
+                $summaryByNama[$nama]['I']++;
+            } elseif ($ap['kehadiran'] === 'Sakit') {
+                $summaryByNama[$nama]['S']++;
+            } elseif ($ap['kehadiran'] === 'Cuti') {
+                $summaryByNama[$nama]['C']++;
+            } elseif ($ap['kehadiran'] === 'Alpha') {
+                $summaryByNama[$nama]['A']++;
+            }
         }
+
+        foreach ($allPresensi as &$p) {
+            $nama = $p['nama'];
+            $p['summary'] = [
+                'H' => $summaryByNama[$nama]['H'] ?? 0,
+                'I' => $summaryByNama[$nama]['I'] ?? 0,
+                'S' => $summaryByNama[$nama]['S'] ?? 0,
+                'C' => $summaryByNama[$nama]['C'] ?? 0,
+                'A' => $summaryByNama[$nama]['A'] ?? 0,
+            ];
+            $p['history'] = $summaryByNama[$nama]['history'] ?? [];
+        }
+        unset($p);
 
         $page = (int) $request->get('page', 1);
         $perPage = 10;

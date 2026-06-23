@@ -14,7 +14,6 @@ class DashboardController extends Controller
         }
 
         $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $karyawans);
 
         $presensi = PresensiController::getPresensiData();
         $gajiPokokRules = GajiPokokController::getGajiPokokData();
@@ -22,8 +21,8 @@ class DashboardController extends Controller
         $bonusRules = GajiBonusController::getBonusData();
         $potonganRules = PotonganGajiController::getPotonganData();
 
-        $activeKaryawan = array_values(array_filter($karyawans, fn ($k) => strtolower($k['status']) === 'aktif'));
-        $inactiveKaryawan = array_values(array_filter($karyawans, fn ($k) => strtolower($k['status']) !== 'aktif'));
+        $activeKaryawan = array_values(array_filter($karyawans, fn($k) => strtolower($k['status']) === 'aktif'));
+        $inactiveKaryawan = array_values(array_filter($karyawans, fn($k) => strtolower($k['status']) !== 'aktif'));
         $statusKaryawanMap = [];
         foreach ($karyawans as $karyawan) {
             $statusKaryawanMap[$karyawan['nama']] = $karyawan['status'] ?? 'Aktif';
@@ -61,9 +60,9 @@ class DashboardController extends Controller
         $namaKaryawan = array_column($karyawans, 'nama');
         $activeNames = array_column($activeKaryawan, 'nama');
         $totalKaryawanAktif = count($activeKaryawan);
-        $totalKaryawanSudahPresensi = count(array_filter($activeNames, fn ($nama) => isset($namaPresensi[$nama])));
-        $karyawanTanpaPresensi = array_values(array_filter($activeNames, fn ($nama) => !isset($namaPresensi[$nama])));
-        $presensiTanpaKaryawan = array_values(array_filter(array_keys($namaPresensi), fn ($nama) => !in_array($nama, $namaKaryawan, true)));
+        $totalKaryawanSudahPresensi = count(array_filter($activeNames, fn($nama) => isset($namaPresensi[$nama])));
+        $karyawanTanpaPresensi = array_values(array_filter($activeNames, fn($nama) => !isset($namaPresensi[$nama])));
+        $presensiTanpaKaryawan = array_values(array_filter(array_keys($namaPresensi), fn($nama) => !in_array($nama, $namaKaryawan, true)));
 
         $bagianCounts = ['Produksi' => 0, 'Peternakan' => 0];
         foreach ($activeKaryawan as $karyawan) {
@@ -100,13 +99,13 @@ class DashboardController extends Controller
 
         arsort($jamLemburMap);
         $topLembur = array_slice(array_map(
-            fn ($nama, $jam) => ['nama' => $nama, 'jam_lembur' => $jam],
+            fn($nama, $jam) => ['nama' => $nama, 'jam_lembur' => $jam],
             array_keys($jamLemburMap),
             $jamLemburMap
         ), 0, 5);
 
-        $totalBonusRules = count(array_filter($bonusRules, fn ($bonus) => strtolower($bonus['status']) === 'aktif'));
-        $totalPotonganRules = count(array_filter($potonganRules, fn ($potongan) => strtolower($potongan['status']) === 'aktif'));
+        $totalBonusRules = count(array_filter($bonusRules, fn($bonus) => strtolower($bonus['status']) === 'aktif'));
+        $totalPotonganRules = count(array_filter($potonganRules, fn($potongan) => strtolower($potongan['status']) === 'aktif'));
         $estimasiBruto = $totalGajiPokok + $totalLembur;
 
         $alerts = [

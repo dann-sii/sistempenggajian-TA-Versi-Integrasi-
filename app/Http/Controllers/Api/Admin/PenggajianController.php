@@ -7,10 +7,11 @@ use App\Http\Controllers\Api\Admin\PotonganGajiController;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class PenggajianController extends Controller
 {
-    private function getInitialData() 
+    private function getInitialData()
     {
         return KaryawanController::getInitialData();
     }
@@ -25,9 +26,8 @@ class PenggajianController extends Controller
         if (!session()->has('karyawan_data')) {
             session()->put('karyawan_data', $this->getInitialData());
         }
-        
+
         $karyawans = $this->withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $karyawans);
 
         // Data presensi: hitung jumlah jam pokok dan jam lembur per karyawan per bulan
         $allPresensi = PresensiController::getCalculatedPresensiData();
@@ -198,7 +198,7 @@ class PenggajianController extends Controller
         return $result;
     }
 
-    private function addDailyUsage(array &$dailyUsage, $karyawanId, string $period, string $date, string $material, float $amount): void
+    private function addDailyUsage(array &$dailyUsage, int|string $karyawanId, string $period, string $date, string $material, float $amount): void
     {
         if ($amount <= 0) {
             return;
@@ -207,7 +207,7 @@ class PenggajianController extends Controller
         $dailyUsage[$karyawanId][$period][$date][$material] = ($dailyUsage[$karyawanId][$period][$date][$material] ?? 0) + $amount;
     }
 
-    private function calculateBonusProduksi(array $dailyUsage, $bonusRules): array
+    private function calculateBonusProduksi(array $dailyUsage, Collection $bonusRules): array
     {
         $result = [];
 
@@ -261,7 +261,7 @@ class PenggajianController extends Controller
         return $result;
     }
 
-    private function findBonusRuleForMaterial($bonusRules, string $material): ?array
+    private function findBonusRuleForMaterial(Collection $bonusRules, string $material): ?array
     {
         return $bonusRules->first(function ($bonus) use ($material) {
             $name = strtolower($bonus['nama']);

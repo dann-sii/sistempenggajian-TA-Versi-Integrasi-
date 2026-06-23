@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class KaryawanController extends Controller
 {
-    private function getInitialData() 
+    private function getInitialData()
     {
         $data = [
             ['id' => 1, 'nik' => '1234567890', 'nama' => 'Budi Santoso', 'npwp' => '12.345.678.9-000.000', 'alamat' => 'Jl. Merdeka No. 10, Yogyakarta', 'no_telp' => '08123456789', 'status' => 'Aktif'],
@@ -53,18 +53,17 @@ class KaryawanController extends Controller
         }
 
         $allKaryawan = $this->withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $allKaryawan);
 
         $status = $request->query('status');
         if ($status) {
-            $allKaryawan = array_values(array_filter($allKaryawan, function($k) use ($status) {
+            $allKaryawan = array_values(array_filter($allKaryawan, function ($k) use ($status) {
                 return strtolower($k['status']) === strtolower($status);
             }));
         }
 
         $search = $request->query('search');
         if ($search) {
-            $allKaryawan = array_values(array_filter($allKaryawan, function($k) use ($search) {
+            $allKaryawan = array_values(array_filter($allKaryawan, function ($k) use ($search) {
                 return stripos((string) $k['id'], $search) !== false
                     || stripos((string) $k['nik'], $search) !== false
                     || stripos((string) $k['nama'], $search) !== false
@@ -80,7 +79,7 @@ class KaryawanController extends Controller
         $perPage = 10;
         $total = count($allKaryawan);
         $totalPages = max(1, ceil($total / $perPage));
-        
+
         if ($page > $totalPages) {
             $page = $totalPages;
         }

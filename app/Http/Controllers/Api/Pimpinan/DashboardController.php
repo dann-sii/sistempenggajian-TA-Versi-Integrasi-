@@ -21,7 +21,7 @@ class DashboardController extends Controller
             session()->put('karyawan_data', \App\Http\Controllers\Api\Admin\KaryawanController::getInitialData());
         }
         $karyawans = \App\Http\Controllers\Api\Admin\KaryawanController::withDefaultBagian(session('karyawan_data'));
-        
+
         $statusKaryawanMap = [];
         foreach ($karyawans as $karyawan) {
             $statusKaryawanMap[$karyawan['nama']] = $karyawan['status'] ?? 'Aktif';
@@ -39,7 +39,7 @@ class DashboardController extends Controller
 
         arsort($jamLemburMap);
         $topLembur = array_slice(array_map(
-            fn ($nama, $jam) => ['nama' => $nama, 'jam_lembur' => $jam],
+            fn($nama, $jam) => ['nama' => $nama, 'jam_lembur' => $jam],
             array_keys($jamLemburMap),
             $jamLemburMap
         ), 0, 5);

@@ -87,7 +87,6 @@ class AktivitasKaryawanController extends Controller
         }
 
         $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data'));
-        session()->put('karyawan_data', $karyawans);
 
         $activeKaryawans = array_values(array_filter($karyawans, function ($karyawan) {
             return strtolower($karyawan['status']) === 'aktif';
@@ -326,7 +325,7 @@ class AktivitasKaryawanController extends Controller
         $gulaGram = (float) ($entry['gula_gram'] ?? 0);
         $perasaGram = (float) ($entry['perasa_gram'] ?? 0);
         $perasaJenis = trim((string) ($entry['perasa_jenis'] ?? '')) ?: 'Vanila';
-        
+
         $calculation = self::calculateProduksiBonus($tpGram, $literSusu, $gulaGram, $perasaGram, $perasaJenis, $tanggal);
 
         return array_merge($base, [
@@ -350,9 +349,9 @@ class AktivitasKaryawanController extends Controller
     {
         $targetTp = (float) self::getPiketTargets()['produksi_tp_gram'];
         $selisihTp = self::customRound(max(0, $tpGram - $targetTp));
-        
+
         $produk = self::findProdukByPerasa($perasaJenis) ?? self::getProdukResepData()[0];
-        
+
         $targetSusu = (float) $produk['susu_liter'];
         $selisihSusu = self::customRound(max(0, $literSusu - $targetSusu));
 
@@ -365,11 +364,13 @@ class AktivitasKaryawanController extends Controller
         $details = [];
         $total = 0;
 
-        foreach ([
-            ['material' => 'susu', 'amount' => $selisihSusu, 'unit' => 'Liter', 'target' => $targetSusu, 'actual' => $literSusu],
-            ['material' => 'gula', 'amount' => $selisihGula, 'unit' => 'Gram', 'target' => $targetGula, 'actual' => $gulaGram],
-            ['material' => 'perasa ' . strtolower($produk['perasa_jenis']), 'amount' => $selisihPerasa, 'unit' => 'Gram', 'target' => $targetPerasa, 'actual' => $perasaGram],
-        ] as $item) {
+        foreach (
+            [
+                ['material' => 'susu', 'amount' => $selisihSusu, 'unit' => 'Liter', 'target' => $targetSusu, 'actual' => $literSusu],
+                ['material' => 'gula', 'amount' => $selisihGula, 'unit' => 'Gram', 'target' => $targetGula, 'actual' => $gulaGram],
+                ['material' => 'perasa ' . strtolower($produk['perasa_jenis']), 'amount' => $selisihPerasa, 'unit' => 'Gram', 'target' => $targetPerasa, 'actual' => $perasaGram],
+            ] as $item
+        ) {
             $rule = self::findBonusRuleForMaterialName($item['material']);
             if (!$rule || $item['amount'] <= 0) {
                 continue;
