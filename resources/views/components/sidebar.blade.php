@@ -60,7 +60,6 @@
                     ['name' => 'Gaji Bonus', 'route' => 'gaji_bonus.index', 'icon' => 'gift'],
                     ['name' => 'Potongan Gaji', 'route' => 'potongan_gaji.index', 'icon' => 'cash-off'],
                     ['name' => 'Penggajian', 'route' => 'penggajian.index', 'icon' => 'report-money'],
-                    ['name' => 'Detail Penggajian', 'route' => 'detail_penggajian.index', 'icon' => 'file-analytics'],
                     ['name' => 'Laporan Penggajian', 'route' => 'laporan_penggajian.index', 'icon' => 'file-description'],
                 ];
             }

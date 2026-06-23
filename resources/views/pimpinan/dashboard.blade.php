@@ -6,7 +6,7 @@
 <div class="space-y-8">
     <!-- Page Header -->
     <div class="space-y-2">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
+        <h1 class="text-3xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
             DASHBOARD OWNER
         </h1>
         <p class="text-carbon-black-500 font-medium pl-6">Ringkasan data dan performa perusahaan</p>
@@ -76,5 +76,30 @@
             </div>
         </div>
     </div>
+
+    <section class="bg-white rounded-2xl shadow-xl border border-carbon-black-100 overflow-hidden">
+        <div class="px-8 py-5 border-b border-carbon-black-100 bg-carbon-black-50/50 flex justify-between items-center">
+            <h2 class="text-lg font-black uppercase tracking-widest text-carbon-black-800">Jam Lembur Tertinggi</h2>
+            <x-tabler-clock-play class="h-6 w-6 text-hunter-green-600" />
+        </div>
+        <div class="p-0">
+            <table class="w-full border-collapse">
+                <thead class="bg-carbon-black-50 text-carbon-black-600 border-b border-carbon-black-100">
+                    <tr>
+                        <th class="px-8 py-4 text-left text-xs font-black uppercase tracking-widest">Nama</th>
+                        <th class="px-8 py-4 text-center text-xs font-black uppercase tracking-widest">Jam Lembur</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-carbon-black-100">
+                    @foreach($topLembur as $item)
+                        <tr class="hover:bg-carbon-black-50 transition-colors">
+                            <td class="px-8 py-4 text-sm font-bold text-carbon-black-800">{{ $item['nama'] }}</td>
+                            <td class="px-8 py-4 text-center text-sm font-black text-hunter-green-700">{{ number_format($item['jam_lembur'], 1, ',', '.') }} Jam</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 @endsection

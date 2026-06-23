@@ -29,17 +29,19 @@ class PenggajianController extends Controller
         $karyawans = $this->withDefaultBagian(session('karyawan_data'));
         session()->put('karyawan_data', $karyawans);
 
-        // Data presensi: hitung jumlah hari hadir dan jam lembur per karyawan per bulan
-        $allPresensi = PresensiController::getPresensiData();
+        // Data presensi: hitung jumlah jam pokok dan jam lembur per karyawan per bulan
+        $allPresensi = PresensiController::getCalculatedPresensiData();
 
-        // Agregasi: hitung jumlah hari hadir dan total jam lembur per nama karyawan
+        // Agregasi: hitung jumlah hari hadir, jam pokok, dan total jam lembur per nama karyawan
         $hariKerjaMap = [];
+        $jamPokokMap = [];
         $jamLemburMap = [];
         foreach ($allPresensi as $p) {
             if ($p['kehadiran'] === 'Hadir') {
                 $hariKerjaMap[$p['nama']] = ($hariKerjaMap[$p['nama']] ?? 0) + 1;
             }
 
+            $jamPokokMap[$p['nama']] = ($jamPokokMap[$p['nama']] ?? 0) + (float) ($p['jam_kerja_pokok'] ?? 0);
             $jamLemburMap[$p['nama']] = ($jamLemburMap[$p['nama']] ?? 0) + (float) ($p['jam_lembur'] ?? 0);
         }
 
@@ -62,6 +64,7 @@ class PenggajianController extends Controller
         $karyawanLookup = [];
         foreach ($karyawans as $k) {
             $hariKerja = $hariKerjaMap[$k['nama']] ?? 0;
+            $jamPokok = $jamPokokMap[$k['nama']] ?? 0;
             $jamLembur = $jamLemburMap[$k['nama']] ?? 0;
             $bagian = $k['bagian'] ?? '-';
             $isPeternakan = strtolower($bagian) === 'peternakan';
@@ -70,7 +73,7 @@ class PenggajianController extends Controller
             $tarifGajiPokok = (float) $gajiPokokRule['tarif'];
             $totalGajiPokok = $satuanGajiPokok === 'Hari'
                 ? $hariKerja * $tarifGajiPokok
-                : $hariKerja * 8 * $tarifGajiPokok;
+                : $jamPokok * $tarifGajiPokok;
             $jamLemburDibayar = $isPeternakan ? 0 : $jamLembur;
 
             $karyawanLookup[$k['id']] = [
@@ -104,9 +107,35 @@ class PenggajianController extends Controller
             return stripos($bonus['nama'], 'Bonus THR') === false;
         });
         $dailyUsage = [];
+        $result = [];
 
         foreach ($aktivitas as $row) {
             if (empty($row['tanggal']) || empty($row['karyawan_id'])) {
+                continue;
+            }
+
+            if (($row['source'] ?? '') === 'piket_batch') {
+                $period = date('Y-m', strtotime($row['tanggal']));
+                $karyawanId = $row['karyawan_id'];
+                $details = $row['bonus_details'] ?? [];
+                $total = (float) ($row['bonus_total'] ?? array_sum(array_column($details, 'amount')));
+
+                if ($total <= 0 && count($details) === 0) {
+                    continue;
+                }
+
+                if (!isset($result[$karyawanId][$period])) {
+                    $result[$karyawanId][$period] = [
+                        'total' => 0,
+                        'details' => [],
+                    ];
+                }
+
+                $result[$karyawanId][$period]['total'] += $total;
+                foreach ($details as $detail) {
+                    $result[$karyawanId][$period]['details'][] = $detail;
+                }
+
                 continue;
             }
 
@@ -148,7 +177,25 @@ class PenggajianController extends Controller
             }
         }
 
-        return $this->calculateBonusProduksi($dailyUsage, $bonusRules);
+        $legacyResult = $this->calculateBonusProduksi($dailyUsage, $bonusRules);
+        foreach ($legacyResult as $karyawanId => $periods) {
+            foreach ($periods as $period => $data) {
+                if (!isset($result[$karyawanId][$period])) {
+                    $result[$karyawanId][$period] = [
+                        'total' => 0,
+                        'details' => [],
+                    ];
+                }
+
+                $result[$karyawanId][$period]['total'] += (float) ($data['total'] ?? 0);
+                $result[$karyawanId][$period]['details'] = array_merge(
+                    $result[$karyawanId][$period]['details'],
+                    $data['details'] ?? []
+                );
+            }
+        }
+
+        return $result;
     }
 
     private function addDailyUsage(array &$dailyUsage, $karyawanId, string $period, string $date, string $material, float $amount): void

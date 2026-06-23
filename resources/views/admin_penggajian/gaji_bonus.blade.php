@@ -6,7 +6,7 @@
 <div class="flex flex-col space-y-8 overflow-hidden">
     <!-- Page Header -->
     <div class="space-y-6">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
+        <h1 class="text-2xl font-black uppercase tracking-tight text-carbon-black-900 border-l-4 border-hunter-green-500 pl-3 py-0.5">
             DATA GAJI BONUS
         </h1>
 
@@ -38,7 +38,28 @@
                 @foreach($gajiBonus as $g)
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
                         <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-16">{{ $g['id'] }}</td>
-                        <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $g['batas_normal'] }}</td>
+                        <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">
+                            @if($g['id'] == 2)
+                                200 - 250
+                            @else
+                                {{ number_format($g['batas_normal'], 0, ',', '.') }}
+                            @endif
+                            <div class="mt-1.5 flex items-center justify-center">
+                                @if(in_array($g['id'], [1, 2, 3, 4, 5, 6]))
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-hunter-green-50 text-hunter-green-700 border border-hunter-green-200">
+                                        Sesuai Resep
+                                    </span>
+                                @elseif($g['id'] == 8)
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                                        Target Aktivitas
+                                    </span>
+                                @elseif($g['id'] == 7)
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                                        Hari Raya
+                                    </span>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $g['satuan'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $g['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ number_format($g['tarif'], 2, '.', '') }}</td>

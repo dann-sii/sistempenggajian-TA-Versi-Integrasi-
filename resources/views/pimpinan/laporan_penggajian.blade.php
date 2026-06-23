@@ -22,7 +22,7 @@
 
 <div class="space-y-8">
     <div class="space-y-6">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
+        <h1 class="text-3xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
             LAPORAN PENGGAJIAN
         </h1>
 

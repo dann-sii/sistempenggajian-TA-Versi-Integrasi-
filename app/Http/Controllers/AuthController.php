@@ -21,7 +21,7 @@ class AuthController extends Controller
         if ($request->username === 'admingaji' && $request->password === 'admingaji') {
             // Mock authentication
             session(['user_role' => 'admin_penggajian', 'is_logged_in' => true]);
-            return redirect()->route('karyawan.index');
+            return redirect()->route('dashboard.index');
         } elseif ($request->username === 'pimpinan' && $request->password === 'pimpinan') {
             session(['user_role' => 'pimpinan', 'is_logged_in' => true]);
             return redirect()->route('pimpinan.dashboard');

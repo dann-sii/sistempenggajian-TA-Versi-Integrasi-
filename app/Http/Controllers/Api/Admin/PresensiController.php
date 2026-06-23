@@ -34,6 +34,62 @@ class PresensiController extends Controller
         ];
     }
 
+    public static function getCalculatedPresensiData(): array
+    {
+        $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data', KaryawanController::getInitialData()));
+        $statusKaryawanMap = [];
+        $bagianKaryawanMap = [];
+        foreach ($karyawans as $karyawan) {
+            $statusKaryawanMap[$karyawan['nama']] = $karyawan['status'] ?? 'Aktif';
+            $bagianKaryawanMap[$karyawan['nama']] = $karyawan['bagian'] ?? 'Produksi';
+        }
+
+        $allPresensi = self::getPresensiData();
+        $standarJamNormal = 7;
+        $standarJamSabtu = 5;
+
+        foreach ($allPresensi as &$row) {
+            $row['status_karyawan'] = $statusKaryawanMap[$row['nama']] ?? 'Aktif';
+            $row['is_inactive'] = strtolower($row['status_karyawan']) === 'inaktif';
+            $bagian = $bagianKaryawanMap[$row['nama']] ?? 'Produksi';
+
+            if ($row['is_inactive']) {
+                $row['jam_masuk'] = '';
+                $row['jam_keluar'] = '';
+                $row['kehadiran'] = '';
+                $row['jam_kerja_pokok'] = 0;
+                $row['jam_lembur'] = 0;
+            } else {
+                if ($row['kehadiran'] === 'Hadir' && !empty($row['jam_masuk']) && !empty($row['jam_keluar'])) {
+                    $masuk = strtotime($row['tanggal'] . ' ' . $row['jam_masuk']);
+                    $keluar = strtotime($row['tanggal'] . ' ' . $row['jam_keluar']);
+                    
+                    $durasiAktual = 0;
+                    if ($keluar >= $masuk) {
+                        $durasiAktual = ($keluar - $masuk) / 3600;
+                    }
+
+                    $isSabtu = date('N', strtotime($row['tanggal'])) == 6;
+                    $standarJam = $isSabtu ? $standarJamSabtu : $standarJamNormal;
+
+                    if (strtolower($bagian) === 'peternakan') {
+                        $row['jam_kerja_pokok'] = round($durasiAktual, 2);
+                        $row['jam_lembur'] = 0;
+                    } else {
+                        $row['jam_kerja_pokok'] = round(min($durasiAktual, $standarJam), 2);
+                        $row['jam_lembur'] = round(max(0, $durasiAktual - $standarJam), 2);
+                    }
+                } else {
+                    $row['jam_kerja_pokok'] = 0;
+                    $row['jam_lembur'] = 0;
+                }
+            }
+        }
+        unset($row);
+
+        return $allPresensi;
+    }
+
     public function index(Request $request)
     {
         if (!session()->has('karyawan_data')) {
@@ -43,26 +99,11 @@ class PresensiController extends Controller
         $karyawans = KaryawanController::withDefaultBagian(session('karyawan_data'));
         session()->put('karyawan_data', $karyawans);
 
-        $statusKaryawanMap = [];
-        foreach ($karyawans as $karyawan) {
-            $statusKaryawanMap[$karyawan['nama']] = $karyawan['status'] ?? 'Aktif';
-        }
-
         // Mock data for attendance based on wireframe columns
-        $allPresensi = self::getPresensiData();
-
-        foreach ($allPresensi as &$row) {
-            $row['status_karyawan'] = $statusKaryawanMap[$row['nama']] ?? 'Aktif';
-            $row['is_inactive'] = strtolower($row['status_karyawan']) === 'inaktif';
-
-            if ($row['is_inactive']) {
-                $row['jam_masuk'] = '';
-                $row['jam_keluar'] = '';
-                $row['kehadiran'] = '';
-                $row['jam_lembur'] = '0';
-            }
-        }
-        unset($row);
+        $allPresensi = self::getCalculatedPresensiData();
+        
+        $standarJamNormal = 7;
+        $standarJamSabtu = 5;
 
         $fullDataset = $allPresensi;
         $search = $request->get('search');
@@ -116,6 +157,6 @@ class PresensiController extends Controller
         $perPage = 10;
         $presensi = array_slice($allPresensi, ($page - 1) * $perPage, $perPage);
 
-        return view('admin_penggajian.presensi', compact('presensi', 'page'));
+        return view('admin_penggajian.presensi', compact('presensi', 'page', 'standarJamNormal', 'standarJamSabtu'));
     }
 }

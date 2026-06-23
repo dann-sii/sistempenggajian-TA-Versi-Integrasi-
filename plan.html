@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rencana Optimasi Performa - Sistem Penggajian Sahabat Ternak</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0c180c; /* Black Forest 950 */
+            --bg-card: #112212; /* Black Forest 900 */
+            --primary: #62a45b; /* Hunter Green 500 */
+            --primary-hover: #4e8448; /* Hunter Green 600 */
+            --text-main: #f2f4f0; /* Carbon Black 50 */
+            --text-muted: #a1c99c; /* Hunter Green 300 */
+            --accent: #26d97d; /* Aquamarine 500 */
+            --border: rgba(255, 255, 255, 0.08);
+            --danger: #fb7185;
+            --warning: #fdba74;
+            --info: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(98,164,91,0.15) 0%, rgba(12,24,12,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .glow-2 {
+            position: absolute;
+            bottom: 10%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(38,217,125,0.08) 0%, rgba(12,24,12,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f2f4f0 30%, #62a45b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        section {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        section:hover {
+            border-color: rgba(98, 164, 91, 0.3);
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            color: #d1dbcf;
+            font-size: 1rem;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #d1dbcf;
+        }
+
+        li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: rgba(98, 164, 91, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--info);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .danger-box {
+            background: rgba(251, 113, 133, 0.08);
+            border-left: 4px solid var(--danger);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-box {
+            background: rgba(253, 186, 116, 0.08);
+            border-left: 4px solid var(--warning);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .badge {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .code-snippet {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: var(--accent);
+            font-size: 0.9em;
+        }
+
+        .steps-list {
+            margin-top: 1.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(98, 164, 91, 0.4);
+        }
+
+        .step-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.95rem;
+            color: #b1c0a5;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
+    <header>
+        <div class="badge">Analisis Tahap Pengembangan (Vite Dev Server Aktif)</div>
+        <h1>Rencana Optimasi Performa</h1>
+        <p class="subtitle">Analisis dan solusi untuk performa loading Sistem Penggajian Sahabat Ternak selama tahap Development</p>
+    </header>
+
+    <main>
+        <!-- SECTION 1: ARSITEKTUR & DATABASE -->
+        <section id="arsitektur">
+            <h2>Analisis Arsitektur Sistem</h2>
+            <div class="grid-container">
+                <div>
+                    <h3>1. Struktur Logic & Frontend</h3>
+                    <p>Sistem ini merupakan aplikasi <strong>Server-Side Rendering (SSR)</strong> berbasis <strong>Laravel 12</strong> dan <strong>Tailwind CSS v4</strong>. Setiap perpindahan halaman membutuhkan loading/rendering halaman secara dinamis di sisi server.</p>
+                    <div class="highlight-box">
+                        <strong>Apakah ada logic frontend yang berat?</strong><br>
+                        Tidak. Logic frontend hanya berupa script vanilla JS ringan (seperti jam realtime, kalender FullCalendar, modal popup). Penyebab utama loading lama bukan dari script frontend, melainkan dari delay koneksi aset dan overhead query sistem.
+                    </div>
+                </div>
+                <div>
+                    <h3>2. Hubungan Database terhadap Beban Sistem</h3>
+                    <p>Database MySQL terdeteksi aktif dan terhubung. Namun, saat ini data karyawan dan transaksi disimpan dalam <strong>Session</strong>.</p>
+                    <div class="warning-box">
+                        <strong>Overhead Database di Level Sistem:</strong><br>
+                        Meskipun data bisnis ada di session, berkas <span class="code-snippet">.env</span> secara default menyetel <span class="code-snippet">CACHE_STORE=database</span> dan <span class="code-snippet">QUEUE_CONNECTION=database</span>. Karena database tidak memiliki tabel Laravel sistem (<span class="code-snippet">cache</span> dan <span class="code-snippet">jobs</span>), Laravel memicu query database error di latar belakang secara berulang pada setiap page load. Hal ini menambah beban rendering backend secara signifikan.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: INDIKASI MASALAH DI TAHAP DEVELOPMENT -->
+        <section id="indikasi">
+            <h2>Indikasi & Rincian Masalah Loading Lambat</h2>
+            <p>Karena berkas hot-reload <span class="code-snippet">public/hot</span> <strong>tetap harus digunakan untuk proses development</strong>, berikut adalah rincian masalah dan solusi khusus agar proses pengembangan tetap lancar dan instan:</p>
+            
+            <div class="grid-container">
+                <div class="danger-box">
+                    <h3>Penyebab 1: Vite Dev Server Tidak Berjalan Concurrently</h3>
+                    <p>Ketika Anda mengakses website via <span class="code-snippet">php artisan serve</span> saja tanpa menyalakan server Vite, browser mencoba memuat aset dari URL dev-server (<span class="code-snippet">http://[::1]:5173</span>).</p>
+                    <ul>
+                        <li><strong>Dampaknya:</strong> Karena port 5173 tidak aktif, browser mengalami delay timeout selama beberapa detik untuk setiap aset CSS dan JS sebelum akhirnya gagal dan memuat halaman secara lambat.</li>
+                        <li><strong>Solusi Utama:</strong> Jalankan perintah gabungan <span class="code-snippet">composer dev</span> (menggunakan <span class="code-snippet">concurrently</span>) agar Laravel Server dan Vite Dev Server berjalan bersamaan secara otomatis.</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h3>Penyebab 2: Delay Resolusi IPv6 [::1] di Windows</h3>
+                    <p>Secara default, Vite dev server seringkali binding menggunakan alamat IPv6 loopback <span class="code-snippet">[::1]</span>.</p>
+                    <ul>
+                        <li><strong>Dampaknya:</strong> Pada Windows, resolusi DNS lokal untuk alamat IPv6 sering mengalami delay lookup. Browser membutuhkan waktu lebih lama untuk terhubung ke <span class="code-snippet">http://[::1]:5173</span> dibandingkan IPv4 lokal (<span class="code-snippet">127.0.0.1</span>).</li>
+                        <li><strong>Solusi:</strong> Konfigurasi server Vite di <span class="code-snippet">vite.config.js</span> untuk memaksa penggunaan host IPv4 (<span class="code-snippet">127.0.0.1</span>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box" style="margin-top: 2rem;">
+                <h3>Penyebab 3: Overhead Cache Driver & Dynamic Blade Icons</h3>
+                <p>Kombinasi antara driver cache database yang memicu query error (karena tabel cache tidak ditemukan di DB) dan proses compile template ikon Blade dinamis di sidebar menu secara berulang setiap request.</p>
+                <ul>
+                    <li><strong>Dampaknya:</strong> Beban rendering di CPU server Laravel membengkak, memperlambat pembuatan halaman HTML di sisi backend sebelum dikirim ke browser.</li>
+                    <li><strong>Solusi:</strong> Alihkan driver cache ke driver file lokal (<span class="code-snippet">CACHE_STORE=file</span>) dan jalankan optimasi caching pada ikon Blade.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 3: RENCANA SOLUSI DEVELOPMENT-FRIENDLY -->
+        <section id="solusi">
+            <h2>Rencana Solusi Terarah (Vite Dev Server Tetap Aktif)</h2>
+            <p>Rencana berikut dirancang untuk menjaga mode development Anda tetap berfungsi penuh sekaligus meniadakan delay loading:</p>
+
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Gunakan Host IPv4 pada Vite Config</h4>
+                        <p>Mengubah konfigurasi <span class="code-snippet">vite.config.js</span> dengan menambahkan opsi server host agar Vite dev server secara konsisten berjalan di <span class="code-snippet">127.0.0.1</span>. Ini menghindari delay DNS resolusi IPv6 Windows.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Ubah Driver Sistem di .env ke Berbasis File / Sync</h4>
+                        <p>Mengubah <span class="code-snippet">CACHE_STORE=file</span> dan <span class="code-snippet">QUEUE_CONNECTION=sync</span> pada file <span class="code-snippet">.env</span>. Solusi ini menghentikan loop error query database pada tabel cache/jobs yang tidak ada, sehingga performa backend kembali ringan.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Lakukan Caching Blade Icons</h4>
+                        <p>Jalankan perintah <span class="code-snippet">php artisan icons:cache</span> agar ikon-ikon di sidebar dimuat instan dari cache memori tanpa memindai disk berulang kali.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Rekomendasi Jalankan Aplikasi dengan "composer dev"</h4>
+                        <p>Alih-alih menggunakan <span class="code-snippet">php artisan serve</span> secara manual, gunakan perintah <span class="code-snippet">composer dev</span>. Perintah ini akan meluncurkan Laravel server dan Vite dev server secara bersamaan, memastikan aset dimuat instan dan fitur hot-reload tetap berfungsi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Sahabat Ternak - Sistem Penggajian. Rencana Optimasi Performa.</p>
+    </footer>
+</body>
+</html>

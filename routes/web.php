@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\Admin\GajiLemburController;
 use App\Http\Controllers\Api\Admin\GajiBonusController;
 use App\Http\Controllers\Api\Admin\PotonganGajiController;
 use App\Http\Controllers\Api\Admin\PenggajianController;
-use App\Http\Controllers\Api\Admin\DetailPenggajianController;
 use App\Http\Controllers\Api\Admin\LaporanPenggajianController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\AktivitasKaryawanController;
@@ -17,9 +16,7 @@ use App\Http\Controllers\Api\Pimpinan\KaryawanController as PimpinanKaryawanCont
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::redirect('/', '/login');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -34,6 +31,7 @@ Route::get('/pimpinan/laporan-penggajian', [\App\Http\Controllers\Api\Pimpinan\L
 Route::get('/dashboard', [DashboardController::class , 'index'])->name('dashboard.index');
 Route::get('/resep-produk', [ResepProdukController::class , 'index'])->name('resep_produk.index');
 Route::get('/aktivitas-karyawan', [AktivitasKaryawanController::class , 'index'])->name('aktivitas_karyawan.index');
+Route::post('/aktivitas-karyawan/batch', [AktivitasKaryawanController::class , 'batchStore'])->name('aktivitas_karyawan.batch_store');
 Route::post('/aktivitas-karyawan', [AktivitasKaryawanController::class , 'store'])->name('aktivitas_karyawan.store');
 Route::get('/karyawan', [KaryawanController::class , 'index'])->name('karyawan.index');
 Route::post('/karyawan', [KaryawanController::class , 'store'])->name('karyawan.store');
@@ -46,5 +44,5 @@ Route::get('/gaji-lembur', [GajiLemburController::class , 'index'])->name('gaji_
 Route::get('/gaji-bonus', [GajiBonusController::class , 'index'])->name('gaji_bonus.index');
 Route::get('/potongan-gaji', [PotonganGajiController::class , 'index'])->name('potongan_gaji.index');
 Route::get('/penggajian', [PenggajianController::class , 'index'])->name('penggajian.index');
-Route::get('/detail-penggajian', [DetailPenggajianController::class , 'index'])->name('detail_penggajian.index');
+Route::redirect('/detail-penggajian', '/penggajian')->name('detail_penggajian.index');
 Route::get('/laporan-penggajian', [LaporanPenggajianController::class , 'index'])->name('laporan_penggajian.index');

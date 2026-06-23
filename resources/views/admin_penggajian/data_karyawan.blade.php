@@ -6,7 +6,7 @@
 <div class="flex flex-col space-y-8 overflow-hidden">
     <!-- Page Header -->
     <div class="space-y-6">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
+        <h1 class="text-2xl font-black uppercase tracking-tight text-carbon-black-900 border-l-4 border-hunter-green-500 pl-3 py-0.5">
             DATA KARYAWAN
         </h1>
         

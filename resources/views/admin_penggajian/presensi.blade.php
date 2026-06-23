@@ -6,12 +6,12 @@
 <div class="flex flex-col space-y-8 overflow-hidden">
     <!-- Page Header -->
     <div class="space-y-6">
-        <h1 class="text-4xl font-black uppercase tracking-tighter text-carbon-black-900 border-l-8 border-hunter-green-500 pl-4 py-1">
+        <h1 class="text-2xl font-black uppercase tracking-tight text-carbon-black-900 border-l-4 border-hunter-green-500 pl-3 py-0.5">
             DATA PRESENSI
         </h1>
         
-        <div class="flex justify-between items-end">
-            <form action="{{ route('presensi.index') }}" method="GET" class="flex items-end space-x-6">
+        <div class="flex flex-col xl:flex-row xl:justify-between items-start xl:items-end gap-6">
+            <form action="{{ route('presensi.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
                 <!-- Search Name -->
                 <div class="flex shadow-sm rounded-lg overflow-hidden border-2 border-carbon-black-200 focus-within:border-hunter-green-400 transition-colors bg-white">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama karyawan..." class="w-72 px-4 py-2 focus:outline-none text-carbon-black-800 placeholder-carbon-black-300 text-base font-medium">
@@ -43,7 +43,7 @@
                 </div>
             </form>
 
-            <button class="bg-black-forest-700 text-white px-6 h-[42px] text-sm font-bold rounded-lg shadow-md hover:bg-black-forest-800 transition-all duration-200 flex items-center space-x-2 active:scale-95 group uppercase tracking-widest mb-0.5">
+            <button class="bg-black-forest-700 text-white px-6 h-[42px] text-sm font-bold rounded-lg shadow-md hover:bg-black-forest-800 transition-all duration-200 flex items-center space-x-2 active:scale-95 group uppercase tracking-widest mb-0.5 ml-auto xl:ml-0">
                 <x-tabler-plus class="w-5 h-5" stroke-width="3" />
                 <span>Tambah</span>
             </button>
@@ -62,7 +62,7 @@
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">JAM MASUK</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">JAM KELUAR</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">KEHADIRAN</th>
-                    <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">JAM LEMBUR</th>
+                    <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">LEMBUR</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">AKSI</th>
                 </tr>
             </thead>
@@ -111,7 +111,13 @@
                                 @endforeach
                             </div>
                         </td>
-                        <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800" id="jam_lembur_{{ $p['id'] }}">{{ $p['jam_lembur'] }} Jam</td>
+                        <td class="px-6 py-5 text-center" id="jam_lembur_{{ $p['id'] }}">
+                            @if(($p['jam_lembur'] ?? 0) > 0)
+                                <span class="font-semibold text-carbon-black-800">{{ $p['jam_lembur'] }} Jam</span>
+                            @else
+                                <span class="text-carbon-black-300 font-medium">-</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-5 text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <button type="button" onclick='openDetailModal(@json($p))' class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-amber-200" title="Lihat">
@@ -286,22 +292,22 @@
             let wMasuk = mH + (mM / 60);
             let wKeluar = kH + (kM / 60);
             
-            // Handle cross-midnight shifts (e.g., 20:00 to 04:00)
-            if (wKeluar < wMasuk) {
-                wKeluar += 24;
-            }
+            // In a real frontend app, we would look up the specific date or employee role here.
+            // Since this is a UI mock updating visually, we'll simulate the update without strictly parsing the date.
+            // If the user presses "Simpan" (submit), the server recalculates correctly based on the exact date.
             
+            // Visual mockup fallback calculation (simulating standard 7 hours)
             let totalJam = wKeluar - wMasuk;
-            let lembur = totalJam - 8;
+            let lembur = totalJam > 7 ? totalJam - 7 : 0;
             
             if (lembur > 0) {
                 lembur = Math.round(lembur * 10) / 10;
-                lemburEl.textContent = lembur + ' Jam'; // e.g., "1.5 Jam"
+                lemburEl.innerHTML = `<span class="font-semibold text-carbon-black-800">${lembur} Jam</span>`;
             } else {
-                lemburEl.textContent = '0 Jam';
+                lemburEl.innerHTML = '<span class="text-carbon-black-300 font-medium">-</span>';
             }
         } else {
-            lemburEl.textContent = '0 Jam';
+            lemburEl.innerHTML = '<span class="text-carbon-black-300 font-medium">-</span>';
         }
     }
     
