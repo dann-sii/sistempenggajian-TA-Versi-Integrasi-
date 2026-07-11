@@ -18,9 +18,9 @@
                         <x-tabler-filter class="h-4 w-4" />
                     </div>
                     <select id="status-filter" class="w-full appearance-none bg-transparent pl-2 pr-10 py-2 text-carbon-black-300 font-bold uppercase tracking-wide text-xs cursor-pointer focus:outline-none">
-                        <option value="">Status</option>
-                        <option value="aktif" {{ request('status') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="aktif" {{ request('status', 'aktif') === 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="inaktif" {{ request('status') === 'inaktif' ? 'selected' : '' }}>Inaktif</option>
+                        <option value="semua" {{ request('status') === 'semua' ? 'selected' : '' }}>Semua Status</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-carbon-black-400 border-l border-carbon-black-100 ml-2">
                         <x-tabler-chevron-down class="h-4 w-4" />
@@ -58,7 +58,7 @@
             <tbody class="divide-y divide-carbon-black-100">
                 @foreach($karyawan as $k)
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
-                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $k['id'] }}</td>
+                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $loop->iteration }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['nik'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $k['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>
@@ -69,6 +69,7 @@
                                 $bagianColor = match($k['bagian'] ?? '') {
                                     'Produksi' => 'bg-blue-50 text-blue-700 border-blue-200',
                                     'Peternakan' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                    'Packing' => 'bg-amber-50 text-amber-700 border-amber-200',
                                     default => 'bg-gray-50 text-gray-700 border-gray-200',
                                 };
                             @endphp
@@ -90,7 +91,7 @@
                         </td>
                         <td class="px-6 py-5 text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                <button type="button" onclick='openDetailModal(@json($k))' class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-amber-200" title="Lihat">
+                                <button type="button" onclick='openDetailModal(@json($k))' class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-amber-200" title="Lihat">
                                     <x-tabler-eye class="w-4 h-4" />
                                     <span>Detail</span>
                                 </button>

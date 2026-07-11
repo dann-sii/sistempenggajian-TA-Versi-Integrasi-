@@ -105,7 +105,7 @@
                 <div class="space-y-2">
                     <label class="text-xs font-black uppercase tracking-widest text-carbon-black-500 ml-1">Cari Laporan</label>
                     <div class="flex shadow-sm rounded-lg overflow-hidden border-2 border-carbon-black-200 focus-within:border-hunter-green-400 transition-colors bg-white">
-                        <input type="text" id="search" value="{{ request('search') }}" placeholder="Nama / ID laporan / ID penggajian" class="w-full px-4 py-2 focus:outline-none text-carbon-black-800 text-sm font-medium" autocomplete="off">
+                        <input type="text" id="search" value="{{ request('search') }}" placeholder="Nama / ID penggajian" class="w-full px-4 py-2 focus:outline-none text-carbon-black-800 text-sm font-medium" autocomplete="off">
                         <button id="search-btn" class="bg-carbon-black-50 px-4 py-2 border-l border-carbon-black-200 text-carbon-black-400 hover:text-hunter-green-600 hover:bg-hunter-green-50 transition-colors">
                             <x-tabler-search class="w-4 h-4" />
                         </button>
@@ -157,10 +157,12 @@
                     </div>
                 </div>
 
+                <!-- TODO: Fitur Excel ditunda untuk pengembangan semester depan
                 <button type="button" class="inline-flex items-center justify-center gap-2 px-5 h-[42px] bg-black-forest-700 text-white text-xs font-black uppercase tracking-widest rounded-lg shadow-md hover:bg-black-forest-800 active:scale-95 transition-all">
                     <x-tabler-file-import class="w-4 h-4" />
                     Excel
                 </button>
+                -->
             </div>
         </div>
     </div>
@@ -170,7 +172,6 @@
             <thead class="bg-carbon-black-50 border-b border-carbon-black-200 text-carbon-black-600">
                 <tr>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center w-16">NO</th>
-                    <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">ID LAPORAN</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">NAMA KARYAWAN</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">PERIODE</th>
                     <th class="px-6 py-4 text-sm font-black uppercase tracking-wider text-center">HARI KERJA</th>
@@ -192,7 +193,6 @@
                     @endphp
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
                         <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-16">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-5 text-center text-base font-black text-carbon-black-900">{{ $l['id_laporan'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $l['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $monthLabels[$l['bulan']] }} {{ $l['tahun'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $l['jumlah_hari_kerja'] }} Hari</td>
@@ -212,7 +212,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-8 text-center text-carbon-black-500 font-medium">Tidak ada data laporan penggajian yang ditemukan.</td>
+                        <td colspan="8" class="px-6 py-8 text-center text-carbon-black-500 font-medium">Tidak ada data laporan penggajian yang ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -227,7 +227,7 @@
                     <p id="modal-subtitle" class="text-xs font-semibold text-carbon-black-500 mt-1">-</p>
                 </div>
                 <div class="flex items-center gap-6">
-                    <button type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-xs font-black uppercase tracking-widest rounded-lg shadow-md hover:bg-blue-700 active:scale-95 transition-all">
+                    <button type="button" onclick="printLaporan()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-carbon-black-200 text-carbon-black-600 text-xs font-black uppercase tracking-widest rounded-lg shadow-sm hover:border-carbon-black-300 hover:bg-carbon-black-50 hover:text-carbon-black-900 active:scale-95 transition-all">
                         <x-tabler-printer class="w-4 h-4" />
                         Cetak Laporan
                     </button>
@@ -238,80 +238,178 @@
             </div>
 
             <div class="px-6 py-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="rounded-lg border border-carbon-black-100 bg-carbon-black-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Nama Karyawan</p>
-                        <p id="modal-nama-karyawan" class="mt-2 text-lg font-black text-carbon-black-900">-</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="rounded-xl border border-carbon-black-100 bg-carbon-black-50 p-6">
+                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Nama Karyawan</p>
+                        <p id="modal-nama-karyawan" class="mt-1.5 text-base font-black text-carbon-black-900">-</p>
                     </div>
-                    <div class="rounded-lg border border-carbon-black-100 bg-carbon-black-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Bagian</p>
-                        <p id="modal-bagian" class="mt-2 text-lg font-black text-carbon-black-900">-</p>
+                    <div class="rounded-xl border border-carbon-black-100 bg-carbon-black-50 p-6">
+                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Bagian</p>
+                        <p id="modal-bagian" class="mt-1.5 text-base font-black text-carbon-black-900">-</p>
                     </div>
-                    <div class="rounded-lg border border-carbon-black-100 bg-carbon-black-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Tanggal Pembayaran</p>
-                        <p id="modal-tanggal" class="mt-2 text-lg font-black text-carbon-black-900">-</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                    <div class="rounded-lg border border-hunter-green-100 bg-hunter-green-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-hunter-green-700">Gaji Pokok</p>
-                        <p class="mt-2 text-xl font-black text-carbon-black-900">Rp <span id="modal-gaji-pokok">0</span></p>
-                    </div>
-                    <div class="rounded-lg border border-blue-100 bg-blue-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-blue-700">Total Lembur</p>
-                        <p class="mt-2 text-xl font-black text-carbon-black-900">Rp <span id="modal-total-lembur">0</span></p>
-                    </div>
-                    <div class="rounded-lg border border-amber-100 bg-amber-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-amber-700">Total Bonus</p>
-                        <p class="mt-2 text-xl font-black text-carbon-black-900">Rp <span id="modal-total-bonus">0</span></p>
-                    </div>
-                    <div class="rounded-lg border border-rose-100 bg-rose-50 p-4">
-                        <p class="text-xs font-black uppercase tracking-widest text-rose-700">Total Potongan</p>
-                        <p class="mt-2 text-xl font-black text-carbon-black-900">Rp <span id="modal-total-potongan">0</span></p>
+                    <div class="rounded-xl border border-carbon-black-100 bg-carbon-black-50 p-6">
+                        <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Tanggal Pembayaran</p>
+                        <p id="modal-tanggal" class="mt-1.5 text-base font-black text-carbon-black-900">-</p>
                     </div>
                 </div>
 
-                <div class="rounded-lg border border-carbon-black-100 bg-white p-4">
-                    <div class="flex items-center justify-between gap-4 border-b border-carbon-black-100 pb-3">
-                        <div>
-                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Rincian Komponen Gaji</p>
-                            <p class="mt-1 text-xs font-semibold text-carbon-black-400">Asal nominal lembur, bonus, dan potongan pada laporan ini.</p>
-                        </div>
+                <div class="border border-carbon-black-100 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-carbon-black-50 px-6 py-4 border-b border-carbon-black-100">
+                        <h4 class="text-sm font-black uppercase tracking-widest text-carbon-black-600">Ringkasan Total Komponen</h4>
                     </div>
-
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 pt-4">
-                        <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
-                            <p class="text-xs font-black uppercase tracking-widest text-blue-700">Rincian Lembur</p>
-                            <div id="modal-rincian-lembur" class="mt-3 space-y-2"></div>
+                    <div class="grid grid-cols-2 xl:grid-cols-4 divide-y xl:divide-y-0 xl:divide-x divide-carbon-black-100 bg-white">
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Gaji Pokok</p>
+                            <p class="mt-2 text-lg font-black text-carbon-black-900">Rp <span id="modal-gaji-pokok">0</span></p>
                         </div>
-                        <div class="rounded-lg border border-amber-100 bg-amber-50/70 p-4">
-                            <p class="text-xs font-black uppercase tracking-widest text-amber-700">Rincian Bonus</p>
-                            <div id="modal-rincian-bonus" class="mt-3 space-y-2"></div>
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Total Lembur</p>
+                            <p class="mt-2 text-lg font-black text-carbon-black-900">Rp <span id="modal-total-lembur">0</span></p>
                         </div>
-                        <div class="rounded-lg border border-rose-100 bg-rose-50/70 p-4">
-                            <p class="text-xs font-black uppercase tracking-widest text-rose-700">Rincian Potongan</p>
-                            <div id="modal-rincian-potongan" class="mt-3 space-y-2"></div>
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Total Bonus</p>
+                            <p class="mt-2 text-lg font-black text-carbon-black-900">Rp <span id="modal-total-bonus">0</span></p>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Total Potongan</p>
+                            <p class="mt-2 text-lg font-black text-rose-600">Rp <span id="modal-total-potongan">0</span></p>
                         </div>
                     </div>
                 </div>
 
-                <div class="rounded-lg border border-carbon-black-100 bg-white p-4">
-                    <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Keterangan</p>
-                    <p id="modal-keterangan" class="mt-2 text-sm font-semibold leading-relaxed text-carbon-black-800">-</p>
+                <div class="border border-carbon-black-100 rounded-xl overflow-hidden shadow-sm">
+                    <div class="bg-carbon-black-50 px-6 py-4 border-b border-carbon-black-100">
+                        <p class="text-sm font-black uppercase tracking-widest text-carbon-black-700">Rincian Komponen Gaji</p>
+                        <p class="mt-1 text-xs font-semibold text-carbon-black-500 uppercase tracking-wider">Asal nominal lembur, bonus, dan potongan pada laporan ini.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 divide-y xl:divide-y-0 xl:divide-x divide-carbon-black-100 bg-white">
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-hunter-green-700 mb-5">Rincian Lembur</p>
+                            <div id="modal-rincian-lembur" class="space-y-4"></div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-hunter-green-700 mb-5">Rincian Bonus</p>
+                            <div id="modal-rincian-bonus" class="space-y-4"></div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs font-black uppercase tracking-widest text-rose-700 mb-5">Rincian Potongan</p>
+                            <div id="modal-rincian-potongan" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-carbon-black-100 bg-white p-6 shadow-sm">
+                    <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">Keterangan</p>
+                    <p id="modal-keterangan" class="mt-2 text-base font-semibold leading-relaxed text-carbon-black-800">-</p>
                 </div>
             </div>
 
-            <div class="px-6 py-4 bg-carbon-black-50 border-t border-carbon-black-100 flex items-center justify-between gap-6 rounded-b-xl">
+            <div class="px-6 py-5 bg-carbon-black-50 border-t border-carbon-black-100 flex items-center justify-between gap-6 rounded-b-xl">
                 <div>
-                    <p class="text-xs font-black uppercase tracking-widest text-carbon-black-500">Total Gaji Bersih</p>
-                    <p class="text-2xl font-black text-carbon-black-900">Rp <span id="modal-total-bersih">0</span></p>
+                    <p class="text-sm font-black uppercase tracking-widest text-carbon-black-500">Total Gaji Bersih</p>
+                    <p class="text-3xl font-black text-carbon-black-900 mt-1">Rp <span id="modal-total-bersih">0</span></p>
                 </div>
-                <span id="modal-status" class="inline-flex px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border shadow-sm"></span>
+                <span id="modal-status" class="inline-flex px-5 py-2.5 rounded-full text-sm font-black uppercase tracking-widest border shadow-sm"></span>
             </div>
         </div>
     </div>
 </div>
+
+<div id="print-laporan-container" class="hidden font-sans text-carbon-black-900 bg-white" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    <!-- Print Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e5e7eb; padding-bottom: 15px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="/img/logo_st.png" alt="Logo Sahabat Ternak" style="height: 60px; width: auto; object-fit: contain;">
+            <div>
+                <h1 style="color: #059669; font-size: 24px; font-weight: 900; margin: 0; letter-spacing: 1px;">SAHABAT TERNAK</h1>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <h2 style="font-size: 20px; font-weight: 900; margin: 0; text-transform: uppercase; color: #111827;">Laporan Penggajian</h2>
+            <p style="font-size: 11px; color: #6b7280; margin-top: 4px;">Dicetak pada: <span id="pl-tanggal-cetak"></span></p>
+        </div>
+    </div>
+
+    <!-- Employee Info -->
+    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 25px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; background-color: #f9fafb;">
+        <!-- Left Column -->
+        <div style="width: 48%; line-height: 2;">
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Nama</span><span>: <span id="pl-nama"></span></span></div>
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Bagian</span><span>: <span id="pl-bagian"></span></span></div>
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Status Karyawan</span><span>: Karyawan</span></div>
+        </div>
+        <!-- Right Column -->
+        <div style="width: 48%; line-height: 2;">
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Job Title</span><span>: <span id="pl-job-title"></span></span></div>
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Periode</span><span>: <span id="pl-periode"></span></span></div>
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Tgl Pembayaran</span><span>: <span id="pl-tgl"></span></span></div>
+            <div style="display: flex; border-bottom: 1px border-dashed #e5e7eb;"><span style="width: 130px; font-weight: bold; color: #4b5563;">Keterangan</span><span>: <span id="pl-ket"></span></span></div>
+        </div>
+    </div>
+
+    <!-- Details Table -->
+    <div style="display: flex; justify-content: space-between; font-size: 12px; gap: 20px;">
+        <!-- Income -->
+        <div style="width: 50%; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #f9fafb; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb; color: #111827;">
+                <span>Pendapatan (Income)</span>
+                <span>Jumlah (Amount)</span>
+            </div>
+            <div style="padding: 12px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb;">
+                <span>Gaji Pokok (Basic Salary)</span>
+                <span id="pl-gapok" style="font-weight: 500;"></span>
+            </div>
+            <div style="padding: 12px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb;">
+                <span>Lembur (Overtime)</span>
+                <span id="pl-lembur" style="font-weight: 500;"></span>
+            </div>
+            <div id="pl-bonus-list"></div>
+
+            <div style="background-color: #f9fafb; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; color: #111827; margin-top: auto;">
+                <span>Total Pendapatan</span>
+                <span id="pl-total-income"></span>
+            </div>
+        </div>
+
+        <!-- Deduction -->
+        <div style="width: 50%; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="background-color: #f9fafb; padding: 12px 15px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb; color: #111827;">
+                <span>Potongan (Deduction)</span>
+                <span>Jumlah (Amount)</span>
+            </div>
+            <div id="pl-potongan-list" style="flex-grow: 1;"></div>
+
+            <div style="background-color: #f9fafb; padding: 12px 15px; font-weight: 900; display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; color: #111827;">
+                <span>Total Potongan</span>
+                <span id="pl-total-deduction"></span>
+            </div>
+            <div style="background-color: #f3f4f6; padding: 15px; font-weight: 900; font-size: 14px; display: flex; justify-content: space-between; border-top: 2px solid #e5e7eb; color: #111827;">
+                <span>Gaji Bersih (Take Home Pay)</span>
+                <span id="pl-thp"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        body > :not(#print-laporan-container) {
+            display: none !important;
+        }
+        #print-laporan-container {
+            display: block !important;
+            position: static;
+            width: 100%;
+            margin: 0 auto;
+            padding: 10mm;
+        }
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+    }
+</style>
 
 @push('scripts')
 <script>
@@ -388,7 +486,7 @@
     }
 
     function emptyDetailText(text) {
-        return `<p class="text-xs font-semibold text-carbon-black-400">${text}</p>`;
+        return `<p class="text-sm font-semibold text-carbon-black-400">${text}</p>`;
     }
 
     function renderLemburDetails(items) {
@@ -397,10 +495,12 @@
         }
 
         return items.map(item => `
-            <div class="rounded-lg border border-blue-100 bg-white px-3 py-2">
-                <p class="text-sm font-black text-carbon-black-900">${escapeHtml(item.keterangan)}</p>
-                <p class="mt-1 text-xs font-semibold text-carbon-black-500">${escapeHtml(item.jumlah_jam)} jam x Rp ${formatRupiah(item.tarif)}</p>
-                <p class="mt-2 text-sm font-black text-blue-700">Rp ${formatRupiah(item.subtotal)}</p>
+            <div class="border-b border-carbon-black-50 last:border-0 pb-4 last:pb-0">
+                <p class="text-base font-black text-carbon-black-800">${escapeHtml(item.keterangan)}</p>
+                <div class="flex justify-between items-end mt-1.5">
+                    <p class="text-sm font-semibold text-carbon-black-500">${escapeHtml(item.jumlah_jam)} jam x Rp ${formatRupiah(item.tarif)}</p>
+                    <p class="text-lg font-black text-hunter-green-700">Rp ${formatRupiah(item.subtotal)}</p>
+                </div>
             </div>
         `).join('');
     }
@@ -411,10 +511,12 @@
         }
 
         return items.map(item => `
-            <div class="rounded-lg border border-amber-100 bg-white px-3 py-2">
-                <p class="text-sm font-black text-carbon-black-900">${escapeHtml(item.nama)}</p>
-                <p class="mt-1 text-xs font-semibold text-carbon-black-500">${escapeHtml(item.jumlah)} ${escapeHtml(item.satuan)} x Rp ${formatRupiah(item.tarif)}</p>
-                <p class="mt-2 text-sm font-black text-amber-700">Rp ${formatRupiah(item.subtotal)}</p>
+            <div class="border-b border-carbon-black-50 last:border-0 pb-4 last:pb-0">
+                <p class="text-base font-black text-carbon-black-800">${escapeHtml(item.nama)}</p>
+                <div class="flex justify-between items-end mt-1.5">
+                    <p class="text-sm font-semibold text-carbon-black-500">${escapeHtml(item.jumlah)} ${escapeHtml(item.satuan)} x Rp ${formatRupiah(item.tarif)}</p>
+                    <p class="text-lg font-black text-hunter-green-700">Rp ${formatRupiah(item.subtotal)}</p>
+                </div>
             </div>
         `).join('');
     }
@@ -425,10 +527,12 @@
         }
 
         return items.map(item => `
-            <div class="rounded-lg border border-rose-100 bg-white px-3 py-2">
-                <p class="text-sm font-black text-carbon-black-900">${escapeHtml(item.nama)}</p>
-                <p class="mt-1 text-xs font-semibold text-carbon-black-500">${escapeHtml(item.jumlah)} kali x Rp ${formatRupiah(item.tarif)}</p>
-                <p class="mt-2 text-sm font-black text-rose-600">- Rp ${formatRupiah(item.subtotal)}</p>
+            <div class="border-b border-carbon-black-50 last:border-0 pb-4 last:pb-0">
+                <p class="text-base font-black text-carbon-black-800">${escapeHtml(item.nama)}</p>
+                <div class="flex justify-between items-end mt-1.5">
+                    <p class="text-sm font-semibold text-carbon-black-500">${escapeHtml(item.jumlah)} kali x Rp ${formatRupiah(item.tarif)}</p>
+                    <p class="text-lg font-black text-rose-600">- Rp ${formatRupiah(item.subtotal)}</p>
+                </div>
             </div>
         `).join('');
     }
@@ -469,6 +573,39 @@
         statusBadge.className = `inline-flex px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border shadow-sm ${statusClasses(laporan.status_pembayaran)}`;
         statusBadge.textContent = laporan.status_pembayaran;
 
+        // Populate Print Template
+        document.getElementById('pl-nama').textContent = laporan.nama;
+        document.getElementById('pl-tanggal-cetak').textContent = new Date().toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'}) + ' ' + new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('pl-bagian').textContent = laporan.bagian || '-';
+        document.getElementById('pl-job-title').textContent = laporan.bagian || '-';
+        document.getElementById('pl-periode').textContent = `${monthName} ${laporan.tahun}`;
+        document.getElementById('pl-tgl').textContent = laporan.tanggal_pembayaran || 'Belum dibayar';
+        document.getElementById('pl-ket').textContent = laporan.keterangan || '-';
+
+        document.getElementById('pl-gapok').textContent = `Rp ${formatRupiah(laporan.gaji_pokok)}`;
+        document.getElementById('pl-lembur').textContent = `Rp ${formatRupiah(laporan.total_lembur)}`;
+        
+        let bonusHTML = '';
+        if (laporan.rincian_bonus && laporan.rincian_bonus.length > 0) {
+            laporan.rincian_bonus.forEach(b => {
+                bonusHTML += `<div style="padding: 12px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb;"><span>${escapeHtml(b.nama)}</span><span style="font-weight: 500;">Rp ${formatRupiah(b.subtotal)}</span></div>`;
+            });
+        }
+        document.getElementById('pl-bonus-list').innerHTML = bonusHTML;
+
+        document.getElementById('pl-total-income').textContent = `Rp ${formatRupiah(Number(laporan.gaji_pokok) + Number(laporan.total_lembur) + Number(laporan.total_bonus))}`;
+
+        let potonganHTML = '';
+        if (laporan.rincian_potongan && laporan.rincian_potongan.length > 0) {
+            laporan.rincian_potongan.forEach(p => {
+                potonganHTML += `<div style="padding: 12px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb;"><span>${escapeHtml(p.nama)}</span><span style="font-weight: 500;">Rp ${formatRupiah(p.subtotal)}</span></div>`;
+            });
+        }
+        document.getElementById('pl-potongan-list').innerHTML = potonganHTML;
+
+        document.getElementById('pl-total-deduction').textContent = `Rp ${formatRupiah(laporan.total_potongan)}`;
+        document.getElementById('pl-thp').textContent = `Rp ${formatRupiah(laporan.total_gaji_bersih)}`;
+
         laporanModal.classList.remove('hidden');
         laporanModal.classList.add('flex');
         setTimeout(() => {
@@ -486,6 +623,12 @@
             laporanModal.classList.add('hidden');
             laporanModal.classList.remove('flex');
         }, 300);
+    }
+
+    window.printLaporan = function() {
+        const container = document.getElementById('print-laporan-container');
+        document.body.appendChild(container); // Move to body root to avoid layout issues
+        window.print();
     }
 </script>
 @endpush

@@ -21,8 +21,8 @@
                 <x-tabler-users class="w-8 h-8" stroke-width="2" />
             </div>
             <div class="z-10">
-                <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Total Karyawan</p>
-                <h3 class="text-3xl font-black text-carbon-black-900">{{ $stats['total_karyawan'] ?? 0 }}</h3>
+                <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Karyawan Aktif</p>
+                <h3 class="text-3xl font-black text-carbon-black-900">{{ $stats['karyawan_aktif'] ?? 0 }}</h3>
             </div>
         </div>
 
@@ -45,8 +45,8 @@
                 <x-tabler-user-off class="w-8 h-8" stroke-width="2" />
             </div>
             <div class="z-10">
-                <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Izin / Sakit</p>
-                <h3 class="text-3xl font-black text-carbon-black-900">{{ $stats['izin_sakit'] ?? 0 }}</h3>
+                <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Tidak Hadir</p>
+                <h3 class="text-3xl font-black text-carbon-black-900">{{ $stats['tidak_hadir'] ?? 0 }}</h3>
             </div>
         </div>
 
@@ -67,12 +67,36 @@
     <div class="bg-white rounded-2xl shadow-xl border border-carbon-black-100 overflow-hidden">
         <div class="px-8 py-5 border-b border-carbon-black-100 bg-carbon-black-50/50 flex justify-between items-center">
             <h2 class="text-lg font-black text-carbon-black-900 uppercase tracking-wide">Laporan Aktivitas Penggajian</h2>
-            <button class="text-xs font-bold text-hunter-green-600 hover:text-hunter-green-800 uppercase tracking-widest">Lihat Semua</button>
         </div>
-        <div class="p-8">
-            <div class="flex flex-col items-center justify-center py-12 text-carbon-black-400">
-                <x-tabler-chart-bar class="w-16 h-16 mb-4 opacity-50" stroke-width="1.5" />
-                <p class="font-medium text-center max-w-sm">Grafik statistik atau laporan aktivitas bulan ini akan ditampilkan di area ini.</p>
+        <div class="p-8 bg-carbon-black-50/20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card Estimasi Payroll -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-carbon-black-100 border-l-4 border-l-hunter-green-500">
+                    <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Estimasi Total Payroll</p>
+                    <h3 class="text-2xl font-black text-carbon-black-900">Rp {{ number_format($ringkasanFinansial['estimasi_payroll'], 0, ',', '.') }}</h3>
+                </div>
+
+                <!-- Card Total Bonus -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-carbon-black-100 border-l-4 border-l-emerald-500">
+                    <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Total Bonus (Bulan Ini)</p>
+                    <h3 class="text-2xl font-black text-emerald-700">Rp {{ number_format($ringkasanFinansial['total_bonus'], 0, ',', '.') }}</h3>
+                </div>
+
+                <!-- Card Total Potongan -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-carbon-black-100 border-l-4 border-l-rose-500">
+                    <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Total Potongan Karyawan</p>
+                    <h3 class="text-2xl font-black text-rose-600">Rp {{ number_format($ringkasanFinansial['total_potongan'], 0, ',', '.') }}</h3>
+                </div>
+
+                <!-- Card Status Pencairan -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-carbon-black-100 border-l-4 border-l-blue-500 relative overflow-hidden">
+                    <p class="text-xs font-bold text-carbon-black-500 uppercase tracking-widest mb-1">Status Pencairan Gaji</p>
+                    <h3 class="text-2xl font-black text-blue-700">{{ $ringkasanFinansial['persentase_terbayar'] }}% <span class="text-sm text-carbon-black-400 font-medium tracking-normal">Telah Dibayar</span></h3>
+                    <!-- Progress bar visual -->
+                    <div class="w-full bg-carbon-black-100 h-1.5 mt-3 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-1.5" style="width: {{ $ringkasanFinansial['persentase_terbayar'] }}%"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -88,6 +112,7 @@
                     <tr>
                         <th class="px-8 py-4 text-left text-xs font-black uppercase tracking-widest">Nama</th>
                         <th class="px-8 py-4 text-center text-xs font-black uppercase tracking-widest">Jam Lembur</th>
+                        <th class="px-8 py-4 text-right text-xs font-black uppercase tracking-widest">Estimasi Biaya</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-carbon-black-100">
@@ -95,6 +120,7 @@
                         <tr class="hover:bg-carbon-black-50 transition-colors">
                             <td class="px-8 py-4 text-sm font-bold text-carbon-black-800">{{ $item['nama'] }}</td>
                             <td class="px-8 py-4 text-center text-sm font-black text-hunter-green-700">{{ number_format($item['jam_lembur'], 1, ',', '.') }} Jam</td>
+                            <td class="px-8 py-4 text-right text-sm font-black text-rose-600">Rp {{ number_format($item['nominal'], 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -102,4 +128,5 @@
         </div>
     </section>
 </div>
+
 @endsection

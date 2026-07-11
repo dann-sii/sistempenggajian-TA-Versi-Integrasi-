@@ -12,6 +12,7 @@ class AktivitasKaryawanController extends Controller
         return [
             'produksi_tp_gram' => 3000,
             'peternakan_liter' => 5,
+            'packing_gram' => 3000,
         ];
     }
 
@@ -21,8 +22,8 @@ class AktivitasKaryawanController extends Controller
             [
                 'id_produk' => 'PR01',
                 'nama_produk' => 'Susu Kambing Original',
-                'jumlah_standar' => 120,
-                'satuan_produk' => 'pcs / 3 kg',
+                'target_produksi' => 3000,
+                'satuan_produk' => 'Gram',
                 'susu_liter' => 10,
                 'gula_gram' => 250,
                 'perasa_jenis' => 'Vanila',
@@ -32,8 +33,8 @@ class AktivitasKaryawanController extends Controller
             [
                 'id_produk' => 'PR02',
                 'nama_produk' => 'Susu Kambing Jahe',
-                'jumlah_standar' => 120,
-                'satuan_produk' => 'pcs / 3 kg',
+                'target_produksi' => 3000,
+                'satuan_produk' => 'Gram',
                 'susu_liter' => 10,
                 'gula_gram' => 250,
                 'perasa_jenis' => 'Jahe',
@@ -43,8 +44,8 @@ class AktivitasKaryawanController extends Controller
             [
                 'id_produk' => 'PR03',
                 'nama_produk' => 'Susu Kambing Coklat',
-                'jumlah_standar' => 120,
-                'satuan_produk' => 'pcs / 3 kg',
+                'target_produksi' => 3000,
+                'satuan_produk' => 'Gram',
                 'susu_liter' => 10,
                 'gula_gram' => 200,
                 'perasa_jenis' => 'Coklat',
@@ -54,8 +55,8 @@ class AktivitasKaryawanController extends Controller
             [
                 'id_produk' => 'PR04',
                 'nama_produk' => 'Susu Kambing Karamel',
-                'jumlah_standar' => 120,
-                'satuan_produk' => 'pcs / 3 kg',
+                'target_produksi' => 3000,
+                'satuan_produk' => 'Gram',
                 'susu_liter' => 10,
                 'gula_gram' => 225,
                 'perasa_jenis' => 'Karamel',
@@ -93,9 +94,14 @@ class AktivitasKaryawanController extends Controller
         }));
 
         $selectedTanggal = $this->normalizeTanggal($request->query('tanggal')) ?: date('Y-m-d');
-        $selectedBagian = in_array($request->query('bagian'), ['Produksi', 'Peternakan'], true)
+        $selectedBagian = in_array($request->query('bagian'), ['Produksi', 'Peternakan', 'Packing'], true)
             ? $request->query('bagian')
             : 'Produksi';
+
+        $riwayatSearch = trim((string)$request->query('riwayat_search'));
+        $riwayatBagian = in_array($request->query('riwayat_bagian'), ['Produksi', 'Peternakan', 'Packing'], true)
+            ? $request->query('riwayat_bagian')
+            : '';
 
         $batchKaryawans = array_values(array_filter($activeKaryawans, function ($karyawan) use ($selectedBagian) {
             return ($karyawan['bagian'] ?? 'Produksi') === $selectedBagian;
@@ -122,10 +128,6 @@ class AktivitasKaryawanController extends Controller
                 continue;
             }
 
-            if (count($recentPiket) < 8) {
-                $recentPiket[] = $row;
-            }
-
             if (($row['tanggal'] ?? null) === $selectedTanggal && ($row['bagian'] ?? null) === $selectedBagian) {
                 $existingPiketByKaryawan[$row['karyawan_id']] = $row;
             }
@@ -133,12 +135,25 @@ class AktivitasKaryawanController extends Controller
             $summary['rows']++;
             $summary['bonus_total'] += (float) ($row['bonus_total'] ?? 0);
             $status = strtolower($row['status_piket'] ?? '');
-            if ($status === 'lebih') {
+            if ($status === 'lebih' || $status === 'memenuhi' || $status === 'normal') {
                 $summary['lebih']++;
-            } elseif ($status === 'normal') {
-                $summary['normal']++;
             } elseif ($status === 'kurang') {
                 $summary['kurang']++;
+            }
+
+            $matchesSearch = true;
+            if ($riwayatSearch !== '') {
+                $matchesSearch = stripos($row['nama'] ?? '', $riwayatSearch) !== false || 
+                                 stripos($row['nik'] ?? '', $riwayatSearch) !== false;
+            }
+            
+            $matchesBagian = true;
+            if ($riwayatBagian !== '') {
+                $matchesBagian = ($row['bagian'] ?? '') === $riwayatBagian;
+            }
+
+            if ($matchesSearch && $matchesBagian && count($recentPiket) < 20) {
+                $recentPiket[] = $row;
             }
         }
 
@@ -163,7 +178,9 @@ class AktivitasKaryawanController extends Controller
             'recentPiket',
             'summary',
             'lastAktivitas',
-            'latestAktivitasByKaryawan'
+            'latestAktivitasByKaryawan',
+            'riwayatSearch',
+            'riwayatBagian'
         ));
     }
 
@@ -219,7 +236,7 @@ class AktivitasKaryawanController extends Controller
 
         $data = $request->validate([
             'tanggal' => 'required|date',
-            'bagian' => 'required|in:Produksi,Peternakan',
+            'bagian' => 'required|in:Produksi,Peternakan,Packing',
             'entries' => 'nullable|array',
             'entries.*.liter_susu' => 'nullable|numeric|min:0',
             'entries.*.gula_gram' => 'nullable|numeric|min:0',
@@ -227,6 +244,14 @@ class AktivitasKaryawanController extends Controller
             'entries.*.perasa_gram' => 'nullable|numeric|min:0',
             'entries.*.tp_gram' => 'nullable|numeric|min:0',
             'entries.*.liter_setor' => 'nullable|numeric|min:0',
+            'entries.*.sachet_qty' => 'nullable|integer|min:0',
+            'entries.*.plastik_250_qty' => 'nullable|integer|min:0',
+            'entries.*.plastik_500_qty' => 'nullable|integer|min:0',
+            'entries.*.plastik_1000_qty' => 'nullable|integer|min:0',
+            'entries.*.kemasan_rusak_sachet_qty' => 'nullable|integer|min:0',
+            'entries.*.kemasan_rusak_p250_qty' => 'nullable|integer|min:0',
+            'entries.*.kemasan_rusak_p500_qty' => 'nullable|integer|min:0',
+            'entries.*.kemasan_rusak_p1000_qty' => 'nullable|integer|min:0',
         ]);
 
         $entries = $data['entries'] ?? [];
@@ -281,9 +306,13 @@ class AktivitasKaryawanController extends Controller
 
     private function isBatchEntryFilled(array $entry, string $bagian): bool
     {
-        $fields = $bagian === 'Produksi'
-            ? ['liter_susu', 'gula_gram', 'perasa_jenis', 'perasa_gram', 'tp_gram']
-            : ['liter_setor'];
+        if ($bagian === 'Produksi') {
+            $fields = ['liter_susu', 'gula_gram', 'perasa_jenis', 'perasa_gram', 'tp_gram'];
+        } elseif ($bagian === 'Packing') {
+            $fields = ['sachet_qty', 'plastik_250_qty', 'plastik_500_qty', 'plastik_1000_qty', 'kemasan_rusak_sachet_qty', 'kemasan_rusak_p250_qty', 'kemasan_rusak_p500_qty', 'kemasan_rusak_p1000_qty'];
+        } else {
+            $fields = ['liter_setor'];
+        }
 
         foreach ($fields as $field) {
             if (isset($entry[$field]) && trim((string) $entry[$field]) !== '') {
@@ -317,6 +346,60 @@ class AktivitasKaryawanController extends Controller
                 'status_piket' => $calculation['status'],
                 'bonus_total' => $calculation['total'],
                 'bonus_details' => $calculation['details'],
+            ]);
+        }
+
+        if ($bagian === 'Packing') {
+            $sachetQty = (int) ($entry['sachet_qty'] ?? 0);
+            $plastik250Qty = (int) ($entry['plastik_250_qty'] ?? 0);
+            $plastik500Qty = (int) ($entry['plastik_500_qty'] ?? 0);
+            $plastik1000Qty = (int) ($entry['plastik_1000_qty'] ?? 0);
+
+            $sachetRusak = (int) ($entry['kemasan_rusak_sachet_qty'] ?? 0);
+            $plastik250Rusak = (int) ($entry['kemasan_rusak_p250_qty'] ?? 0);
+            $plastik500Rusak = (int) ($entry['kemasan_rusak_p500_qty'] ?? 0);
+            $plastik1000Rusak = (int) ($entry['kemasan_rusak_p1000_qty'] ?? 0);
+
+            $tpGram = ($sachetQty * 25) + ($plastik250Qty * 250) + ($plastik500Qty * 500) + ($plastik1000Qty * 1000);
+            $target = (float) self::getPiketTargets()['packing_gram'];
+            $status = self::statusFromActual($tpGram, $target);
+
+            // Bonus over-target = Rp 10 / gram (read dynamically from GajiBonusController)
+            $rule = self::findBonusRuleForMaterialName('Packing');
+            $rate = $rule ? (float) $rule['tarif'] : 10.00;
+            $selisih = max(0, $tpGram - $target);
+            $bonusTotal = $selisih * $rate;
+
+            $details = [];
+            if ($bonusTotal > 0) {
+                $details[] = [
+                    'title' => $rule ? $rule['nama'] : 'Bonus Produktivitas Packing',
+                    'description' => sprintf(
+                        '%s: Hasil %s gram, target %s gram, selisih %s gram x Rp %s',
+                        $tanggal ?: 'Piket harian',
+                        number_format($tpGram, 0, ',', '.'),
+                        number_format($target, 0, ',', '.'),
+                        number_format($selisih, 0, ',', '.'),
+                        number_format($rate, 0, ',', '.')
+                    ),
+                    'amount' => $bonusTotal
+                ];
+            }
+
+            return array_merge($base, [
+                'sachet_qty' => $sachetQty,
+                'plastik_250_qty' => $plastik250Qty,
+                'plastik_500_qty' => $plastik500Qty,
+                'plastik_1000_qty' => $plastik1000Qty,
+                'sachet_rusak_qty' => $sachetRusak,
+                'plastik_250_rusak_qty' => $plastik250Rusak,
+                'plastik_500_rusak_qty' => $plastik500Rusak,
+                'plastik_1000_rusak_qty' => $plastik1000Rusak,
+                'tp_gram' => $tpGram,
+                'target_tp_harian' => $target,
+                'status_piket' => $status,
+                'bonus_total' => $bonusTotal,
+                'bonus_details' => $details,
             ]);
         }
 
@@ -484,16 +567,7 @@ class AktivitasKaryawanController extends Controller
 
     private static function statusFromActual(float $actual, float $target): string
     {
-        $diff = $actual - $target;
-        if ($diff > 0) {
-            return 'Lebih';
-        }
-
-        if ($diff === 0.0) {
-            return 'Normal';
-        }
-
-        return 'Kurang';
+        return $actual >= $target ? 'Memenuhi' : 'Kurang';
     }
 
     private static function customRound(float $value): float

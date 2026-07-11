@@ -11,26 +11,36 @@ class PresensiController extends Controller
     public static function getPresensiData(): array
     {
         return [
-            ['id' => 1, 'nama' => 'Budi Santoso', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 2, 'nama' => 'Siti Aminah', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 3, 'nama' => 'Andi Wijaya', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 4, 'nama' => 'Dewi Lestari', 'tanggal' => '2026-03-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Izin', 'jam_lembur' => '0'],
-            ['id' => 5, 'nama' => 'Rizky Pratama', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:05', 'jam_keluar' => '16:05', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 6, 'nama' => 'Anita Sari', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:30', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
-            ['id' => 7, 'nama' => 'Bambang Subianto', 'tanggal' => '2026-03-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Sakit', 'jam_lembur' => '0'],
-            ['id' => 8, 'nama' => 'Eka Putri', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:10', 'jam_keluar' => '16:10', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 9, 'nama' => 'Faisal Rahman', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
-            ['id' => 10, 'nama' => 'Gita Permata', 'tanggal' => '2026-03-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 11, 'nama' => 'Hendra Wijaya', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 12, 'nama' => 'Indah Kusuma', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 13, 'nama' => 'Joko Susilo', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 14, 'nama' => 'Kartini Putri', 'tanggal' => '2026-03-02', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Izin', 'jam_lembur' => '0'],
-            ['id' => 15, 'nama' => 'Lukman Hakim', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:05', 'jam_keluar' => '16:05', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
-            ['id' => 16, 'nama' => 'Maya Sari', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '16:30', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
-            ['id' => 17, 'nama' => 'Nugroho Saputra', 'tanggal' => '2026-03-02', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Sakit', 'jam_lembur' => '0'],
-            ['id' => 18, 'nama' => 'Oki Setiana', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:10', 'jam_keluar' => '16:40', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
-            ['id' => 19, 'nama' => 'Puji Astuti', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
-            ['id' => 20, 'nama' => 'Qomarudin', 'tanggal' => '2026-03-02', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 1, 'nama' => 'Budi Santoso', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 2, 'nama' => 'Siti Aminah', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 3, 'nama' => 'Andi Wijaya', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 4, 'nama' => 'Dewi Lestari', 'tanggal' => '2026-07-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Izin', 'jam_lembur' => '0', 'keterangan' => 'Mengurus perpanjangan STNK'],
+            ['id' => 5, 'nama' => 'Rizky Pratama', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:05', 'jam_keluar' => '16:05', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 6, 'nama' => 'Anita Sari', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:30', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
+            ['id' => 7, 'nama' => 'Bambang Subianto', 'tanggal' => '2026-07-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Sakit', 'jam_lembur' => '0', 'keterangan' => 'Surat Dokter: Rawat Inap Tipes'],
+            ['id' => 8, 'nama' => 'Eka Putri', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:10', 'jam_keluar' => '16:10', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 9, 'nama' => 'Faisal Rahman', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
+            ['id' => 10, 'nama' => 'Gita Permata', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 11, 'nama' => 'Hendra Wijaya', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 12, 'nama' => 'Indah Kusuma', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 13, 'nama' => 'Joko Susilo', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 14, 'nama' => 'Kartini Putri', 'tanggal' => '2026-07-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Izin', 'jam_lembur' => '0', 'keterangan' => 'Acara Keluarga di Luar Kota'],
+            ['id' => 15, 'nama' => 'Lukman Hakim', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:05', 'jam_keluar' => '16:05', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 16, 'nama' => 'Maya Sari', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:30', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
+            ['id' => 17, 'nama' => 'Nugroho Saputra', 'tanggal' => '2026-07-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Sakit', 'jam_lembur' => '0', 'keterangan' => 'Surat Dokter: Demam Berdarah'],
+            ['id' => 18, 'nama' => 'Oki Setiana', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:10', 'jam_keluar' => '16:40', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
+            ['id' => 19, 'nama' => 'Puji Astuti', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
+            ['id' => 20, 'nama' => 'Qomarudin', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 21, 'nama' => 'Rian Hidayat', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 22, 'nama' => 'Santi Wijaya', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:15', 'jam_keluar' => '16:15', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 23, 'nama' => 'Teguh Prasetyo', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '17:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '1'],
+            ['id' => 24, 'nama' => 'Umi Kulsum', 'tanggal' => '2026-07-01', 'jam_masuk' => '00:00', 'jam_keluar' => '00:00', 'kehadiran' => 'Izin', 'jam_lembur' => '0', 'keterangan' => 'Urusan keluarga'],
+            ['id' => 25, 'nama' => 'Vina Panduwinata', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:05', 'jam_keluar' => '16:05', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 26, 'nama' => 'Wahyu Hidayat', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:30', 'kehadiran' => 'Hadir', 'jam_lembur' => '0.5'],
+            ['id' => 27, 'nama' => 'Xena Putri', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
+            ['id' => 28, 'nama' => 'Yayan Ruhian', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:10', 'jam_keluar' => '18:10', 'kehadiran' => 'Hadir', 'jam_lembur' => '2'],
+            ['id' => 29, 'nama' => 'Zack Lee', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '20:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '4'],
+            ['id' => 30, 'nama' => 'Ahmad Dahlan', 'tanggal' => '2026-07-01', 'jam_masuk' => '08:00', 'jam_keluar' => '16:00', 'kehadiran' => 'Hadir', 'jam_lembur' => '0'],
         ];
     }
 
@@ -120,12 +130,13 @@ class PresensiController extends Controller
             });
         }
 
-        usort($allPresensi, function ($a, $b) {
-            if ($a['is_inactive'] === $b['is_inactive']) {
-                return $a['id'] <=> $b['id'];
-            }
+        // Menghilangkan karyawan Inaktif sepenuhnya dari tabel operasional harian (Sesuai Opsi Logika Terbaik)
+        $allPresensi = array_filter($allPresensi, function ($p) {
+            return !$p['is_inactive'];
+        });
 
-            return $a['is_inactive'] ? 1 : -1;
+        usort($allPresensi, function ($a, $b) {
+            return $a['id'] <=> $b['id'];
         });
 
         $summaryByNama = [];
@@ -147,6 +158,7 @@ class PresensiController extends Controller
                 $summaryByNama[$nama]['history'][] = [
                     'date' => $ap['tanggal'],
                     'status' => $ap['kehadiran'],
+                    'keterangan' => $ap['keterangan'] ?? '',
                 ];
             }
 

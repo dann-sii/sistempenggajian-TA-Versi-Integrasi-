@@ -12,9 +12,15 @@
                 class="relative w-28 h-28 rounded-full border-2 border-white/10 overflow-hidden bg-black-forest-800 shadow-2xl flex items-center justify-center p-1 backdrop-blur-sm">
                 <div
                     class="w-full h-full rounded-full bg-gradient-to-br from-carbon-black-800 to-black-forest-900 flex items-center justify-center">
-                    <!-- Profile Placeholder -->
-                    <x-tabler-user
-                        class="w-16 h-16 text-carbon-black-400/50 group-hover:text-hunter-green-400 transition-colors duration-500" />
+                    <!-- Profile Photo -->
+                    @if(session('user_foto'))
+                        <img src="{{ asset('images/' . session('user_foto')) }}" alt="Foto Profil"
+                            class="w-full h-full object-cover rounded-full"
+                            onerror="this.onerror=null; this.outerHTML='<x-tabler-user class=\'w-16 h-16 text-carbon-black-400/50 group-hover:text-hunter-green-400 transition-colors duration-500\' />'" />
+                    @else
+                        <x-tabler-user
+                            class="w-16 h-16 text-carbon-black-400/50 group-hover:text-hunter-green-400 transition-colors duration-500" />
+                    @endif
                 </div>
             </div>
         </div>
@@ -48,13 +54,14 @@
                     ['name' => 'Dashboard', 'route' => 'pimpinan.dashboard', 'icon' => 'dashboard'],
                     ['name' => 'Data Karyawan', 'route' => 'pimpinan.karyawan.index', 'icon' => 'users'],
                     ['name' => 'Laporan Penggajian', 'route' => 'pimpinan.laporan_penggajian.index', 'icon' => 'file-description'],
+                    ['name' => 'Kelola Pengguna', 'route' => 'pimpinan.kelola_user.index', 'icon' => 'user'],
                 ];
             } else {
                 $menuItems = [
                     ['name' => 'Dashboard', 'route' => 'dashboard.index', 'icon' => 'dashboard'],
                     ['name' => 'Data Karyawan', 'route' => 'karyawan.index', 'icon' => 'users'],
                     ['name' => 'Data Presensi', 'route' => 'presensi.index', 'icon' => 'calendar-check'],
-                    ['name' => 'Data Produk', 'route' => 'resep_produk.index', 'icon' => 'package'],
+                    ['name' => 'Data Produk', 'route' => 'data_produk.index', 'icon' => 'package'],
                     ['name' => 'Aktivitas Karyawan', 'route' => 'aktivitas_karyawan.index', 'icon' => 'clipboard-list'],
                     ['name' => 'Gaji Pokok & Lembur', 'route' => 'gaji_pokok.index', 'icon' => 'cash'],
                     ['name' => 'Gaji Bonus', 'route' => 'gaji_bonus.index', 'icon' => 'gift'],
@@ -70,7 +77,7 @@
                 $isActive = Route::currentRouteName() == $item['route'] || (isset($active) && $active == $item['name']);
             @endphp
             <a href="{{ $item['route'] !== '#' ? route($item['route']) : '#' }}" class="group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative
-                   {{ $isActive
+                               {{ $isActive
             ? 'bg-gradient-to-r from-hunter-green-600 to-hunter-green-500 text-white shadow-[0_4px_15px_rgba(98,164,91,0.3)]'
             : 'text-carbon-black-300 hover:bg-white/5 hover:text-white' }}">
 
@@ -89,19 +96,16 @@
 
     <!-- Logout Button -->
     <div class="p-6">
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit"
-                class="w-full group relative overflow-hidden bg-white/5 hover:bg-rose-600/10 border border-white/10 hover:border-rose-500/50 rounded-xl py-3 px-4 transition-all duration-300 active:scale-95">
-                <div class="relative flex items-center justify-center space-x-3">
-                    <x-tabler-logout
-                        class="w-5 h-5 text-rose-500 transition-transform duration-300 group-hover:-translate-x-1" />
-                    <span
-                        class="text-xs font-black uppercase tracking-widest text-rose-500 group-hover:text-rose-400">Keluar
-                        Sistem</span>
-                </div>
-            </button>
-        </form>
+        <a href="{{ url('/logout') }}"
+            class="block w-full group relative overflow-hidden bg-white/5 hover:bg-rose-600/10 border border-white/10 hover:border-rose-500/50 rounded-xl py-3 px-4 transition-all duration-300 active:scale-95">
+            <div class="relative flex items-center justify-center space-x-3">
+                <x-tabler-logout
+                    class="w-5 h-5 text-rose-500 transition-transform duration-300 group-hover:-translate-x-1" />
+                <span
+                    class="text-xs font-black uppercase tracking-widest text-rose-500 group-hover:text-rose-400">Keluar
+                    Sistem</span>
+            </div>
+        </a>
     </div>
 
     <style>

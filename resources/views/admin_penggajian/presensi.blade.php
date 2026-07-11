@@ -14,7 +14,7 @@
             <form action="{{ route('presensi.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
                 <!-- Search Name -->
                 <div class="flex shadow-sm rounded-lg overflow-hidden border-2 border-carbon-black-200 focus-within:border-hunter-green-400 transition-colors bg-white">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama karyawan..." class="w-72 px-4 py-2 focus:outline-none text-carbon-black-800 placeholder-carbon-black-300 text-base font-medium">
+                    <input type="text" id="search-input" name="search" value="{{ request('search') }}" placeholder="Cari nama karyawan..." class="w-72 px-4 py-2 focus:outline-none text-carbon-black-800 placeholder-carbon-black-300 text-base font-medium">
                     <button type="submit" class="bg-carbon-black-50 px-4 py-2 border-l border-carbon-black-200 text-carbon-black-400 hover:text-hunter-green-600 hover:bg-hunter-green-50 transition-colors">
                         <x-tabler-search class="w-4 h-4" />
                     </button>
@@ -43,9 +43,9 @@
                 </div>
             </form>
 
-            <button class="bg-black-forest-700 text-white px-6 h-[42px] text-sm font-bold rounded-lg shadow-md hover:bg-black-forest-800 transition-all duration-200 flex items-center space-x-2 active:scale-95 group uppercase tracking-widest mb-0.5 ml-auto xl:ml-0">
+            <button onclick="openKoreksiModal()" class="bg-amber-500 text-white px-6 h-[42px] text-sm font-bold rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200 flex items-center space-x-2 active:scale-95 group uppercase tracking-widest mb-0.5 ml-auto xl:ml-0" title="Formulir Koreksi Absensi Masa Lalu">
                 <x-tabler-plus class="w-5 h-5" stroke-width="3" />
-                <span>Tambah</span>
+                <span>Susulan / Koreksi</span>
             </button>
         </div>
     </div>
@@ -105,10 +105,12 @@
                                         <input type="radio" name="kehadiran_{{ $p['id'] }}" value="{{ $val }}" 
                                             class="w-4 h-4 {{ $opt['accent'] }} {{ $isInactive ? 'cursor-not-allowed' : 'cursor-pointer' }}" 
                                             {{ $currentStatus === $val ? 'checked' : '' }}
-                                            {{ $isInactive ? 'disabled' : '' }}>
+                                            {{ $isInactive ? 'disabled' : '' }}
+                                            onchange="handleStatusChange(this, '{{ $p['id'] }}', '{{ $p['nama'] }}', '{{ $val }}')">
                                         <span class="text-xs font-black text-carbon-black-500 {{ $isInactive ? '' : 'group-hover/radio:text-carbon-black-900' }} transition-colors">{{ $opt['label'] }}</span>
                                     </label>
                                 @endforeach
+                                <input type="hidden" id="keterangan_harian_{{ $p['id'] }}" name="keterangan_{{ $p['id'] }}" value="{{ $p['keterangan'] ?? '' }}">
                             </div>
                         </td>
                         <td class="px-6 py-5 text-center" id="jam_lembur_{{ $p['id'] }}">
@@ -124,14 +126,7 @@
                                     <x-tabler-eye class="w-4 h-4" />
                                     <span>Detail</span>
                                 </button>
-                                <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-blue-200" title="Edit">
-                                    <x-tabler-pencil class="w-4 h-4" />
-                                    <span>Ubah</span>
-                                </button>
-                                <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-red-200" title="Hapus">
-                                    <x-tabler-trash class="w-4 h-4" />
-                                    <span>Hapus</span>
-                                </button>
+
                             </div>
                         </td>
                     </tr>
@@ -182,6 +177,130 @@
                 </ul>
             </nav>
         </div>
+    </div>
+</div>
+
+<!-- Modal Prompt Keterangan Harian -->
+<div id="modal-prompt-keterangan" class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/60 backdrop-blur-sm transition-opacity opacity-0">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300 flex flex-col overflow-hidden border border-carbon-black-100">
+        <div class="px-6 py-5 flex justify-between items-center bg-white">
+            <h3 class="text-base font-black tracking-widest text-carbon-black-900 flex items-center gap-2">
+                <x-tabler-pencil-plus class="w-5 h-5 text-hunter-green-500" />
+                INPUT KETERANGAN
+            </h3>
+            <button type="button" class="text-carbon-black-300 hover:text-rose-600 transition-colors" onclick="closePromptModal()">
+                <x-tabler-x class="w-5 h-5" />
+            </button>
+        </div>
+        
+        <div class="px-6 pb-2 flex flex-col gap-3">
+            <p class="text-[15px] font-semibold text-carbon-black-500 leading-relaxed">
+                Tambahkan alasan untuk status <span id="prompt-status-label" class="font-black text-hunter-green-600 uppercase">IZIN</span> milik <span id="prompt-nama-label" class="font-bold text-carbon-black-800">Budi Santoso</span>.
+            </p>
+            
+            <input type="hidden" id="prompt-active-id">
+            
+            <textarea id="prompt-keterangan-input" rows="3" placeholder="Ketik alasan di sini..." class="w-full px-3 py-2.5 border border-carbon-black-200 rounded-lg text-sm font-semibold text-carbon-black-800 focus:outline-none focus:border-hunter-green-400 focus:ring-1 focus:ring-hunter-green-400 resize-none transition-colors shadow-inner bg-carbon-black-50/50"></textarea>
+        </div>
+        
+        <div class="px-6 py-5 flex justify-end space-x-3 bg-white">
+            <button type="button" onclick="closePromptModal()" class="px-4 py-2 text-carbon-black-500 bg-transparent text-sm font-bold uppercase tracking-wider rounded-lg hover:text-carbon-black-800 transition-all active:scale-95">
+                Nanti Saja
+            </button>
+            <button type="button" onclick="savePromptKeterangan()" class="px-5 py-2 text-white bg-hunter-green-600 text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-hunter-green-700 transition-all active:scale-95 flex items-center gap-2">
+                Simpan
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Susulan / Koreksi Presensi -->
+<div id="modal-koreksi" class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+        <div class="px-6 py-5 border-b border-carbon-black-100 flex justify-between items-center bg-amber-50 rounded-t-xl">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                    <x-tabler-calendar-time class="w-6 h-6" />
+                </div>
+                <h3 class="text-xl font-black uppercase tracking-wide text-amber-700">Form Susulan / Koreksi Masa Lalu</h3>
+            </div>
+            <button type="button" class="text-carbon-black-400 hover:text-rose-600 transition-colors" onclick="closeKoreksiModal()">
+                <x-tabler-x class="w-6 h-6" />
+            </button>
+        </div>
+        
+        <form action="#" method="POST" class="flex flex-col flex-1 overflow-hidden">
+            @csrf
+            <div class="px-6 py-6 overflow-y-auto space-y-5">
+                <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm flex gap-3 shadow-sm">
+                    <x-tabler-info-circle class="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <div>
+                        <p class="font-bold mb-1">Perhatian (Sistem Audit Trail)</p>
+                        <p class="opacity-90">Anda akan memodifikasi data masa lalu. Segala bentuk perubahan akan tercatat secara otomatis ke dalam <strong>Jejak Audit</strong> dan memerlukan alasan yang jelas untuk proses validasi manajemen.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Karyawan -->
+                    <div class="space-y-1 md:col-span-2">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Nama Karyawan <span class="text-rose-500">*</span></label>
+                        <select name="karyawan_id" required class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white">
+                            <option value="">-- Pilih Karyawan --</option>
+                            <option value="1">Budi Santoso (Produksi)</option>
+                            <option value="2">Dewi Lestari (Peternakan)</option>
+                            <option value="3">Rizky Pratama (Produksi)</option>
+                            <option value="4">Bambang Subianto (Peternakan)</option>
+                        </select>
+                    </div>
+
+                    <!-- Tanggal -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Tanggal Revisi <span class="text-rose-500">*</span></label>
+                        <input type="date" name="tanggal" required max="{{ date('Y-m-d') }}" class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Status Kehadiran <span class="text-rose-500">*</span></label>
+                        <select name="status" required class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white">
+                            <option value="Hadir">Hadir (H)</option>
+                            <option value="Izin">Izin (I)</option>
+                            <option value="Sakit">Sakit (S)</option>
+                            <option value="Cuti">Cuti (C)</option>
+                            <option value="Alpha">Alpha (A)</option>
+                        </select>
+                    </div>
+
+                    <!-- Jam Masuk -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Jam Masuk</label>
+                        <input type="time" name="jam_masuk" class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    </div>
+
+                    <!-- Jam Keluar -->
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Jam Keluar</label>
+                        <input type="time" name="jam_keluar" class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                    </div>
+
+                    <!-- Alasan -->
+                    <div class="space-y-1 md:col-span-2">
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Alasan Koreksi / Susulan <span class="text-rose-500">*</span></label>
+                        <textarea name="alasan" required rows="3" placeholder="Contoh: Admin lupa memasukkan data Izin karyawan bersangkutan pada hari tersebut, sehingga terhitung Alpha secara sistem..." class="w-full px-3 py-2 border border-carbon-black-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-carbon-black-100 flex justify-end space-x-3 bg-carbon-black-50 rounded-b-xl">
+                <button type="button" onclick="closeKoreksiModal()" class="px-5 py-2.5 text-carbon-black-600 bg-white border border-carbon-black-200 text-sm font-bold uppercase tracking-wider rounded-lg shadow-sm hover:bg-carbon-black-50 hover:text-carbon-black-900 transition-all active:scale-95">
+                    Batal
+                </button>
+                <button type="submit" class="px-5 py-2.5 text-white bg-amber-600 border border-amber-600 text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-amber-700 transition-all active:scale-95 flex items-center gap-2">
+                    <x-tabler-device-floppy class="w-4 h-4" />
+                    Simpan Koreksi
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -359,7 +478,10 @@
                 title: item.status.toUpperCase(),
                 start: item.date,
                 color: colorMap[item.status] || '#1a1a1a',
-                allDay: true
+                allDay: true,
+                extendedProps: {
+                    keterangan: item.keterangan || ''
+                }
             }));
 
             calendarEl.innerHTML = '';
@@ -375,6 +497,17 @@
                 events: events,
                 contentHeight: "auto",
                 firstDay: 1, // Start on Monday
+                eventDidMount: function(info) {
+                    if (info.event.extendedProps.keterangan) {
+                        info.el.setAttribute('title', info.event.title + ' - ' + info.event.extendedProps.keterangan);
+                    } else {
+                        info.el.setAttribute('title', info.event.title);
+                    }
+                    // Make it look clickable/hoverable if it has keterangan
+                    if (info.event.extendedProps.keterangan) {
+                        info.el.style.cursor = 'help';
+                    }
+                }
             });
         }
         
@@ -403,6 +536,114 @@
             detailModal.classList.add('hidden');
             detailModal.classList.remove('flex');
         }, 300);
+    }
+    
+    // Koreksi Modal Control
+    const koreksiModal = document.getElementById('modal-koreksi');
+    const koreksiModalInner = koreksiModal ? koreksiModal.querySelector('div') : null;
+
+    window.openKoreksiModal = function() {
+        if(!koreksiModal) return;
+        koreksiModal.classList.remove('hidden');
+        koreksiModal.classList.add('flex');
+        setTimeout(() => {
+            koreksiModal.classList.remove('opacity-0');
+            if(koreksiModalInner) {
+                koreksiModalInner.classList.remove('scale-95');
+                koreksiModalInner.classList.add('scale-100');
+            }
+        }, 10);
+    }
+
+    window.closeKoreksiModal = function() {
+        if(!koreksiModal) return;
+        koreksiModal.classList.add('opacity-0');
+        if(koreksiModalInner) {
+            koreksiModalInner.classList.remove('scale-100');
+            koreksiModalInner.classList.add('scale-95');
+        }
+        setTimeout(() => {
+            koreksiModal.classList.add('hidden');
+            koreksiModal.classList.remove('flex');
+        }, 300);
+    }
+    
+    // Fitur pencarian otomatis per huruf
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.form.submit();
+            }, 600); // Jeda 0.6 detik sebelum submit otomatis
+        });
+
+        // Letakkan kursor di akhir teks saat halaman dimuat ulang setelah pencarian
+        if (searchInput.value) {
+            searchInput.focus();
+            const val = searchInput.value;
+            searchInput.value = '';
+            searchInput.value = val;
+        }
+    }
+    
+    // Prompt Keterangan Control
+    const promptModal = document.getElementById('modal-prompt-keterangan');
+    const promptModalInner = promptModal ? promptModal.querySelector('div') : null;
+
+    window.handleStatusChange = function(radioEl, empId, empName, status) {
+        if (status === 'Hadir') {
+            // Kosongkan keterangan jika diubah kembali ke Hadir
+            const hiddenInput = document.getElementById(`keterangan_harian_${empId}`);
+            if(hiddenInput) hiddenInput.value = '';
+            return;
+        }
+        
+        document.getElementById('prompt-status-label').textContent = status;
+        document.getElementById('prompt-nama-label').textContent = empName;
+        document.getElementById('prompt-active-id').value = empId;
+        
+        const hiddenInput = document.getElementById(`keterangan_harian_${empId}`);
+        document.getElementById('prompt-keterangan-input').value = hiddenInput ? hiddenInput.value : '';
+        
+        if(promptModal) {
+            promptModal.classList.remove('hidden');
+            promptModal.classList.add('flex');
+            setTimeout(() => {
+                promptModal.classList.remove('opacity-0');
+                if(promptModalInner) {
+                    promptModalInner.classList.remove('scale-95');
+                    promptModalInner.classList.add('scale-100');
+                }
+                document.getElementById('prompt-keterangan-input').focus();
+            }, 10);
+        }
+    }
+
+    window.closePromptModal = function() {
+        if(!promptModal) return;
+        promptModal.classList.add('opacity-0');
+        if(promptModalInner) {
+            promptModalInner.classList.remove('scale-100');
+            promptModalInner.classList.add('scale-95');
+        }
+        setTimeout(() => {
+            promptModal.classList.add('hidden');
+            promptModal.classList.remove('flex');
+        }, 300);
+    }
+
+    window.savePromptKeterangan = function() {
+        const empId = document.getElementById('prompt-active-id').value;
+        const ketVal = document.getElementById('prompt-keterangan-input').value;
+        
+        const hiddenInput = document.getElementById(`keterangan_harian_${empId}`);
+        if(hiddenInput) {
+            hiddenInput.value = ketVal;
+        }
+        
+        closePromptModal();
     }
 </script>
 @endpush

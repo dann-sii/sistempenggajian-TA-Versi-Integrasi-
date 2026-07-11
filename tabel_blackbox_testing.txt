@@ -1,0 +1,49 @@
+No	Fitur	Skenario Pengujian	Data Input	Hasil yang Diharapkan	Valid / Tidak Valid
+1	Login	Pengguna masuk dengan username dan password yang benar	Username: admingaji, Password: admingaji	Berhasil login dan langsung diarahkan ke halaman Dashboard Admin	Valid
+2	Login	Pengguna memasukkan password yang salah	Username: admingaji, Password: abc123	Gagal login, muncul pesan "ID Pengguna atau Kata Sandi salah"	Tidak Valid
+3	Login	Pengguna mencoba login tanpa mengisi apapun	Username dan Password dibiarkan kosong	Form tidak bisa dikirim, muncul peringatan bahwa kedua field wajib diisi	Tidak Valid
+4	Login	Pengguna login dengan akun yang statusnya Inaktif	Username: admingaji (status sudah di-set Inaktif), Password: admingaji	Gagal login meskipun username dan password benar, muncul pesan "akun Anda sedang tidak aktif"	Tidak Valid
+5	Kelola Data Karyawan	Admin menambahkan karyawan baru dengan data yang lengkap	NIK: 3404011234560001, Nama: Doni Saputra, NPWP: 1612034500001234, Bagian: Produksi, No. Telp: 08123456789, Alamat: Jl. Mawar No.1, Nama Bank: BRI, No. Rek: 001234567890	Karyawan baru muncul di daftar tabel dengan status default Aktif	Valid
+6	Kelola Data Karyawan	Admin menambahkan karyawan tapi tidak mengisi NIK	NIK dikosongkan, field lainnya diisi lengkap	Muncul pesan validasi bahwa NIK wajib diisi	Tidak Valid
+7	Kelola Data Karyawan	Admin mengubah data bagian seorang karyawan	Mengedit karyawan Budi Santoso, bagian diganti dari Produksi ke Peternakan	Perubahan berhasil tersimpan dan terlihat di tabel	Valid
+8	Kelola Data Karyawan	Admin menonaktifkan karyawan yang masih aktif	Menekan tombol Nonaktifkan pada karyawan Budi Santoso	Status berubah menjadi Inaktif dan karyawan tidak tampil di filter status Aktif	Valid
+9	Data Produk (Resep)	Admin menambahkan data produk baru	Nama: Susu Kambing Matcha, Target Produksi: 3000, Susu (Liter): 10, Gula (Gram): 200, Perasa: Matcha, Perasa (Gram): 20	Produk baru muncul di daftar dengan status Aktif	Valid
+10	Data Produk (Resep)	Admin menambahkan produk tapi mengosongkan nama	Nama Produk dikosongkan, field lain diisi normal	Muncul pesan error "Nama produk wajib diisi"	Tidak Valid
+11	Data Produk (Resep)	Admin menonaktifkan salah satu produk	Mengklik tombol toggle pada produk Susu Kambing Original	Status produk berubah jadi Inaktif dan tidak bisa dipilih saat input aktivitas	Valid
+12	Data Produk (Resep)	Admin menghapus produk yang baru ditambahkan	Menekan tombol Hapus pada produk Susu Kambing Matcha (bukan data bawaan)	Produk hilang dari daftar tabel	Valid
+13	Aktivitas Karyawan	Admin mencatat aktivitas produksi harian karyawan secara batch	Tanggal: 2026-07-02, Bagian: Produksi, mengisi liter susu, gula, perasa, dan total produksi gram untuk beberapa karyawan	Seluruh data piket harian berhasil tersimpan, status Memenuhi/Kurang dan bonus otomatis terhitung	Valid
+14	Aktivitas Karyawan	Admin mencatat piket peternakan dengan jumlah setor susu melebihi target	Tanggal: 2026-07-02, Bagian: Peternakan, Liter Setor: 8 (target 5 liter)	Piket tersimpan dengan status Memenuhi, bonus dihitung dari selisih 3 liter x tarif bonus	Valid
+15	Aktivitas Karyawan	Admin mengirim form batch tanpa mengisi data satupun karyawan	Semua baris karyawan dibiarkan kosong, lalu klik Simpan	Muncul pesan "Tidak ada baris piket yang terisi"	Tidak Valid
+16	Aktivitas Karyawan	Admin mencatat aktivitas karyawan bagian Packing dengan kemasan rusak	Tanggal: 2026-07-02, Bagian: Packing, Sachet: 120, Plastik 250g: 5, Kemasan Rusak Sachet: 3	Piket tersimpan, potongan wastage otomatis terhitung (3 sachet x Rp250 = Rp750)	Valid
+17	Data Presensi	Admin membuka halaman presensi	Mengklik menu Presensi	Tabel menampilkan daftar kehadiran seluruh karyawan untuk periode default	Valid
+18	Data Presensi	Admin memfilter presensi berdasarkan tanggal tertentu	Tanggal Awal: 01-07-2026, Tanggal Akhir: 31-07-2026	Tabel hanya menampilkan data presensi bulan Juli 2026	Valid
+19	Data Presensi	Admin melihat detail presensi seorang karyawan	Mengklik tombol Detail pada karyawan Faisal Rahman	Muncul rincian jam masuk (08:00), jam keluar (20:00), dan jam lembur (4 jam) karyawan tersebut	Valid
+20	Data Presensi	Admin memfilter dengan rentang tanggal yang terbalik	Tanggal Awal: 31-07-2026, Tanggal Akhir: 01-07-2026	Sistem menolak filter atau menampilkan data kosong karena rentang tidak logis	Tidak Valid
+21	Gaji Pokok	Admin menambahkan tarif gaji pokok baru	Nama: Gaji Pokok per Shift, Tarif: Rp 120.000, Status: Aktif	Tarif baru berhasil ditambahkan ke daftar gaji pokok	Valid
+22	Gaji Pokok	Admin mengubah besaran tarif gaji pokok yang sudah ada	Mengedit "Gaji Pokok per Jam" dari Rp 15.000 menjadi Rp 18.000	Tarif berhasil diperbarui dan berlaku di perhitungan penggajian berikutnya	Valid
+23	Gaji Pokok	Admin menambahkan tarif gaji pokok dengan nominal negatif	Tarif diisi dengan -50000	Muncul pesan validasi "Tarif minimal 0"	Tidak Valid
+24	Gaji Pokok	Admin menonaktifkan tarif gaji pokok	Mengklik toggle pada "Gaji Pokok per Jam"	Status berubah jadi Inaktif dan tarif tersebut tidak diperhitungkan saat proses gaji	Valid
+25	Gaji Lembur	Admin mengubah tarif lembur per jam	Mengedit "Gaji Lembur per Jam" dari Rp 10.000 menjadi Rp 15.000	Tarif lembur berhasil diperbarui	Valid
+26	Gaji Lembur	Admin menambahkan tarif lembur baru tanpa mengisi nominal	Nama diisi, tapi kolom Tarif dibiarkan kosong	Muncul pesan validasi bahwa tarif wajib diisi	Tidak Valid
+27	Gaji Lembur	Admin menonaktifkan tarif lembur	Mengklik toggle status pada tarif lembur	Status jadi Inaktif, jam lembur tidak dihitung dalam komponen gaji	Valid
+28	Gaji Lembur	Admin mencoba menghapus tarif lembur bawaan sistem	Menekan tombol Hapus pada "Gaji Lembur per Jam" (data default)	Muncul pesan "Data bawaan sistem tidak dapat dihapus"	Tidak Valid
+29	Gaji Bonus	Admin menambahkan tipe bonus baru	Nama: Bonus Kerajinan, Batas Normal: 0, Satuan: Kali, Tarif: Rp 50.000, Keterangan: Bonus bulanan	Tipe bonus baru berhasil ditambahkan dengan status Aktif	Valid
+30	Gaji Bonus	Admin mengubah tarif bonus yang sudah ada	Mengedit tarif "Bonus Penggunaan Susu" dari Rp 2.500 menjadi Rp 3.000	Perubahan tarif berhasil disimpan	Valid
+31	Gaji Bonus	Admin mencoba menghapus bonus bawaan sistem	Menekan tombol Hapus pada "Bonus THR" (data default)	Muncul pesan "Data bawaan sistem tidak dapat dihapus"	Tidak Valid
+32	Gaji Bonus	Admin menonaktifkan tipe bonus tertentu	Mengklik toggle status pada "Bonus THR"	Status jadi Inaktif dan bonus tersebut tidak ikut dihitung saat proses penggajian	Valid
+33	Potongan Gaji	Admin menambahkan jenis potongan baru	Nama: Potongan Kasbon, Tarif: 100000, Tipe: Tetap	Data potongan baru muncul di daftar dengan status Aktif	Valid
+34	Potongan Gaji	Admin menambahkan potongan tanpa mengisi nama	Nama dikosongkan, Tarif: 50000, Tipe: Tetap	Muncul pesan validasi bahwa nama wajib diisi	Tidak Valid
+35	Potongan Gaji	Admin mengubah tarif potongan BPJS Kesehatan	Mengedit tarif dari 1% menjadi 1.5%	Tarif potongan berhasil diperbarui	Valid
+36	Potongan Gaji	Admin mencoba menghapus potongan bawaan sistem	Menekan tombol Hapus pada "Potongan BPJS Kesehatan" (data default)	Muncul pesan "Data bawaan sistem tidak dapat dihapus"	Tidak Valid
+37	Proses Penggajian	Admin memproses penggajian untuk bulan berjalan	Memilih periode Juli 2026, lalu klik Proses Penggajian	Sistem menghitung total gaji pokok, lembur, bonus, dan potongan untuk setiap karyawan, lalu menampilkan hasilnya	Valid
+38	Proses Penggajian	Admin melihat detail slip gaji seorang karyawan	Mengklik tombol Detail pada slip gaji Faisal Rahman	Muncul rincian: gaji pokok (jam x tarif), lembur (4 jam x tarif), bonus produksi, potongan BPJS, dan total Take Home Pay	Valid
+39	Proses Penggajian	Admin memproses penggajian untuk karyawan yang statusnya Inaktif	Karyawan Siti Aminah (Inaktif) dicek apakah ikut terproses	Karyawan Inaktif tetap muncul di daftar tetapi komponen gaji dihitung berdasarkan data presensi yang ada	Valid
+40	Proses Penggajian	Admin memproses penggajian saat semua tarif gaji pokok dinonaktifkan	Semua tarif gaji pokok di-set Inaktif, lalu proses penggajian	Total gaji pokok menjadi Rp 0 karena tidak ada tarif aktif yang bisa dipakai	Tidak Valid
+41	Laporan Penggajian	Admin menampilkan laporan penggajian bulan tertentu	Memilih filter Bulan: Juli, Tahun: 2026	Tabel menampilkan rekapitulasi gaji seluruh karyawan beserta komponen penambah dan pengurang	Valid
+42	Laporan Penggajian	Admin memfilter laporan untuk periode yang belum ada datanya	Memilih filter Bulan: Desember, Tahun: 2027	Tabel kosong atau muncul pemberitahuan "Data tidak ditemukan"	Valid
+43	Laporan Penggajian	Pimpinan mengakses menu laporan penggajian	Login sebagai pimpinan (username: pimpinan), lalu buka menu Laporan	Laporan bisa dilihat dan dicetak, tapi tidak ada tombol ubah atau hapus (hanya read-only)	Valid
+44	Laporan Penggajian	Admin mencetak laporan penggajian	Mengklik tombol Cetak / Download pada halaman laporan	File laporan berhasil di-generate atau jendela print terbuka dengan format yang rapi	Valid
+45	Kelola User	Admin menambahkan akun user baru	Nama: Staff Baru, Username: staffbaru, Password: staff123, Role: admin_penggajian, Status: Aktif	Akun baru berhasil dibuat dan bisa dipakai login	Valid
+46	Kelola User	Admin menambahkan akun dengan username yang sudah dipakai	Username: admingaji (sudah ada), field lain diisi normal	Muncul pesan "Username sudah digunakan!"	Tidak Valid
+47	Kelola User	Admin mengubah role dan status user lain	Mengedit user Pimpinan, role diganti ke admin_penggajian	Perubahan berhasil tersimpan, menu yang muncul saat user tersebut login menyesuaikan role baru	Valid
+48	Kelola User	Admin menghapus satu-satunya akun pimpinan aktif	Menekan Hapus pada user Pimpinan (satu-satunya pimpinan aktif)	Muncul pesan "Harus ada minimal 1 pimpinan yang aktif", data tidak terhapus	Tidak Valid

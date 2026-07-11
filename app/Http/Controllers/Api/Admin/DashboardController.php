@@ -9,7 +9,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        if (!session()->has('karyawan_data')) {
+        if (!session()->has('karyawan_data') || count(session('karyawan_data', [])) < count(KaryawanController::getInitialData()) || strpos(session('karyawan_data')[0]['npwp'] ?? '', '.') !== false) {
             session()->put('karyawan_data', KaryawanController::getInitialData());
         }
 
@@ -64,7 +64,7 @@ class DashboardController extends Controller
         $karyawanTanpaPresensi = array_values(array_filter($activeNames, fn($nama) => !isset($namaPresensi[$nama])));
         $presensiTanpaKaryawan = array_values(array_filter(array_keys($namaPresensi), fn($nama) => !in_array($nama, $namaKaryawan, true)));
 
-        $bagianCounts = ['Produksi' => 0, 'Peternakan' => 0];
+        $bagianCounts = ['Produksi' => 0, 'Peternakan' => 0, 'Packing' => 0];
         foreach ($activeKaryawan as $karyawan) {
             $bagian = $karyawan['bagian'] ?? 'Produksi';
             $bagianCounts[$bagian] = ($bagianCounts[$bagian] ?? 0) + 1;

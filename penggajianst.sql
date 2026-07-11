@@ -277,9 +277,9 @@ INSERT INTO `presensi` (`id_presensi`, `id_karyawan`, `tanggal`, `jam_masuk`, `j
 
 CREATE TABLE `produk_resep` (
   `id_produk` varchar(4) NOT NULL,
-  `nama_produk` varchar(100) NOT NULL,
-  `jumlah_standar` decimal(10,2) NOT NULL,
-  `satuan_produk` varchar(20) DEFAULT 'pcs',
+  `nama_produk` varchar(255) NOT NULL,
+  `target_produksi` decimal(10,2) NOT NULL,
+  `satuan_produk` varchar(50) NOT NULL,
   `susu_liter` decimal(10,2) DEFAULT '0.00',
   `gula_gram` decimal(10,2) DEFAULT '0.00',
   `perasa_jenis` varchar(50) DEFAULT NULL,
@@ -291,7 +291,7 @@ CREATE TABLE `produk_resep` (
 -- Dumping data for table `produk_resep`
 --
 
-INSERT INTO `produk_resep` (`id_produk`, `nama_produk`, `jumlah_standar`, `satuan_produk`, `susu_liter`, `gula_gram`, `perasa_jenis`, `perasa_gram`, `status`) VALUES
+INSERT INTO `produk_resep` (`id_produk`, `nama_produk`, `target_produksi`, `satuan_produk`, `susu_liter`, `gula_gram`, `perasa_jenis`, `perasa_gram`, `status`) VALUES
 ('PR01', 'Susu Kambing Original', '40.00', 'pcs / 1 kg', '5.00', '250.00', 'Vanila', '15.00', 'aktif'),
 ('PR02', 'Susu Kambing Jahe', '40.00', 'pcs / 1 kg', '5.00', '250.00', 'Jahe', '20.00', 'aktif'),
 ('PR03', 'Susu Kambing Coklat', '40.00', 'pcs / 1 kg', '5.00', '200.00', 'Coklat', '25.00', 'aktif'),

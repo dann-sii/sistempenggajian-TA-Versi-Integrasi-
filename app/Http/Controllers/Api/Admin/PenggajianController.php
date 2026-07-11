@@ -23,7 +23,7 @@ class PenggajianController extends Controller
 
     public function index()
     {
-        if (!session()->has('karyawan_data')) {
+        if (!session()->has('karyawan_data') || count(session('karyawan_data', [])) < count($this->getInitialData()) || strpos(session('karyawan_data')[0]['npwp'] ?? '', '.') !== false) {
             session()->put('karyawan_data', $this->getInitialData());
         }
 
@@ -60,6 +60,49 @@ class PenggajianController extends Controller
         }));
         $bonusProduksiMap = $this->buildBonusProduksiMap($gajiBonus);
 
+        // Akumulasi potongan wastage kemasan rusak untuk bagian Packing
+        $wastageDeductionsMap = [];
+        $aktivitasList = session('aktivitas_karyawan_data', []);
+        foreach ($aktivitasList as $row) {
+            if (empty($row['tanggal']) || empty($row['karyawan_id'])) {
+                continue;
+            }
+            if (($row['bagian'] ?? '') === 'Packing') {
+                $period = date('Y-m', strtotime($row['tanggal']));
+                $karyawanId = $row['karyawan_id'];
+
+                $sachetRusak = (int) ($row['sachet_rusak_qty'] ?? 0);
+                $plastik250Rusak = (int) ($row['plastik_250_rusak_qty'] ?? 0);
+                $plastik500Rusak = (int) ($row['plastik_500_rusak_qty'] ?? 0);
+                $plastik1000Rusak = (int) ($row['plastik_1000_rusak_qty'] ?? 0);
+
+                // Tarif potongan wastage: Sachet: Rp250, P.250g: Rp500, P.500g: Rp1000, P.1kg: Rp1500
+                $deduction = ($sachetRusak * 250) + ($plastik250Rusak * 500) + ($plastik500Rusak * 1000) + ($plastik1000Rusak * 1500);
+
+                if ($deduction > 0) {
+                    if (!isset($wastageDeductionsMap[$karyawanId][$period])) {
+                        $wastageDeductionsMap[$karyawanId][$period] = [
+                            'amount' => 0,
+                            'details' => [],
+                        ];
+                    }
+                    $wastageDeductionsMap[$karyawanId][$period]['amount'] += $deduction;
+
+                    $breakdown = [];
+                    if ($sachetRusak > 0) $breakdown[] = "Sachet: {$sachetRusak} x Rp250";
+                    if ($plastik250Rusak > 0) $breakdown[] = "P.250g: {$plastik250Rusak} x Rp500";
+                    if ($plastik500Rusak > 0) $breakdown[] = "P.500g: {$plastik500Rusak} x Rp1000";
+                    if ($plastik1000Rusak > 0) $breakdown[] = "P.1kg: {$plastik1000Rusak} x Rp1500";
+
+                    $wastageDeductionsMap[$karyawanId][$period]['details'][] = [
+                        'date' => date('d-m-Y', strtotime($row['tanggal'])),
+                        'amount' => $deduction,
+                        'description' => implode(', ', $breakdown)
+                    ];
+                }
+            }
+        }
+
         // Buat lookup karyawan_id => data untuk dipakai JS
         $karyawanLookup = [];
         foreach ($karyawans as $k) {
@@ -89,6 +132,7 @@ class PenggajianController extends Controller
                 'total_lembur' => $jamLemburDibayar * $gajiLemburAktif,
                 'lembur_aktif' => !$isPeternakan,
                 'bonus_produksi_by_period' => $bonusProduksiMap[$k['id']] ?? [],
+                'wastage_deductions_by_period' => $wastageDeductionsMap[$k['id']] ?? [],
             ];
         }
 
@@ -148,7 +192,7 @@ class PenggajianController extends Controller
                 $produk = $produkResep->firstWhere('nama_produk', $row['nama_produk']);
             }
 
-            if (!$produk || (float) $produk['jumlah_standar'] <= 0) {
+            if (!$produk || (float) $produk['target_produksi'] <= 0) {
                 continue;
             }
 
@@ -157,7 +201,7 @@ class PenggajianController extends Controller
                 continue;
             }
 
-            $factor = $jumlahProduksi / (float) $produk['jumlah_standar'];
+            $factor = $jumlahProduksi / (float) $produk['target_produksi'];
             $period = date('Y-m', strtotime($row['tanggal']));
             $date = $row['tanggal'];
             $karyawanId = $row['karyawan_id'];

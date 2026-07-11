@@ -18,9 +18,9 @@
                         <x-tabler-filter class="h-4 w-4" />
                     </div>
                     <select id="status-filter" class="w-full appearance-none bg-transparent pl-2 pr-10 py-2 text-carbon-black-300 font-bold uppercase tracking-wide text-xs cursor-pointer focus:outline-none">
-                        <option value="">Status</option>
-                        <option value="aktif" {{ request('status') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="aktif" {{ request('status', 'aktif') === 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="inaktif" {{ request('status') === 'inaktif' ? 'selected' : '' }}>Inaktif</option>
+                        <option value="semua" {{ request('status') === 'semua' ? 'selected' : '' }}>Semua Status</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-carbon-black-400 border-l border-carbon-black-100 ml-2">
                         <x-tabler-chevron-down class="h-4 w-4" />
@@ -44,7 +44,7 @@
     </div>
     
     @if(session('success'))
-        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg shadow-sm">
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg shadow-sm" id="toast-success">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <x-tabler-check class="h-5 w-5 text-emerald-500" />
@@ -56,6 +56,7 @@
                 </div>
             </div>
         </div>
+        <script>setTimeout(() => { let el = document.getElementById('toast-success'); if(el) { el.style.transition = 'opacity 0.5s'; el.style.opacity = '0'; setTimeout(() => el.style.display = 'none', 500); } }, 3000);</script>
     @endif
 
     <!-- Data Table Container -->
@@ -78,7 +79,7 @@
             <tbody class="divide-y divide-carbon-black-100">
                 @foreach($karyawan as $k)
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
-                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $k['id'] }}</td>
+                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $loop->iteration }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['nik'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $k['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>
@@ -89,6 +90,7 @@
                                 $bagianColor = match($k['bagian'] ?? '') {
                                     'Produksi' => 'bg-blue-50 text-blue-700 border-blue-200',
                                     'Peternakan' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                    'Packing' => 'bg-amber-50 text-amber-700 border-amber-200',
                                     default => 'bg-gray-50 text-gray-700 border-gray-200',
                                 };
                             @endphp
@@ -110,18 +112,34 @@
                         </td>
                         <td class="px-6 py-5 text-center">
                             <div class="flex items-center justify-center space-x-2">
-                                <button type="button" onclick='openDetailModal(@json($k))' class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-amber-200" title="Lihat">
+                                <button type="button" onclick='openDetailModal(@json($k))' class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-amber-200" title="Lihat">
                                     <x-tabler-eye class="w-4 h-4" />
                                     <span>Detail</span>
                                 </button>
-                                <button type="button" onclick='openEditModal(@json($k))' class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-blue-200" title="Edit">
-                                    <x-tabler-pencil class="w-4 h-4" />
-                                    <span>Ubah</span>
-                                </button>
-                                <button type="button" onclick="openDeleteModal({{ $k['id'] }}, '{{ addslashes($k['nama']) }}')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-red-200" title="Hapus">
-                                    <x-tabler-trash class="w-4 h-4" />
-                                    <span>Hapus</span>
-                                </button>
+                                @if($k['status'] === 'Aktif')
+                                    <button type="button" onclick='openEditModal(@json($k))' class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-blue-200" title="Edit">
+                                        <x-tabler-pencil class="w-4 h-4" />
+                                        <span>Ubah</span>
+                                    </button>
+                                @else
+                                    <button type="button" disabled class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-carbon-black-50 text-carbon-black-400 cursor-not-allowed opacity-80 text-xs font-bold uppercase tracking-wider border border-carbon-black-200" title="Data historis tidak dapat diubah">
+                                        <x-tabler-lock class="w-4 h-4" />
+                                        <span>Terkunci</span>
+                                    </button>
+                                @endif
+                                @if(isset($k['has_history']) && $k['has_history'])
+                                    @if($k['status'] === 'Aktif')
+                                        <button type="button" onclick="openStatusModal({{ $k['id'] }}, '{{ addslashes($k['nama']) }}')" class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-rose-200" title="Nonaktifkan">
+                                            <x-tabler-power class="w-4 h-4" />
+                                            <span>Nonaktif</span>
+                                        </button>
+                                    @endif
+                                @else
+                                    <button type="button" onclick="openDeleteModal({{ $k['id'] }}, '{{ addslashes($k['nama']) }}')" class="w-28 flex justify-center items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all shadow-sm group/btn text-xs font-bold uppercase tracking-wider border border-red-200" title="Hapus">
+                                        <x-tabler-trash class="w-4 h-4" />
+                                        <span>Hapus</span>
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -198,6 +216,7 @@
                             <option value="" disabled selected>Pilih Bagian</option>
                             <option value="Produksi">Produksi</option>
                             <option value="Peternakan">Peternakan</option>
+                            <option value="Packing">Packing</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
                             <x-tabler-chevron-down class="h-4 w-4" />
@@ -346,6 +365,7 @@
                         <select id="edit_bagian" name="bagian" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
                             <option value="Produksi">Produksi</option>
                             <option value="Peternakan">Peternakan</option>
+                            <option value="Packing">Packing</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
                             <x-tabler-chevron-down class="h-4 w-4" />
@@ -380,16 +400,14 @@
                         <input type="text" id="edit_no_rekening" name="no_rekening" required oninput="this.value=this.value.replace(/\D/g, '')" class="w-full px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50">
                     </div>
 
-                    <!-- STATUS -->
+                    <!-- STATUS (Read-only) -->
                     <div class="space-y-1.5 relative col-span-2">
-                        <label for="edit_status" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Status <span class="text-rose-500">*</span></label>
-                        <select id="edit_status" name="status" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Inaktif">Inaktif</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
-                            <x-tabler-chevron-down class="h-4 w-4" />
+                        <label class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Status</label>
+                        <div class="px-3 py-2.5 bg-carbon-black-50 border border-carbon-black-200 rounded-lg flex items-center shadow-sm w-max">
+                            <span id="edit_status_display" class="text-xs font-black uppercase tracking-widest text-carbon-black-800">-</span>
+                            <input type="hidden" id="edit_status" name="status" value="">
                         </div>
+                        <p class="text-[12.5px] text-carbon-black-400 mt-1">* Perubahan status dilakukan melalui tombol di halaman utama tabel.</p>
                     </div>
                 </div>
             </div>
@@ -432,6 +450,41 @@
                 <button type="submit" class="px-5 py-2.5 bg-rose-600 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-rose-700 hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
                     <x-tabler-trash class="w-4 h-4" />
                     Hapus
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Status Data Karyawan -->
+<div id="modal-status" class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-300">
+        <div class="px-6 py-5 border-b border-carbon-black-100 flex justify-between items-center">
+            <h3 id="modal_status_title" class="text-xl font-black uppercase tracking-wide text-carbon-black-900 flex items-center gap-2">
+                <x-tabler-power class="w-6 h-6" />
+                Ubah Status
+            </h3>
+            <button type="button" class="text-carbon-black-400 hover:text-rose-600 transition-colors" onclick="closeStatusModal()">
+                <x-tabler-x class="w-6 h-6" />
+            </button>
+        </div>
+        
+        <div class="px-6 py-6">
+            <p class="text-carbon-black-700 text-base font-medium text-center">
+                Apakah Anda yakin ingin <span id="status_action_text" class="font-bold"></span> karyawan <br> <span id="status_nama_karyawan" class="font-black text-carbon-black-900 text-lg mt-1 block"></span>
+            </p>
+            <p id="status_warning_text" class="text-sm text-carbon-black-500 text-center mt-3">
+                Karyawan yang nonaktif tidak dapat didaftarkan pada presensi dan penggajian.
+            </p>
+        </div>
+        
+        <form method="POST" id="form-status">
+            @csrf
+            @method('PATCH')
+            <div id="status_modal_footer" class="px-6 py-4 border-t flex justify-end space-x-3 rounded-b-xl">
+                <button type="button" class="px-5 py-2.5 bg-white border border-carbon-black-300 text-carbon-black-600 text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-carbon-black-100 transition-colors" onclick="closeStatusModal()">Batal</button>
+                <button type="submit" id="status_submit_btn" class="px-5 py-2.5 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md transition-all active:scale-95 flex items-center gap-2">
+                    Ya, Lanjutkan
                 </button>
             </div>
         </form>
@@ -644,7 +697,16 @@
         document.getElementById('edit_no_telp').value = data.no_telp !== '-' ? data.no_telp : '';
         document.getElementById('edit_bagian').value = data.bagian || 'Produksi';
         document.getElementById('edit_alamat').value = data.alamat || '';
-        document.getElementById('edit_status').value = data.status || 'Aktif';
+        
+        const stat = data.status || 'Aktif';
+        document.getElementById('edit_status').value = stat;
+        const statDisplay = document.getElementById('edit_status_display');
+        statDisplay.textContent = stat;
+        if(stat === 'Aktif') {
+            statDisplay.className = 'text-xs font-black uppercase tracking-widest text-emerald-700';
+        } else {
+            statDisplay.className = 'text-xs font-black uppercase tracking-widest text-rose-700';
+        }
 
         if(data.nama_bank) {
             editBankSelect.value = data.nama_bank;
@@ -705,6 +767,45 @@
         setTimeout(() => {
             deleteModal.classList.add('hidden');
             deleteModal.classList.remove('flex');
+        }, 300);
+    }
+
+    // Modal Status Control
+    const statusModal = document.getElementById('modal-status');
+    const statusModalInner = statusModal.querySelector('div');
+    
+    window.openStatusModal = function(id, nama) {
+        document.getElementById('form-status').action = '/karyawan/' + id + '/toggle-status';
+        document.getElementById('status_nama_karyawan').textContent = nama;
+        
+        document.getElementById('status_action_text').textContent = 'menonaktifkan';
+        
+        document.getElementById('modal_status_title').className = 'text-xl font-black uppercase tracking-wide flex items-center gap-2 text-rose-600';
+        document.getElementById('status_warning_text').textContent = 'Karyawan yang nonaktif tidak dapat didaftarkan pada presensi dan penggajian.';
+            
+        const footer = document.getElementById('status_modal_footer');
+        footer.className = 'px-6 py-4 border-t flex justify-end space-x-3 rounded-b-xl bg-rose-50 border-rose-100';
+        
+        const submitBtn = document.getElementById('status_submit_btn');
+        submitBtn.className = 'px-5 py-2.5 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md transition-all active:scale-95 flex items-center gap-2 bg-rose-600 hover:bg-rose-700';
+        submitBtn.innerHTML = '<svg class="w-4 h-4 icon icon-tabler icon-tabler-power" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 6a7.75 7.75 0 1 0 10 0" /><path d="M12 4l0 8" /></svg> Ya, Nonaktifkan';
+        
+        statusModal.classList.remove('hidden');
+        statusModal.classList.add('flex');
+        setTimeout(() => {
+            statusModal.classList.remove('opacity-0');
+            statusModalInner.classList.remove('scale-95');
+            statusModalInner.classList.add('scale-100');
+        }, 10);
+    }
+
+    window.closeStatusModal = function() {
+        statusModal.classList.add('opacity-0');
+        statusModalInner.classList.remove('scale-100');
+        statusModalInner.classList.add('scale-95');
+        setTimeout(() => {
+            statusModal.classList.add('hidden');
+            statusModal.classList.remove('flex');
         }, 300);
     }
 </script>

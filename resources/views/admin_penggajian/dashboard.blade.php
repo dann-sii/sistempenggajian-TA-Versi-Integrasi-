@@ -112,6 +112,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-5 transition-all hover:bg-hunter-green-50/30 hover:border-hunter-green-100 group">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-widest text-carbon-black-400">PACKING</p>
+                            <p class="mt-1 text-3xl font-black text-carbon-black-900">{{ $bagianCounts['Packing'] ?? 0 }}</p>
+                        </div>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-hunter-green-600 shadow-sm border border-slate-100 group-hover:border-hunter-green-200 transition-colors">
+                            <x-tabler-package class="h-6 w-6" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

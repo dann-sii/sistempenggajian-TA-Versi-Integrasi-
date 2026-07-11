@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - LAPORAN PENGGAJIAN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fafafa; color: #000000; font-family: monospace; zoom: 0.85; }
+        .wf-border { border: 2px solid #000000; }
+        .wf-box { border: 2px solid #000000; background-color: #ffffff; display: flex; align-items: center; justify-content: center; color: #000000; font-weight: bold; text-align: center; }
+        .wf-sidebar { width: 288px; min-height: 100vh; border-right: 2px solid #000000; background-color: #ffffff; position: fixed; left: 0; top: 0; }
+        .wf-header { height: 80px; border-bottom: 2px solid #000000; background-color: #ffffff; position: fixed; left: 288px; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+        .wf-menu-item { padding: 0.6rem 1rem; border: 2px solid transparent; border-radius: 0.5rem; margin-bottom: 0.25rem; font-weight: bold; cursor: default; font-size: 0.9rem; }
+        .wf-menu-item.active { border: 2px solid #000000; background-color: #f3f4f6; }
+        .wf-menu-item.active::before { content: ""; width: 4px; height: 1.5rem; background-color: #000; margin-right: 8px; border-radius: 9999px; }
+        .wf-menu-header { font-size: 0.75rem; color: #666; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px; }
+        table { border-collapse: collapse; width: 100%; text-align: center; margin-bottom: 1rem; }
+        th, td { border: 1px solid #000000; padding: 0.75rem; }
+        thead { border-bottom: 2px solid #000000; background-color: #f0f0f0; }
+    </style>
+</head>
+<body class="flex">
+    <!-- Sidebar (Fixed) -->
+    <div class="wf-sidebar flex flex-col justify-between p-6">
+        <div>
+            <!-- Profile Area -->
+            <div class="flex flex-col items-center pb-6 border-b-2 border-black mb-6">
+                <div class="w-20 h-20 rounded-full wf-box mb-4">FOTO</div>
+                <div class="text-xs uppercase tracking-widest text-gray-500">Selamat Datang</div>
+                <div class="font-bold text-sm uppercase">Admin</div>
+            </div>
+            
+            <!-- Menu -->
+            <nav class="space-y-1">
+                <div class="wf-menu-header">Menu Utama</div><div class="wf-menu-item ">- Dashboard</div><div class="wf-menu-item ">- Data Karyawan</div><div class="wf-menu-item ">- Data Presensi</div><div class="wf-menu-item ">- Data Produk</div><div class="wf-menu-item ">- Aktivitas Karyawan</div><div class="wf-menu-item ">- Gaji Pokok & Lembur</div><div class="wf-menu-item ">- Gaji Bonus</div><div class="wf-menu-item ">- Potongan Gaji</div><div class="wf-menu-item ">- Penggajian</div><div class="wf-menu-item active">- Laporan Penggajian</div>
+            </nav>
+        </div>
+        
+        <!-- Logout Button -->
+        <div class="wf-box p-3 cursor-default font-bold text-center uppercase tracking-wider">
+            KELUAR SISTEM
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="ml-72 flex-1 flex flex-col min-h-screen">
+        <!-- Header -->
+        <div class="wf-header px-8">
+            <div class="wf-box px-4 py-2 text-sm font-bold uppercase tracking-widest">Sahabat Ternak</div>
+            <div class="flex items-center space-x-6 text-sm">
+                <div class="flex items-center space-x-2 text-black font-bold border-r border-black pr-6">
+                    <span>--:--:--</span>
+                </div>
+                <div class="wf-box px-3 py-1 text-xs font-black uppercase">ADMIN</div>
+            </div>
+        </div>
+        
+        <!-- Page Content -->
+        <main class="flex-1 p-10 mt-20">
+            <div class="flex items-start justify-between gap-6 mb-8">
+                <div>
+                    <h1 class="text-2xl font-black uppercase tracking-tight border-l-4 border-black pl-3 py-0.5">
+                        LAPORAN PENGGAJIAN
+                    </h1>
+                </div>
+                
+            </div>
+            
+            
+<div class="grid grid-cols-6 gap-4 mb-6">
+    <div class="wf-border bg-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-500">Penerima Gaji</span>
+        <p class="text-2xl font-black mt-2">-</p>
+    </div>
+    <div class="wf-border bg-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-500">Gaji Pokok</span>
+        <p class="text-base font-black mt-2">Rp -</p>
+    </div>
+    <div class="wf-border bg-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-500">Total Lembur</span>
+        <p class="text-base font-black mt-2">Rp -</p>
+    </div>
+    <div class="wf-border bg-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-500">Total Bonus</span>
+        <p class="text-base font-black mt-2">Rp -</p>
+    </div>
+    <div class="wf-border bg-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-500">Total Potongan</span>
+        <p class="text-base font-black mt-2">Rp -</p>
+    </div>
+    <div class="wf-border bg-black text-white p-5">
+        <span class="text-[10px] font-black uppercase text-gray-300">Pengeluaran Gaji</span>
+        <p class="text-base font-black mt-2">Rp -</p>
+    </div>
+</div>
+
+<div class="wf-border bg-white p-4 mb-6">
+    <div class="grid grid-cols-[1.4fr_1fr_1fr_1fr_auto] gap-4 items-end">
+        <div>
+            <label class="text-xs font-bold text-gray-500 uppercase">Cari Laporan</label>
+            <div class="wf-box h-10 mt-1 justify-start px-3 text-xs">Nama / ID laporan / ID penggajian</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold text-gray-500 uppercase">Bulan</label>
+            <div class="wf-box h-10 mt-1 justify-start px-3 text-xs">Semua Bulan</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold text-gray-500 uppercase">Tahun</label>
+            <div class="wf-box h-10 mt-1 justify-start px-3 text-xs">Semua Tahun</div>
+        </div>
+        <div>
+            <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
+            <div class="wf-box h-10 mt-1 justify-start px-3 text-xs">Semua Status</div>
+        </div>
+        <button class="wf-box px-5 h-10 text-xs font-bold">EXCEL</button>
+    </div>
+</div>
+
+<div class="wf-border bg-white overflow-hidden">
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>ID LAPORAN</th>
+                <th>NAMA KARYAWAN</th>
+                <th>PERIODE</th>
+                <th>HARI KERJA</th>
+                <th>LEMBUR</th>
+                <th>TOTAL BERSIH</th>
+                <th>STATUS</th>
+                <th>AKSI</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td class="text-left">-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Rp -</td>
+                <td><div class="wf-box text-xs px-2 py-0.5 inline-block">[Status]</div></td>
+                <td><div class="wf-box w-12 h-6 text-xs mx-auto cursor-default">SLIP</div></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+        </main>
+    </div>
+</body>
+</html>

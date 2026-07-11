@@ -1,0 +1,54 @@
+# Peningkatan Sistem Penggajian (Standar Tugas Akhir)
+
+Dokumen ini berisi rencana perombakan dan penambahan fitur pada Sistem Penggajian v1.0 agar memiliki kompleksitas yang layak untuk dijadikan sistem Tugas Akhir (TA) dan mematahkan argumen bahwa sistem ini "bisa dikerjakan di Excel".
+
+## Latar Belakang & Solusi
+Berdasarkan masukan dari dosen penguji, sistem saat ini dinilai terlalu sederhana (mirip fungsi Excel) karena masih mengandalkan input manual dari Admin untuk data yang seharusnya dinamis (presensi dan aktivitas). 
+
+Solusi utama dari masalah ini adalah **Desentralisasi Input Data** dan **Otomatisasi Alur Kerja (Workflow)**. Kita akan membuat sistem bekerja untuk Admin, bukan Admin bekerja untuk sistem.
+
+## Proposed Changes (Rencana Perubahan)
+
+### 1. Fitur "Self-Service" Portal Karyawan
+Untuk memecahkan masalah presensi manual (Komentar 1) dan kertas piket (Komentar 2), kita wajib menambahkan hak akses (Role) baru: **Karyawan**.
+
+- **Modul Login Karyawan**: Karyawan memiliki akun masing-masing untuk masuk ke sistem (melalui HP atau Komputer).
+- **Modul Presensi Digital (Clock In / Clock Out)**: 
+  - Karyawan menekan tombol "Absen Masuk" dan "Absen Pulang" langsung di sistem.
+  - *Sistem akan mencatat waktu server secara otomatis (tidak bisa dimanipulasi Karyawan).*
+  - **Nilai Plus TA**: Kita bisa menambahkan fitur pencatatan titik lokasi (Geolocation/GPS) saat mereka absen, sehingga ketahuan jika mereka absen dari rumah.
+- **Modul Input Aktivitas Harian**:
+  - Karyawan menginput sendiri pekerjaannya hari itu ke dalam sistem sebelum "Absen Pulang". 
+  - **Penyelesaian Masalah**: Ini menghilangkan kebutuhan kertas piket dan menghilangkan beban Admin (Admin tidak perlu input 2x). Teman Anda dengan sistem inventorinya pun tidak perlu diganggu gugat.
+
+### 2. Alur Validasi (Workflow) & Otomatisasi
+Ini adalah fitur yang membedakan sistem informasi dengan Microsoft Excel (Komentar 3). Excel tidak memiliki sistem persetujuan (approval) berjenjang yang aman.
+
+- **Validasi Aktivitas & Presensi (Oleh Admin/Pimpinan)**: 
+  - Admin bertugas mereview dan meng-klik tombol "Validasi/Setujui" pada aktivitas yang disubmit karyawan.
+- **Perhitungan Denda Keterlambatan Otomatis**:
+  - Jika jam masuk shift adalah 08:00, dan karyawan klik "Absen Masuk" jam 08:30, sistem *otomatis* menghitung denda keterlambatan yang akan langsung memotong Gaji.
+- **Kalkulasi Gaji 1-Klik**:
+  - Di akhir bulan, Admin cukup klik "Generate Gaji". Sistem akan otomatis menjumlahkan Gaji Pokok + Bonus - (Denda Terlambat + Potongan Absen) berdasarkan data presensi valid bulan tersebut.
+
+### 3. Reporting & Output Tingkat Lanjut
+- **Cetak Slip Gaji PDF**: Fitur otomatis men-generate file PDF Slip Gaji untuk tiap karyawan yang bisa didownload.
+- **Dashboard Analitik**: Menampilkan grafik (Chart.js/ApexCharts) tren pengeluaran gaji, tingkat kehadiran karyawan, dll. (Sangat disukai dosen penguji).
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Keputusan Desain:**
+> Apakah Anda setuju dengan penambahan akses/login untuk **Karyawan**? Ini adalah kunci utama untuk menyelamatkan sistem Anda. Dengan adanya portal Karyawan, sistem Anda berubah dari sekadar "Aplikasi Kalkulator Gaji" menjadi "Sistem Manajemen SDM / HRIS" yang sesungguhnya.
+
+> [!TIP]
+> **Terkait Sistem Teman Anda:**
+> Kita pisahkan saja sepenuhnya. Aktivitas Karyawan murni dicatat oleh Karyawan di sistem ini sebagai syarat mereka menerima gaji. Tidak perlu ada integrasi API/Database dengan sistem inventori teman Anda untuk saat ini.
+
+## Verification Plan
+1. Membuat Seeder & Factory untuk akun Karyawan (agar bisa didemokan langsung).
+2. Membangun halaman Dashboard & Presensi khusus Karyawan.
+3. Mengubah fungsi AktivitasKaryawanController agar Admin hanya berlaku sebagai *Approver*.
+4. Memastikan relasi database terhubung dengan baik sehingga saat demo, perhitungan gaji benar-benar berjalan otomatis dari awal (Absen) sampai akhir (Slip Gaji).

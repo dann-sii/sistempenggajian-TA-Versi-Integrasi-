@@ -54,8 +54,8 @@ class KaryawanController extends Controller
 
         $allKaryawan = $this->withDefaultBagian(session('karyawan_data'));
 
-        $status = $request->query('status');
-        if ($status) {
+        $status = $request->query('status', 'aktif');
+        if ($status && $status !== 'semua') {
             $allKaryawan = array_values(array_filter($allKaryawan, function ($k) use ($status) {
                 return strtolower($k['status']) === strtolower($status);
             }));

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fafafa; color: #000000; font-family: monospace; zoom: 0.85; }
+        .wf-border { border: 2px solid #000000; }
+        .wf-box { border: 2px solid #000000; background-color: #ffffff; display: flex; align-items: center; justify-content: center; color: #000000; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-[460px] rounded-[32px] overflow-hidden wf-border shadow-md">
+        <!-- Oval Header Block -->
+        <div class="relative w-full h-[150px] border-b-2 border-black flex items-center justify-center bg-gray-50" style="border-radius: 0 0 50% 50% / 0 0 40px 40px;">
+            <div class="w-[110px] h-[110px] bg-white rounded-full absolute -bottom-12 z-10 wf-border flex items-center justify-center font-bold text-xs uppercase">
+                LOGO
+            </div>
+        </div>
+        
+        <!-- Form Fields -->
+        <div class="px-8 pt-16 pb-8">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-black uppercase tracking-tight">SAHABAT TERNAK</h1>
+                <p class="text-sm font-bold text-gray-500 mt-1 uppercase">Masukkan akun anda</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- Username -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-widest pl-1">ID Pengguna / Email</label>
+                    <div class="wf-box w-full py-3 justify-start px-4 text-xs text-gray-400 font-bold uppercase">
+                        [ID PENGGUNA]
+                    </div>
+                </div>
+                
+                <!-- Password -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center pl-1 pr-1">
+                        <label class="block text-xs font-bold uppercase tracking-widest">Kata Sandi</label>
+                        <span class="text-xs font-bold uppercase">Lupa sandi?</span>
+                    </div>
+                    <div class="wf-box w-full py-3 justify-start px-4 text-xs text-gray-400 font-bold uppercase">
+                        [KATA SANDI]
+                    </div>
+                </div>
+                
+                <!-- Submit -->
+                <div class="pt-2">
+                    <button class="w-full bg-black text-white py-3.5 font-bold text-sm uppercase tracking-widest flex justify-center items-center gap-2">
+                        <span>MASUK</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center text-xs font-bold text-gray-400 tracking-wider">
+                <p>&copy; 2026 PT. Sahabat Ternak</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

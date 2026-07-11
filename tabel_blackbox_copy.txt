@@ -1,0 +1,49 @@
+Fitur	Skenario Pengujian	Data Input	Hasil yang Diharapkan	Valid/Tidak
+Login (Otentikasi)	Login dengan kredensial yang benar	Email: admin@gmail.com, Password: password123	Sistem mengarahkan user masuk ke halaman Dashboard sesuai dengan role (Admin/Pimpinan).	Valid
+Login (Otentikasi)	Login dengan password salah	Email: admin@gmail.com, Password: salah123	Sistem menolak masuk dan menampilkan pesan error "Password salah".	Tidak Valid
+Login (Otentikasi)	Login dengan email tidak terdaftar	Email: tidakada@gmail.com, Password: bebas	Sistem menolak masuk dan menampilkan pesan error "Email tidak terdaftar/ditemukan".	Tidak Valid
+Login (Otentikasi)	Login tanpa mengisi data form	Email: (kosong), Password: (kosong)	Validasi form mencegah submit dan menampilkan pesan peringatan "Email dan password wajib diisi".	Tidak Valid
+Kelola Data Karyawan	Menambah karyawan baru dengan data lengkap	Form NIK, Nama, Email, No. HP, Jabatan, dan Status diisi dengan lengkap dan benar.	Data karyawan baru berhasil disimpan ke dalam database dan tampil di tabel daftar karyawan.	Valid
+Kelola Data Karyawan	Menambah karyawan dengan form wajib dikosongkan	Form 'Nama Karyawan' atau 'NIK' dikosongkan saat disimpan.	Muncul notifikasi error validasi bahwa field tersebut wajib diisi.	Tidak Valid
+Kelola Data Karyawan	Mengubah data jabatan karyawan	Mengganti jabatan pada salah satu karyawan dan menyimpannya.	Perubahan tersimpan dan jabatan baru tampil pada daftar karyawan.	Valid
+Kelola Data Karyawan	Menghapus data karyawan	Menekan tombol "Hapus" pada karyawan uji coba.	Data terhapus dari sistem (atau di-soft delete) dan hilang dari tampilan tabel.	Valid
+Kelola Data Produk	Menambah master data produk	Form Nama Produk, Satuan, dan Harga diisi sesuai format.	Data produk berhasil disimpan dan status default aktif.	Valid
+Kelola Data Produk	Menambah produk dengan nominal huruf	Form Harga diisi dengan karakter huruf (contoh: "lima ribu").	Sistem menolak dengan error validasi "Harga harus berupa angka".	Tidak Valid
+Kelola Data Produk	Menonaktifkan (Toggle) status produk	Menekan tombol switch/toggle status aktif ke non-aktif.	Status produk menjadi non-aktif dan produk tersebut tidak bisa dipilih saat input aktivitas karyawan.	Valid
+Kelola Data Produk	Menghapus data produk	Menekan tombol "Hapus" pada data produk.	Data produk hilang dari daftar tabel.	Valid
+Aktivitas Karyawan	Input aktivitas tunggal	Pilih nama karyawan, pilih produk, dan isi quantity hasil (misal: 100).	Data aktivitas berhasil ditambahkan dan nominal nilai upah terhitung dari produk.	Valid
+Aktivitas Karyawan	Input aktivitas Batch (Banyak karyawan)	Memilih beberapa karyawan sekaligus untuk aktivitas atau produk yang sama.	Riwayat aktivitas tersimpan pada seluruh karyawan yang dipilih dengan nilai yang sama.	Valid
+Aktivitas Karyawan	Input aktivitas dengan Quantity nol (0)	Form jumlah / quantity hasil kerja diisi dengan angka 0.	Sistem menolak karena minimum input quantity aktivitas tidak boleh 0.	Tidak Valid
+Aktivitas Karyawan	Input aktivitas tanpa memilih produk	Pilihan dropdown produk dibiarkan kosong.	Sistem menolak proses dan memunculkan notifikasi "Pilih produk terlebih dahulu".	Tidak Valid
+Data Presensi	Melihat daftar presensi bulan berjalan	Membuka menu Presensi Karyawan.	Tabel menampilkan rekap absen seluruh karyawan pada bulan yang sedang aktif.	Valid
+Data Presensi	Filter data presensi berdasar periode	Memasukkan input Tanggal Awal (01-05-2026) dan Tanggal Akhir (31-05-2026).	Tabel memperbarui tampilan hanya untuk data presensi di periode tersebut.	Valid
+Data Presensi	Filter dengan periode terbalik	Input Tanggal Awal (10 Mei) dan Tanggal Akhir (1 Mei).	Sistem menolak filter dan memunculkan error validasi "Tanggal akhir tidak boleh lebih kecil dari tanggal awal".	Tidak Valid
+Data Presensi	Melihat detail presensi karyawan	Menekan tombol Detail pada salah satu karyawan.	Menampilkan daftar lengkap rincian jam masuk/keluar karyawan tersebut di periode terkait.	Valid
+Kelola Gaji Pokok	Menambah standar gaji pokok baru	Form Golongan/Jabatan dan nominal Gaji Pokok (Misal: 3.000.000) diisi valid.	Data standar gaji pokok berhasil ditambahkan.	Valid
+Kelola Gaji Pokok	Menambah gaji pokok dengan nominal negatif	Nominal Gaji Pokok diisi dengan angka -500000.	Sistem menolak karena nominal gaji tidak boleh kurang dari 0.	Tidak Valid
+Kelola Gaji Pokok	Menonaktifkan (Toggle) status gaji pokok	Mengklik tombol aktif/non-aktif pada salah satu standar gaji.	Standar gaji non-aktif tidak akan otomatis terpakai di penggajian masa depan.	Valid
+Kelola Gaji Pokok	Mengupdate nominal gaji pokok	Mengubah nominal gaji pokok lama menjadi tarif baru dan menyimpannya.	Tarif berubah dan akan berlaku di periode penggajian selanjutnya.	Valid
+Kelola Gaji Lembur	Mengupdate standar rate upah lembur	Nominal upah per jam diubah (misal jadi Rp. 20.000) dan disimpan.	Nominal berhasil diperbarui di sistem.	Valid
+Kelola Gaji Lembur	Menambah upah lembur tanpa nominal	Nominal dikosongkan.	Sistem memvalidasi dan menolak form "Nominal lembur wajib diisi".	Tidak Valid
+Kelola Gaji Lembur	Menonaktifkan tipe lembur	Mengklik switch status ke non-aktif.	Lembur jenis tersebut tidak dihitung dalam proses kalkulasi penggajian.	Valid
+Kelola Gaji Lembur	Menghapus tarif gaji lembur	Menekan tombol hapus pada jenis lembur tertentu.	Tipe lembur tersebut terhapus dari daftar master lembur.	Valid
+Kelola Gaji Bonus	Menambah tipe bonus baru	Nama bonus (THR), Keterangan, dan Nominal diisi dengan lengkap.	Tipe bonus berhasil dibuat dan aktif.	Valid
+Kelola Gaji Bonus	Update tipe bonus	Mengubah nominal dari suatu jenis bonus.	Perubahan nominal bonus berhasil disimpan.	Valid
+Kelola Gaji Bonus	Menambah bonus dengan nama ganda/duplikat	Menambah bonus dengan nama "THR" padahal sebelumnya tipe "THR" sudah terdaftar dan aktif.	Sistem menolak jika ada validasi unik, atau memperingatkan admin "Tipe bonus sudah ada".	Tidak Valid
+Kelola Gaji Bonus	Menonaktifkan gaji bonus	Menekan tombol non-aktif pada bonus tertentu.	Bonus tersebut tidak akan terakumulasi otomatis ke komponen penerimaan karyawan saat proses gaji.	Valid
+Potongan Gaji	Menambah jenis potongan baru	Nama potongan "Kasbon", dan nominal (Rp. 100.000) diisi benar.	Data master potongan baru berhasil tercatat.	Valid
+Potongan Gaji	Menambah potongan tanpa mengisi nama	Nama potongan dikosongkan dan langsung di-submit.	Muncul peringatan "Nama potongan wajib diisi".	Tidak Valid
+Potongan Gaji	Mengubah (Edit) nominal potongan	Nominal potongan "Telat" diubah dan disimpan.	Perubahan berhasil disimpan di master data potongan.	Valid
+Potongan Gaji	Menghapus potongan gaji	Menekan tombol hapus pada salah satu potongan (yang belum terelasi/terproses).	Data master potongan terhapus dari tabel.	Valid
+Proses Penggajian	Generate Penggajian karyawan	Memilih Periode Bulan & Tahun lalu klik "Proses Penggajian".	Sistem berhasil mengkalkulasi komponen Penambah (Gaji pokok+lembur+bonus) dan Pengurang (potongan) untuk seluruh karyawan di bulan tersebut.	Valid
+Proses Penggajian	Generate gaji di periode yang sudah pernah diproses	Memilih periode bulan yang mana slip gaji karyawannya sudah digenerate sebelumnya.	Sistem menolak memproses ulang/mencegah duplikasi dengan pesan "Penggajian periode ini sudah diproses!".	Tidak Valid
+Proses Penggajian	Melihat detail / Slip Gaji	Mengklik tombol Detail/Slip pada karyawan yang sudah dihitung gajinya.	Sistem menampilkan rincian/struk slip gaji (Take Home Pay) milik karyawan tersebut dengan akurat.	Valid
+Proses Penggajian	Cetak/Cetak PDF Slip Gaji	Menekan tombol Download/Cetak PDF pada slip gaji karyawan.	Sistem meng-generate file berekstensi .pdf atau melakukan aksi Print dengan format yang rapi.	Valid
+Laporan Penggajian	Menampilkan rekap laporan periode tertentu	Memilih filter "Mei", Tahun "2026", lalu klik Filter.	Tabel menampilkan rincian penerimaan dan potongan seluruh karyawan secara kolektif di bulan tersebut.	Valid
+Laporan Penggajian	Filter periode bulan depan (belum ada data)	Filter diset pada periode yang belum digenerate gajinya.	Tabel menampilkan pemberitahuan "Data Tidak Ditemukan" atau kosong.	Valid
+Laporan Penggajian	Cetak laporan rekap bulanan	Klik tombol Cetak / Download Excel laporan penggajian.	Berkas excel / PDF rekapitulasi nominal gaji seluruh karyawan terunduh.	Valid
+Laporan Penggajian	Akses Laporan oleh Role Pimpinan	Login menggunakan akun pimpinan dan masuk ke menu laporan.	Role Pimpinan hanya bisa melihat (View Only) dan mencetak tanpa tombol ubah/hapus (Sesuai dengan Hak Akses).	Valid
+Kelola User / Akun	Menambah akun pengguna (Admin/Pimpinan)	Form Nama, Role, Email baru, dan Password diisi dengan valid.	Akun baru berhasil dibuat dan dapat digunakan untuk login.	Valid
+Kelola User / Akun	Menambah akun dengan email duplikat	Mengisi form tambah akun menggunakan Email yang sudah ada di database.	Sistem menolak form dengan pesan "Email ini sudah terdaftar/digunakan".	Tidak Valid
+Kelola User / Akun	Ubah / Edit Role Pengguna	Mengganti Role dari akun Pimpinan menjadi Admin lalu disave.	Perubahan sukses dan fitur/menu yang muncul saat user tersebut login menyesuaikan hak akses Admin.	Valid
+Kelola User / Akun	Hapus akun sendiri (Self-Delete)	Admin mencoba menghapus data akunnya sendiri yang sedang dipakai login.	Sistem menolak atau menyembunyikan tombol hapus untuk mencegah pengguna menghapus diri sendiri.	Tidak Valid

@@ -199,8 +199,8 @@ class LaporanPenggajianController extends Controller
         }, $allLaporan);
 
         $search = $request->input('search');
-        $bulan = $request->input('bulan');
-        $tahun = $request->input('tahun');
+        $bulan = $request->has('bulan') ? $request->input('bulan') : date('m');
+        $tahun = $request->has('tahun') ? $request->input('tahun') : date('Y');
         $status = $request->input('status');
 
         if ($search) {
