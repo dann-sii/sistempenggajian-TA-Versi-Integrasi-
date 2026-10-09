@@ -118,6 +118,10 @@ class PenggajianController extends Controller
                 ? $hariKerja * $tarifGajiPokok
                 : $jamPokok * $tarifGajiPokok;
             $jamLemburDibayar = $isPeternakan ? 0 : $jamLembur;
+            $namaBank = $k['nama_bank'] ?? 'Tidak Memiliki';
+            $noRekening = $k['no_rekening'] ?? '-';
+            $hasBank = !empty($namaBank) && strtolower($namaBank) !== 'tidak memiliki' && !empty($noRekening) && $noRekening !== '-';
+            $metodePembayaran = $hasBank ? 'Transfer Bank' : 'Tunai';
 
             $karyawanLookup[$k['id']] = [
                 'nama'        => $k['nama'],
@@ -131,6 +135,9 @@ class PenggajianController extends Controller
                 'tarif_lembur' => $gajiLemburAktif,
                 'total_lembur' => $jamLemburDibayar * $gajiLemburAktif,
                 'lembur_aktif' => !$isPeternakan,
+                'nama_bank'   => $namaBank,
+                'no_rekening' => $noRekening,
+                'metode_pembayaran' => $metodePembayaran,
                 'bonus_produksi_by_period' => $bonusProduksiMap[$k['id']] ?? [],
                 'wastage_deductions_by_period' => $wastageDeductionsMap[$k['id']] ?? [],
             ];

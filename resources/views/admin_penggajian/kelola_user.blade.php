@@ -125,7 +125,7 @@
                                 <td
                                     class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">
                                     {{ $loop->iteration }}</td>
-                                <td class="px-6 py-5 text-center text-base font-black text-carbon-black-900">{{ $user['nama'] }}
+                                <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $user['nama'] }}
                                 </td>
                                 <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">
                                     {{ $user['username'] }}</td>
@@ -176,7 +176,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-8 text-center text-carbon-black-500 font-medium">Tidak ada data
+                                <td colspan="6" class="px-6 py-8 text-center text-carbon-black-500 text-base font-semibold">Tidak ada data
                                     pengguna yang ditemukan.</td>
                             </tr>
                         @endforelse

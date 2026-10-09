@@ -38,8 +38,8 @@ class KaryawanController extends Controller
     private function withDefaultBagian(array $karyawans): array
     {
         return array_map(function ($k) {
-            if (!isset($k['bagian'])) {
-                $k['bagian'] = ((int) $k['id'] <= 12) ? 'Produksi' : 'Peternakan';
+            if (!isset($k['bagian']) || $k['bagian'] === 'Peternakan') {
+                $k['bagian'] = ((int) $k['id'] <= 16) ? 'Produksi' : 'Packing';
             }
 
             return $k;

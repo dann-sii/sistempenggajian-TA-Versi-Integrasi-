@@ -109,7 +109,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-sm font-bold text-carbon-black-500">
+                            <td colspan="5" class="px-6 py-10 text-center text-base font-semibold text-carbon-black-500">
                                 @if(!empty($search))
                                     Tidak ada data gaji pokok yang cocok dengan pencarian "{{ $search }}".
                                 @else
@@ -201,7 +201,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-sm font-bold text-carbon-black-500">
+                            <td colspan="6" class="px-6 py-10 text-center text-base font-semibold text-carbon-black-500">
                                 @if(!empty($search))
                                     Tidak ada data gaji lembur yang cocok dengan pencarian "{{ $search }}".
                                 @else

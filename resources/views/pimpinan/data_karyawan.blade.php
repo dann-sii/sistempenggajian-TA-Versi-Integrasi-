@@ -58,7 +58,7 @@
             <tbody class="divide-y divide-carbon-black-100">
                 @foreach($karyawan as $k)
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
-                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ ($page - 1) * 10 + $loop->iteration }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['nik'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $k['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>

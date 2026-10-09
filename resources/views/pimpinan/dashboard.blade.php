@@ -110,17 +110,17 @@
             <table class="w-full border-collapse">
                 <thead class="bg-carbon-black-50 text-carbon-black-600 border-b border-carbon-black-100">
                     <tr>
-                        <th class="px-8 py-4 text-left text-xs font-black uppercase tracking-widest">Nama</th>
-                        <th class="px-8 py-4 text-center text-xs font-black uppercase tracking-widest">Jam Lembur</th>
-                        <th class="px-8 py-4 text-right text-xs font-black uppercase tracking-widest">Estimasi Biaya</th>
+                        <th class="px-8 py-4 text-left text-sm font-black uppercase tracking-wider">Nama</th>
+                        <th class="px-8 py-4 text-center text-sm font-black uppercase tracking-wider">Jam Lembur</th>
+                        <th class="px-8 py-4 text-right text-sm font-black uppercase tracking-wider">Estimasi Biaya</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-carbon-black-100">
                     @foreach($topLembur as $item)
                         <tr class="hover:bg-carbon-black-50 transition-colors">
-                            <td class="px-8 py-4 text-sm font-bold text-carbon-black-800">{{ $item['nama'] }}</td>
-                            <td class="px-8 py-4 text-center text-sm font-black text-hunter-green-700">{{ number_format($item['jam_lembur'], 1, ',', '.') }} Jam</td>
-                            <td class="px-8 py-4 text-right text-sm font-black text-rose-600">Rp {{ number_format($item['nominal'], 0, ',', '.') }}</td>
+                            <td class="px-8 py-4 text-base font-semibold text-carbon-black-800">{{ $item['nama'] }}</td>
+                            <td class="px-8 py-4 text-center text-base font-black text-hunter-green-700">{{ number_format($item['jam_lembur'], 1, ',', '.') }} Jam</td>
+                            <td class="px-8 py-4 text-right text-base font-black text-rose-600">Rp {{ number_format($item['nominal'], 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

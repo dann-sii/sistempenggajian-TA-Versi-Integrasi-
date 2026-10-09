@@ -143,33 +143,33 @@
                     <table class="min-w-[1100px] w-full border-collapse">
                         <thead class="bg-carbon-black-50 text-carbon-black-600">
                             <tr class="border-b border-carbon-black-200">
-                                <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest w-16">No</th>
-                                <th class="px-4 py-4 text-left text-xs font-black uppercase tracking-widest">Karyawan</th>
+                                <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider w-16">No</th>
+                                <th class="px-4 py-4 text-left text-sm font-black uppercase tracking-wider">Karyawan</th>
                                 @if($selectedBagian === 'Produksi')
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Susu (Liter)
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Rasa</th>
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Susu (Liter)
                                     </th>
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Gula (Gram)
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Gula (Gram)
                                     </th>
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Rasa</th>
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Perasa (Gram)
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Perasa (Gram)
                                     </th>
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Hasil
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Hasil
                                         Produksi (Gram)</th>
                                  @elseif($selectedBagian === 'Packing')
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Sachet 25 Gram</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 250 Gram</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 500 Gram</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 1 Kilogram</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Sachet Rusak</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 250g Rusak</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 500g Rusak</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-36">Plastik 1kg Rusak</th>
-                                     <th class="px-2 py-4 text-center text-xs font-black uppercase tracking-widest w-40">Total Kemasan (Gram)</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Sachet 25 Gram</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 250 Gram</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 500 Gram</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 1 Kilogram</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Sachet Rusak</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 250g Rusak</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 500g Rusak</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-36">Plastik 1kg Rusak</th>
+                                     <th class="px-2 py-4 text-center text-sm font-black uppercase tracking-wider w-40">Total Kemasan (Gram)</th>
                                 @else
-                                    <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Susu Disetor
+                                    <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Susu Disetor
                                         (Liter)</th>
                                 @endif
-                                <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-widest">Status
+                                <th class="px-4 py-4 text-center text-sm font-black uppercase tracking-wider">Status
                                     Capaian</th>
                             </tr>
                         </thead>
@@ -183,16 +183,24 @@
                                     $isPastDate = $selectedTanggal < date('Y-m-d');
                                     $isLocked = $isActive;
                                     $inputClass = $isLocked ? 'bg-carbon-black-100 text-carbon-black-500 cursor-not-allowed border-transparent shadow-inner' : 'bg-carbon-black-50 text-carbon-black-800 border-carbon-black-200 focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20';
+
+                                    $selectedRasa = $existing['perasa_jenis'] ?? '';
+                                    $matchedResep = $selectedRasa ? collect($produkResep)->firstWhere('perasa_jenis', $selectedRasa) : null;
+                                    $susuPlaceholder = $matchedResep ? "Std: {$matchedResep['susu_liter']} L" : "Jml Susu";
+                                    $gulaPlaceholder = $matchedResep ? "Std: {$matchedResep['gula_gram']} g" : "Jml Gula";
+                                    $perasaPlaceholder = $matchedResep ? "Std: {$matchedResep['perasa_gram']} g" : "Jml Perasa";
+                                    $actualPlaceholder = $matchedResep ? "Std: {$matchedResep['target_produksi']} g" : "Hasil Kemas (g)";
+                                    $rowTarget = $matchedResep['target_produksi'] ?? ($targets['produksi_tp_gram'] ?? 3000);
                                 @endphp
                                 <tr class="piket-row transition-all duration-200 hover:bg-hunter-green-50/50 {{ $isActive ? 'bg-hunter-green-50/30 shadow-sm border-y border-hunter-green-200' : '' }}"
-                                    data-target="{{ $selectedBagian === 'Produksi' ? $targets['produksi_tp_gram'] : ($selectedBagian === 'Packing' ? $targets['packing_gram'] : $targets['peternakan_liter']) }}">
+                                    data-target="{{ $selectedBagian === 'Produksi' ? $rowTarget : ($selectedBagian === 'Packing' ? $targets['packing_gram'] : $targets['peternakan_liter']) }}">
                                     <td
-                                        class="bg-carbon-black-50/50 px-4 py-4 text-center text-sm font-black text-hunter-green-700">
+                                        class="bg-carbon-black-50/50 px-4 py-4 text-center text-base font-bold text-hunter-green-700">
                                         {{ $index + 1 }}</td>
                                     <td class="px-4 py-4">
                                         <div class="flex items-start justify-between gap-2">
                                             <div>
-                                                <p class="text-sm font-black text-carbon-black-900">{{ $karyawan['nama'] }}</p>
+                                                <p class="text-base font-semibold text-carbon-black-900">{{ $karyawan['nama'] }}</p>
                                                 <p class="mt-0.5 text-xs font-semibold text-carbon-black-400">NIK: {{ $karyawan['nik'] }}</p>
                                             </div>
                                             @if($isLocked && !$isPastDate)
@@ -208,18 +216,6 @@
                                     </td>
 
                                      @if($selectedBagian === 'Produksi')
-                                         <td class="px-3 py-4 text-center">
-                                             <input type="number" min="0" step="0.01"
-                                                 name="entries[{{ $karyawan['id'] }}][liter_susu]"
-                                                 value="{{ $existing['liter_susu'] ?? '' }}" placeholder="Jml Susu"
-                                                 class="piket-input piket-susu w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-300 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
-                                         </td>
-                                         <td class="px-3 py-4 text-center">
-                                             <input type="number" min="0" step="0.01"
-                                                 name="entries[{{ $karyawan['id'] }}][gula_gram]"
-                                                 value="{{ $existing['gula_gram'] ?? '' }}" placeholder="Jml Gula"
-                                                 class="piket-input piket-gula w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-300 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
-                                         </td>
                                          <td class="px-3 py-4 text-center">
                                              <div class="relative inline-block text-left">
                                                  <select name="entries[{{ $karyawan['id'] }}][perasa_jenis]"
@@ -237,14 +233,26 @@
                                          </td>
                                          <td class="px-3 py-4 text-center">
                                              <input type="number" min="0" step="0.01"
+                                                 name="entries[{{ $karyawan['id'] }}][liter_susu]"
+                                                 value="{{ $existing['liter_susu'] ?? '' }}" placeholder="{{ $susuPlaceholder }}"
+                                                 class="piket-input piket-susu w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-400 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
+                                         </td>
+                                         <td class="px-3 py-4 text-center">
+                                             <input type="number" min="0" step="0.01"
+                                                 name="entries[{{ $karyawan['id'] }}][gula_gram]"
+                                                 value="{{ $existing['gula_gram'] ?? '' }}" placeholder="{{ $gulaPlaceholder }}"
+                                                 class="piket-input piket-gula w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-400 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
+                                         </td>
+                                         <td class="px-3 py-4 text-center">
+                                             <input type="number" min="0" step="0.01"
                                                  name="entries[{{ $karyawan['id'] }}][perasa_gram]"
-                                                 value="{{ $existing['perasa_gram'] ?? '' }}" placeholder="Jml Perasa"
-                                                 class="piket-input piket-perasa w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-300 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
+                                                 value="{{ $existing['perasa_gram'] ?? '' }}" placeholder="{{ $perasaPlaceholder }}"
+                                                 class="piket-input piket-perasa w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-400 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
                                          </td>
                                          <td class="px-3 py-4 text-center">
                                              <input type="number" min="0" step="0.01" name="entries[{{ $karyawan['id'] }}][tp_gram]"
-                                                 value="{{ $existing['tp_gram'] ?? '' }}" placeholder="Hasil Kemas (g)"
-                                                 class="piket-input piket-actual w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-300 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
+                                                 value="{{ $existing['tp_gram'] ?? '' }}" placeholder="{{ $actualPlaceholder }}"
+                                                 class="piket-input piket-actual w-28 rounded-lg border px-3 py-2 text-right text-sm font-semibold placeholder-carbon-black-400 focus:outline-none transition-colors {{ $inputClass }}" {{ $isLocked ? 'disabled' : '' }}>
                                          </td>
                                      @elseif($selectedBagian === 'Packing')
                                          <td class="px-1 py-4 text-center">
@@ -321,7 +329,7 @@
                             @empty
                                 <tr>
                                     <td colspan="{{ $selectedBagian === 'Produksi' ? 8 : 4 }}"
-                                        class="px-6 py-10 text-center text-sm font-bold text-carbon-black-500">
+                                        class="px-6 py-10 text-center text-base font-semibold text-carbon-black-500">
                                         Tidak ada karyawan aktif untuk bagian ini.
                                     </td>
                                 </tr>
@@ -366,11 +374,11 @@
                 <table class="min-w-[900px] w-full border-collapse">
                     <thead class="bg-white text-carbon-black-500">
                         <tr class="border-b border-carbon-black-100">
-                            <th class="px-5 py-3 text-left text-xs font-black uppercase tracking-widest">Tanggal</th>
-                            <th class="px-5 py-3 text-left text-xs font-black uppercase tracking-widest">Karyawan</th>
-                            <th class="px-5 py-3 text-center text-xs font-black uppercase tracking-widest">Bagian</th>
-                            <th class="px-5 py-3 text-center text-xs font-black uppercase tracking-widest">Aktual</th>
-                            <th class="px-5 py-3 text-center text-xs font-black uppercase tracking-widest">Status</th>
+                            <th class="px-5 py-3 text-left text-sm font-black uppercase tracking-wider">Tanggal</th>
+                            <th class="px-5 py-3 text-left text-sm font-black uppercase tracking-wider">Karyawan</th>
+                            <th class="px-5 py-3 text-center text-sm font-black uppercase tracking-wider">Bagian</th>
+                            <th class="px-5 py-3 text-center text-sm font-black uppercase tracking-wider">Aktual</th>
+                            <th class="px-5 py-3 text-center text-sm font-black uppercase tracking-wider">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-carbon-black-100">
@@ -383,24 +391,23 @@
                                     : number_format($row['liter_setor'] ?? 0, 2, ',', '.') . ' liter';
                             @endphp
                             <tr class="hover:bg-hunter-green-50/50">
-                                <td class="px-5 py-4 text-sm font-bold text-carbon-black-700">
+                                <td class="px-5 py-4 text-base font-semibold text-carbon-black-800">
                                     {{ date('d M Y', strtotime($row['tanggal'])) }}</td>
                                 <td class="px-5 py-4">
-                                    <p class="text-sm font-black text-carbon-black-900">{{ $row['nama'] }}</p>
-                                    <p class="text-xs font-semibold text-carbon-black-400">NIK: {{ $row['nik'] }}</p>
+                                    <p class="text-base font-semibold text-carbon-black-900">{{ $row['nama'] }}</p>
+                                    <p class="mt-0.5 text-xs font-semibold text-carbon-black-400">NIK: {{ $row['nik'] }}</p>
                                 </td>
-                                <td class="px-5 py-4 text-center text-sm font-bold text-carbon-black-700">{{ $row['bagian'] }}
+                                <td class="px-5 py-4 text-center text-base font-semibold text-carbon-black-800">{{ $row['bagian'] }}
                                 </td>
-                                <td class="px-5 py-4 text-center text-sm font-bold text-carbon-black-700">{{ $actual }}</td>
+                                <td class="px-5 py-4 text-center text-base font-semibold text-carbon-black-800">{{ $actual }}</td>
                                 <td class="px-5 py-4 text-center">
                                     <span
                                         class="inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest {{ $statusClass }}">{{ $status }}</span>
                                 </td>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-sm font-bold text-carbon-black-500">Belum ada
+                                <td colspan="5" class="px-6 py-8 text-center text-base font-semibold text-carbon-black-500">Belum ada
                                     rekap aktivitas batch.</td>
                             </tr>
                         @endforelse
@@ -452,9 +459,16 @@
                 }
 
                 const selectedBagian = "{{ $selectedBagian }}";
+                const produkResepList = @json($produkResep ?? []);
+                const defaultProduksiTarget = {{ $targets['produksi_tp_gram'] ?? 3000 }};
+                const resepLookup = {};
+                produkResepList.forEach(p => {
+                    if (p.perasa_jenis && p.perasa_jenis !== '-') {
+                        resepLookup[p.perasa_jenis] = p;
+                    }
+                });
 
                 function updateRow(row) {
-                    const target = Number(row.dataset.target || 0);
                     const actualInput = row.querySelector('.piket-actual');
                     const statusElement = row.querySelector('.piket-status');
                     const statusTextElement = statusElement?.querySelector('.status-text');
@@ -464,6 +478,51 @@
                     const rasaSelect = row.querySelector('.piket-rasa');
                     const gulaHidden = row.querySelector('.piket-gula');
                     const perasaHidden = row.querySelector('.piket-perasa');
+
+                    if (selectedBagian === 'Produksi') {
+                        const selectedRasa = rasaSelect ? rasaSelect.value : '';
+                        const resep = resepLookup[selectedRasa];
+
+                        if (resep) {
+                            if (susuInput) {
+                                susuInput.placeholder = `Std: ${resep.susu_liter} L`;
+                                susuInput.title = `Standar Susu ${selectedRasa}: ${resep.susu_liter} Liter`;
+                            }
+                            if (gulaHidden) {
+                                gulaHidden.placeholder = `Std: ${resep.gula_gram} g`;
+                                gulaHidden.title = `Standar Gula ${selectedRasa}: ${resep.gula_gram} Gram`;
+                            }
+                            if (perasaHidden) {
+                                perasaHidden.placeholder = `Std: ${resep.perasa_gram} g`;
+                                perasaHidden.title = `Standar Perasa ${selectedRasa}: ${resep.perasa_gram} Gram`;
+                            }
+                            if (actualInput) {
+                                actualInput.placeholder = `Std: ${resep.target_produksi} g`;
+                                actualInput.title = `Target Hasil ${selectedRasa}: ${resep.target_produksi} Gram`;
+                            }
+                            row.dataset.target = resep.target_produksi || defaultProduksiTarget;
+                        } else {
+                            if (susuInput) {
+                                susuInput.placeholder = 'Jml Susu';
+                                susuInput.title = '';
+                            }
+                            if (gulaHidden) {
+                                gulaHidden.placeholder = 'Jml Gula';
+                                gulaHidden.title = '';
+                            }
+                            if (perasaHidden) {
+                                perasaHidden.placeholder = 'Jml Perasa';
+                                perasaHidden.title = '';
+                            }
+                            if (actualInput) {
+                                actualInput.placeholder = 'Hasil Kemas (g)';
+                                actualInput.title = '';
+                            }
+                            row.dataset.target = defaultProduksiTarget;
+                        }
+                    }
+
+                    const target = Number(row.dataset.target || 0);
 
                     if (selectedBagian === 'Packing') {
                         const sachet = Number(row.querySelector('.piket-sachet')?.value || 0);

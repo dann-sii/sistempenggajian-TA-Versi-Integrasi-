@@ -29,7 +29,7 @@
     <!-- Main Wrapper: offset by sidebar width (w-72) -->
     <div class="ml-72 flex min-h-screen flex-col">
         <!-- Header (Fixed) -->
-        <header class="fixed top-0 right-0 left-72 z-10 h-20 bg-white border-b border-carbon-black-200 flex items-center justify-between px-8 shadow-sm">
+        <header class="fixed top-0 right-0 left-72 z-30 h-20 bg-white border-b border-carbon-black-200 flex items-center justify-between px-8 shadow-sm">
             <div class="flex items-center space-x-4">
                 <span class="bg-black-forest-700 text-white px-4 py-2 rounded-lg text-lg font-bold uppercase tracking-widest">
                     Sahabat Ternak

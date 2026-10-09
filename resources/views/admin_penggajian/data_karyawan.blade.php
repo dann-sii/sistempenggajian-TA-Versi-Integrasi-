@@ -79,7 +79,7 @@
             <tbody class="divide-y divide-carbon-black-100">
                 @foreach($karyawan as $k)
                     <tr class="hover:bg-hunter-green-50 transition-colors duration-150 group">
-                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-5 text-center text-base font-bold text-hunter-green-700 bg-carbon-black-50/50 w-20">{{ ($page - 1) * 10 + $loop->iteration }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['nik'] }}</td>
                         <td class="px-6 py-5 text-justify text-base font-semibold text-carbon-black-900 group-hover:text-black-forest-700">{{ $k['nama'] }}</td>
                         <td class="px-6 py-5 text-center text-base font-semibold text-carbon-black-800">{{ $k['npwp'] }}</td>
@@ -215,7 +215,6 @@
                         <select id="bagian" name="bagian" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
                             <option value="" disabled selected>Pilih Bagian</option>
                             <option value="Produksi">Produksi</option>
-                            <option value="Peternakan">Peternakan</option>
                             <option value="Packing">Packing</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">
@@ -364,7 +363,6 @@
                         <label for="edit_bagian" class="text-xs font-bold uppercase tracking-widest text-carbon-black-600">Bagian <span class="text-rose-500">*</span></label>
                         <select id="edit_bagian" name="bagian" required class="w-full appearance-none px-3 py-2.5 border border-carbon-black-200 rounded-lg focus:outline-none focus:border-hunter-green-500 focus:ring-1 focus:ring-hunter-green-500 transition-colors text-sm text-carbon-black-800 bg-carbon-black-50/50 cursor-pointer">
                             <option value="Produksi">Produksi</option>
-                            <option value="Peternakan">Peternakan</option>
                             <option value="Packing">Packing</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-[26px] text-carbon-black-400">

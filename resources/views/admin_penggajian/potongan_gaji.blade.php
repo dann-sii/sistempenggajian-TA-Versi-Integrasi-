@@ -126,7 +126,7 @@
                 @endforeach
                 @if(count($allPotongan) == 0)
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-carbon-black-500 font-medium font-semibold text-sm">
+                        <td colspan="6" class="px-6 py-8 text-center text-carbon-black-500 text-base font-semibold">
                             @if(!empty($search))
                                 Tidak ada data potongan gaji yang cocok dengan pencarian "{{ $search }}".
                             @else
@@ -230,13 +230,13 @@
             <div id="readonly_info_group" class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex flex-col space-y-2">
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Nama Potongan:</span>
-                    <span id="display_nama" class="text-sm font-black text-carbon-black-900"></span>
+                    <span id="display_nama" class="text-base font-bold text-carbon-black-900"></span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Tipe Potongan:</span>
-                    <span id="display_tipe" class="text-sm font-black text-carbon-black-900"></span>
+                    <span id="display_tipe" class="text-base font-bold text-carbon-black-900"></span>
                 </div>
-                <div class="mt-2 text-[10px] text-blue-700 font-semibold uppercase tracking-widest leading-relaxed flex space-x-1.5 items-start">
+                <div class="mt-2 text-xs text-blue-800 font-semibold leading-relaxed flex space-x-1.5 items-start">
                     <x-tabler-info-circle class="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     <span>Data ini terintegrasi dengan rumus kalkulasi pusat. Anda hanya diizinkan mengubah Tarif.</span>
                 </div>

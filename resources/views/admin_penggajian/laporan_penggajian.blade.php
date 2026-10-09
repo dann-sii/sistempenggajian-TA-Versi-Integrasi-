@@ -212,7 +212,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-8 text-center text-carbon-black-500 font-medium">Tidak ada data laporan penggajian yang ditemukan.</td>
+                        <td colspan="8" class="px-6 py-8 text-center text-carbon-black-500 text-base font-semibold">Tidak ada data laporan penggajian yang ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>

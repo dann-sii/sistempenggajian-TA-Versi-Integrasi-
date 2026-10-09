@@ -48,6 +48,8 @@ Route::put('/karyawan/{id}', [KaryawanController::class , 'update'])->name('kary
 Route::patch('/karyawan/{id}/toggle-status', [KaryawanController::class , 'toggleStatus'])->name('karyawan.toggle_status');
 Route::delete('/karyawan/{id}', [KaryawanController::class , 'destroy'])->name('karyawan.destroy');
 Route::get('/presensi', [PresensiController::class , 'index'])->name('presensi.index');
+Route::post('/presensi/koreksi', [PresensiController::class , 'storeKoreksi'])->name('presensi.store_koreksi');
+Route::post('/presensi/update-inline', [PresensiController::class , 'updateInline'])->name('presensi.update_inline');
 Route::get('/gaji-pokok', [GajiPokokController::class , 'index'])->name('gaji_pokok.index');
 Route::post('/gaji-pokok', [GajiPokokController::class , 'store'])->name('gaji_pokok.store');
 Route::put('/gaji-pokok/{id}', [GajiPokokController::class , 'updatePokok'])->name('gaji_pokok.update');

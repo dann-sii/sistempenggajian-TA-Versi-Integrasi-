@@ -187,37 +187,37 @@
                     <!-- Row 1 -->
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">NAMA PRODUK</p>
-                        <p id="detail-nama-produk" class="text-[15px] font-medium text-carbon-black-900">Nama Produk</p>
+                        <p id="detail-nama-produk" class="text-base font-semibold text-carbon-black-900">Nama Produk</p>
                     </div>
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">TARGET PRODUKSI</p>
-                        <p id="detail-jumlah-standar" class="text-[15px] font-medium text-carbon-black-900">0 Gram</p>
+                        <p id="detail-jumlah-standar" class="text-base font-semibold text-carbon-black-900">0 Gram</p>
                     </div>
                     
                     <!-- Row 2 -->
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">BAHAN UTAMA: SUSU</p>
-                        <p id="detail-susu" class="text-[15px] font-medium text-carbon-black-900">0 Liter</p>
+                        <p id="detail-susu" class="text-base font-semibold text-carbon-black-900">0 Liter</p>
                     </div>
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">BAHAN UTAMA: GULA</p>
-                        <p id="detail-gula" class="text-[15px] font-medium text-carbon-black-900">0 Gram</p>
+                        <p id="detail-gula" class="text-base font-semibold text-carbon-black-900">0 Gram</p>
                     </div>
                     
                     <!-- Row 3 -->
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">VARIAN PERASA</p>
-                        <p id="detail-perasa-jenis" class="text-[15px] font-medium text-carbon-black-900">-</p>
+                        <p id="detail-perasa-jenis" class="text-base font-semibold text-carbon-black-900">-</p>
                     </div>
                     <div>
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">JUMLAH PERASA</p>
-                        <p id="detail-perasa-gram" class="text-[15px] font-medium text-carbon-black-900">0 Gram</p>
+                        <p id="detail-perasa-gram" class="text-base font-semibold text-carbon-black-900">0 Gram</p>
                     </div>
                     
                     <!-- Row 4 (Separator) -->
                     <div class="col-span-2 pt-6 border-t border-carbon-black-100 mt-2">
                         <p class="text-[11px] font-black text-hunter-green-600 uppercase tracking-widest mb-2.5 opacity-70">STATUS DATA</p>
-                        <p id="detail-status" class="text-[15px] font-bold text-emerald-600">AKTIF</p>
+                        <p id="detail-status" class="text-base font-bold text-emerald-600">AKTIF</p>
                     </div>
                 </div>
             </div>
@@ -491,7 +491,7 @@
                 <div id="confirm-modal-icon" class="mx-auto flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-amber-100 text-amber-600">
                     <x-tabler-alert-triangle class="w-6 h-6" />
                 </div>
-                <p id="confirm-modal-message" class="text-sm font-semibold text-carbon-black-600">Apakah Anda yakin ingin mengubah status data ini?</p>
+                <p id="confirm-modal-message" class="text-base font-semibold text-carbon-black-700">Apakah Anda yakin ingin mengubah status data ini?</p>
             </div>
             
             <div class="px-6 py-4 bg-carbon-black-50 border-t border-carbon-black-100 flex items-center justify-center gap-3 rounded-b-xl">

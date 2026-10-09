@@ -108,10 +108,24 @@ class AktivitasKaryawanController extends Controller
         }));
 
         $aktivitas = session('aktivitas_karyawan_data', []);
-        $produkResep = array_values(array_filter(self::getProdukResepData(), function ($produk) {
-            return strtolower($produk['status']) === 'aktif';
+        $sessionResep = session('resep_tambahan', []);
+        $allResep = array_merge(self::getProdukResepData(), $sessionResep);
+        $overrides = session('resep_status_override', []);
+        foreach ($allResep as &$p) {
+            if (isset($overrides[$p['id_produk']])) {
+                $p['status'] = $overrides[$p['id_produk']];
+            }
+        }
+        $produkResep = array_values(array_filter($allResep, function ($produk) {
+            return strtolower($produk['status'] ?? 'aktif') === 'aktif';
         }));
-        $perasaOptions = self::getPerasaOptions();
+        $perasaOptions = [];
+        foreach ($produkResep as $p) {
+            if (!empty($p['perasa_jenis']) && $p['perasa_jenis'] !== '-') {
+                $perasaOptions[$p['perasa_jenis']] = $p['perasa_jenis'];
+            }
+        }
+        $perasaOptions = array_values($perasaOptions);
         $targets = self::getPiketTargets();
         $existingPiketByKaryawan = [];
         $recentPiket = [];

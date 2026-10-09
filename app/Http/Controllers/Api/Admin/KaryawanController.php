@@ -11,26 +11,26 @@ class KaryawanController extends Controller
     public static function getInitialData(): array
     {
         $data = [
-            ['id' => 1, 'nik' => '3404011203900001', 'nama' => 'Budi Santoso', 'npwp' => '1612034567890001', 'alamat' => 'Jl. Merdeka No. 10, Yogyakarta', 'no_telp' => '08123456789', 'status' => 'Aktif'],
-            ['id' => 2, 'nik' => '3404012204910002', 'nama' => 'Siti Aminah', 'npwp' => '1612034567890002', 'alamat' => 'Jl. Mawar No. 5, Yogyakarta', 'no_telp' => '08129876543', 'status' => 'Inaktif'],
-            ['id' => 3, 'nik' => '3404011405920003', 'nama' => 'Andi Wijaya', 'npwp' => '1612034567890003', 'alamat' => 'Jl. Melati No. 2, Yogyakarta', 'no_telp' => '08131122334', 'status' => 'Inaktif'],
-            ['id' => 4, 'nik' => '3404015006930004', 'nama' => 'Dewi Lestari', 'npwp' => '1612034567890004', 'alamat' => 'Jl. Anggrek No. 15, Yogyakarta', 'no_telp' => '08122233445', 'status' => 'Aktif'],
-            ['id' => 5, 'nik' => '3404011107940005', 'nama' => 'Rizky Pratama', 'npwp' => '1612034567890005', 'alamat' => 'Jl. Kenanga No. 8, Magelang', 'no_telp' => '08133344556', 'status' => 'Aktif'],
-            ['id' => 6, 'nik' => '3404014208950006', 'nama' => 'Anita Sari', 'npwp' => '1612034567890006', 'alamat' => 'Jl. Cempaka No. 12, Yogyakarta', 'no_telp' => '08144455667', 'status' => 'Inaktif'],
-            ['id' => 7, 'nik' => '3404011509960007', 'nama' => 'Bambang Subianto', 'npwp' => '1612034567890007', 'alamat' => 'Jl. Teratai No. 20, Magelang', 'no_telp' => '08155566778', 'status' => 'Aktif'],
-            ['id' => 8, 'nik' => '3404014510970008', 'nama' => 'Eka Putri', 'npwp' => '1612034567890008', 'alamat' => 'Jl. Kamboja No. 3, Yogyakarta', 'no_telp' => '08166677889', 'status' => 'Aktif'],
-            ['id' => 9, 'nik' => '3404011811980009', 'nama' => 'Faisal Rahman', 'npwp' => '1612034567890009', 'alamat' => 'Jl. Melur No. 7, Yogyakarta', 'no_telp' => '08177788990', 'status' => 'Inaktif'],
-            ['id' => 10, 'nik' => '3404015212990010', 'nama' => 'Gita Permata', 'npwp' => '1612034567890010', 'alamat' => 'Jl. Dahlia No. 11, Yogyakarta', 'no_telp' => '08188899001', 'status' => 'Aktif'],
-            ['id' => 11, 'nik' => '3404021203900011', 'nama' => 'Hendra Wijaya', 'npwp' => '1612034567890011', 'alamat' => 'Jl. Garuda No. 1, Magelang', 'no_telp' => '08111002233', 'status' => 'Aktif'],
-            ['id' => 12, 'nik' => '3404024204910012', 'nama' => 'Indah Kusuma', 'npwp' => '1612034567890012', 'alamat' => 'Jl. Merak No. 4, Yogyakarta', 'no_telp' => '08122113344', 'status' => 'Inaktif'],
-            ['id' => 13, 'nik' => '3404021405920013', 'nama' => 'Joko Susilo', 'npwp' => '1612034567890013', 'alamat' => 'Jl. Elang No. 6, Yogyakarta', 'no_telp' => '08133224455', 'status' => 'Aktif'],
-            ['id' => 14, 'nik' => '3404025006930014', 'nama' => 'Kartini Putri', 'npwp' => '1612034567890014', 'alamat' => 'Jl. Rajawali No. 9, Yogyakarta', 'no_telp' => '08144335566', 'status' => 'Aktif'],
-            ['id' => 15, 'nik' => '3404021107940015', 'nama' => 'Lukman Hakim', 'npwp' => '1612034567890015', 'alamat' => 'Jl. Kancil No. 2, Yogyakarta', 'no_telp' => '08155446677', 'status' => 'Inaktif'],
-            ['id' => 16, 'nik' => '3404024208950016', 'nama' => 'Maya Sari', 'npwp' => '1612034567890016', 'alamat' => 'Jl. Rusa No. 5, Yogyakarta', 'no_telp' => '08166557788', 'status' => 'Aktif'],
-            ['id' => 17, 'nik' => '3404021509960017', 'nama' => 'Nugroho Saputra', 'npwp' => '1612034567890017', 'alamat' => 'Jl. Gajah No. 8, Yogyakarta', 'no_telp' => '08177668899', 'status' => 'Aktif'],
-            ['id' => 18, 'nik' => '3404024510970018', 'nama' => 'Oki Setiana', 'npwp' => '1612034567890018', 'alamat' => 'Jl. Harimau No. 10, Yogyakarta', 'no_telp' => '08188779900', 'status' => 'Inaktif'],
-            ['id' => 19, 'nik' => '3404021811980019', 'nama' => 'Puji Astuti', 'npwp' => '1612034567890019', 'alamat' => 'Jl. Singa No. 3, Magelang', 'no_telp' => '08199880011', 'status' => 'Aktif'],
-            ['id' => 20, 'nik' => '3404025212990020', 'nama' => 'Qomarudin', 'npwp' => '1612034567890020', 'alamat' => 'Jl. Beruang No. 7, Yogyakarta', 'no_telp' => '08100991122', 'status' => 'Aktif'],
+            ['id' => 1, 'nik' => '3404011203900001', 'nama' => 'Budi Santoso', 'npwp' => '1612034567890001', 'alamat' => 'Jl. Merdeka No. 10, Yogyakarta', 'no_telp' => '08123456789', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 2, 'nik' => '3404012204910002', 'nama' => 'Siti Aminah', 'npwp' => '1612034567890002', 'alamat' => 'Jl. Mawar No. 5, Yogyakarta', 'no_telp' => '08129876543', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 3, 'nik' => '3404011405920003', 'nama' => 'Andi Wijaya', 'npwp' => '1612034567890003', 'alamat' => 'Jl. Melati No. 2, Yogyakarta', 'no_telp' => '08131122334', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 4, 'nik' => '3404015006930004', 'nama' => 'Dewi Lestari', 'npwp' => '1612034567890004', 'alamat' => 'Jl. Anggrek No. 15, Yogyakarta', 'no_telp' => '08122233445', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 5, 'nik' => '3404011107940005', 'nama' => 'Rizky Pratama', 'npwp' => '1612034567890005', 'alamat' => 'Jl. Kenanga No. 8, Magelang', 'no_telp' => '08133344556', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 6, 'nik' => '3404014208950006', 'nama' => 'Anita Sari', 'npwp' => '1612034567890006', 'alamat' => 'Jl. Cempaka No. 12, Yogyakarta', 'no_telp' => '08144455667', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 7, 'nik' => '3404011509960007', 'nama' => 'Bambang Subianto', 'npwp' => '1612034567890007', 'alamat' => 'Jl. Teratai No. 20, Magelang', 'no_telp' => '08155566778', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 8, 'nik' => '3404014510970008', 'nama' => 'Eka Putri', 'npwp' => '1612034567890008', 'alamat' => 'Jl. Kamboja No. 3, Yogyakarta', 'no_telp' => '08166677889', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 9, 'nik' => '3404011811980009', 'nama' => 'Faisal Rahman', 'npwp' => '1612034567890009', 'alamat' => 'Jl. Melur No. 7, Yogyakarta', 'no_telp' => '08177788990', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 10, 'nik' => '3404015212990010', 'nama' => 'Gita Permata', 'npwp' => '1612034567890010', 'alamat' => 'Jl. Dahlia No. 11, Yogyakarta', 'no_telp' => '08188899001', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 11, 'nik' => '3404021203900011', 'nama' => 'Hendra Wijaya', 'npwp' => '1612034567890011', 'alamat' => 'Jl. Garuda No. 1, Magelang', 'no_telp' => '08111002233', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 12, 'nik' => '3404024204910012', 'nama' => 'Indah Kusuma', 'npwp' => '1612034567890012', 'alamat' => 'Jl. Merak No. 4, Yogyakarta', 'no_telp' => '08122113344', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 13, 'nik' => '3404021405920013', 'nama' => 'Joko Susilo', 'npwp' => '1612034567890013', 'alamat' => 'Jl. Elang No. 6, Yogyakarta', 'no_telp' => '08133224455', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 14, 'nik' => '3404025006930014', 'nama' => 'Kartini Putri', 'npwp' => '1612034567890014', 'alamat' => 'Jl. Rajawali No. 9, Yogyakarta', 'no_telp' => '08144335566', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 15, 'nik' => '3404021107940015', 'nama' => 'Lukman Hakim', 'npwp' => '1612034567890015', 'alamat' => 'Jl. Kancil No. 2, Yogyakarta', 'no_telp' => '08155446677', 'status' => 'Inaktif', 'bagian' => 'Produksi'],
+            ['id' => 16, 'nik' => '3404024208950016', 'nama' => 'Maya Sari', 'npwp' => '1612034567890016', 'alamat' => 'Jl. Rusa No. 5, Yogyakarta', 'no_telp' => '08166557788', 'status' => 'Aktif', 'bagian' => 'Produksi'],
+            ['id' => 17, 'nik' => '3404021509960017', 'nama' => 'Nugroho Saputra', 'npwp' => '1612034567890017', 'alamat' => 'Jl. Gajah No. 8, Yogyakarta', 'no_telp' => '08177668899', 'status' => 'Aktif', 'bagian' => 'Packing'],
+            ['id' => 18, 'nik' => '3404024510970018', 'nama' => 'Oki Setiana', 'npwp' => '1612034567890018', 'alamat' => 'Jl. Harimau No. 10, Yogyakarta', 'no_telp' => '08188779900', 'status' => 'Inaktif', 'bagian' => 'Packing'],
+            ['id' => 19, 'nik' => '3404021811980019', 'nama' => 'Puji Astuti', 'npwp' => '1612034567890019', 'alamat' => 'Jl. Singa No. 3, Magelang', 'no_telp' => '08199880011', 'status' => 'Aktif', 'bagian' => 'Packing'],
+            ['id' => 20, 'nik' => '3404025212990020', 'nama' => 'Qomarudin', 'npwp' => '1612034567890020', 'alamat' => 'Jl. Beruang No. 7, Yogyakarta', 'no_telp' => '08100991122', 'status' => 'Aktif', 'bagian' => 'Packing'],
             ['id' => 21, 'nik' => '3404031203900021', 'nama' => 'Rian Hidayat', 'npwp' => '1612034567890021', 'alamat' => 'Jl. Solo Km 10, Yogyakarta', 'no_telp' => '08123344556', 'status' => 'Aktif', 'bagian' => 'Packing'],
             ['id' => 22, 'nik' => '3404034204910022', 'nama' => 'Santi Wijaya', 'npwp' => '1612034567890022', 'alamat' => 'Jl. Kaliurang Km 5, Yogyakarta', 'no_telp' => '08123344557', 'status' => 'Aktif', 'bagian' => 'Packing'],
             ['id' => 23, 'nik' => '3404031405920023', 'nama' => 'Teguh Prasetyo', 'npwp' => '1612034567890023', 'alamat' => 'Jl. Gejayan No. 8, Yogyakarta', 'no_telp' => '08123344558', 'status' => 'Aktif', 'bagian' => 'Packing'],
@@ -49,8 +49,8 @@ class KaryawanController extends Controller
     public static function withDefaultBagian(array $karyawans): array
     {
         return array_map(function ($k) {
-            if (!isset($k['bagian'])) {
-                $k['bagian'] = ((int) $k['id'] <= 12) ? 'Produksi' : 'Peternakan';
+            if (!isset($k['bagian']) || $k['bagian'] === 'Peternakan') {
+                $k['bagian'] = ((int) $k['id'] <= 16) ? 'Produksi' : 'Packing';
             }
             if (!isset($k['has_history'])) {
                 // Mock: IDs 1-15 have history (cannot be hard-deleted), 16+ do not (can be hard-deleted).
@@ -65,6 +65,21 @@ class KaryawanController extends Controller
     {
         if (!session()->has('karyawan_data') || count(session('karyawan_data', [])) < count(self::getInitialData()) || strpos(session('karyawan_data')[0]['npwp'] ?? '', '.') !== false) {
             session()->put('karyawan_data', self::getInitialData());
+        }
+
+        // Migrate / sync session data so active Produksi and Packing ratio is 10:13
+        $sessionKaryawan = session('karyawan_data', []);
+        $updatedSession = false;
+        foreach ($sessionKaryawan as &$sk) {
+            $expectedBagian = ((int) ($sk['id'] ?? 0) <= 16) ? 'Produksi' : 'Packing';
+            if ((($sk['bagian'] ?? '') !== $expectedBagian || ($sk['bagian'] ?? '') === 'Peternakan') && ($sk['id'] ?? 0) <= 30) {
+                $sk['bagian'] = $expectedBagian;
+                $updatedSession = true;
+            }
+        }
+        unset($sk);
+        if ($updatedSession) {
+            session()->put('karyawan_data', $sessionKaryawan);
         }
 
         $allKaryawan = self::withDefaultBagian(session('karyawan_data'));
@@ -110,7 +125,7 @@ class KaryawanController extends Controller
             'nik' => 'required|string',
             'nama' => 'required|string',
             'npwp' => 'required|string',
-            'bagian' => 'required|in:Produksi,Peternakan,Packing',
+            'bagian' => 'required|in:Produksi,Packing',
             'no_telp' => ['nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'alamat' => 'required|string',
             'nama_bank' => 'required|string',
@@ -146,7 +161,7 @@ class KaryawanController extends Controller
             'nik' => 'required|string',
             'nama' => 'required|string',
             'npwp' => 'required|string',
-            'bagian' => 'required|in:Produksi,Peternakan,Packing',
+            'bagian' => 'required|in:Produksi,Packing',
             'no_telp' => ['nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'alamat' => 'required|string',
             'status' => 'required|string',

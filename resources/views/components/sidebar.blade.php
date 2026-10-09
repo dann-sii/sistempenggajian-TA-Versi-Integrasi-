@@ -1,5 +1,5 @@
 <aside
-    class="fixed top-0 left-0 h-[125vh] w-72 bg-gradient-to-b from-black-forest-950 via-black-forest-900 to-black-forest-950 text-white flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.3)] z-20 overflow-hidden">
+    class="fixed top-0 left-0 h-[125vh] w-72 bg-gradient-to-b from-black-forest-950 via-black-forest-900 to-black-forest-950 text-white flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.3)] z-40 overflow-hidden">
     <!-- Decorative background elements -->
     <div class="absolute top-0 right-0 w-32 h-32 bg-hunter-green-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
     <div class="absolute bottom-0 left-0 w-40 h-40 bg-aquamarine-500/5 rounded-full blur-3xl -ml-20 -mb-20"></div>

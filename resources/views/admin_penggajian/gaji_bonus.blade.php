@@ -67,16 +67,16 @@
                             
                             @if($g['is_default'])
                                 <div class="mt-1.5 flex items-center justify-center">
-                                    @if(in_array($g['id'], [1, 2, 3, 4, 5, 6]))
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-hunter-green-50 text-hunter-green-700 border border-hunter-green-200">
+                                     @if(in_array($g['id'], [1, 2, 3, 4, 5, 6]))
+                                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-hunter-green-50 text-hunter-green-700 border border-hunter-green-200">
                                             Sesuai Resep
                                         </span>
                                     @elseif($g['id'] == 8)
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
                                             Target Aktivitas
                                         </span>
                                     @elseif($g['id'] == 7)
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
                                             Hari Raya
                                         </span>
                                     @endif
@@ -139,7 +139,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-10 text-center text-sm font-bold text-carbon-black-500">
+                        <td colspan="8" class="px-6 py-10 text-center text-base font-semibold text-carbon-black-500">
                             @if(!empty($search))
                                 Tidak ada data gaji bonus yang cocok dengan pencarian "{{ $search }}".
                             @else
@@ -258,17 +258,17 @@
             <div id="readonly_info_group" class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex flex-col space-y-2">
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Nama:</span>
-                    <span id="display_nama" class="text-sm font-black text-carbon-black-900"></span>
+                    <span id="display_nama" class="text-base font-bold text-carbon-black-900"></span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Batas Normal:</span>
-                    <span id="display_batas_normal" class="text-sm font-black text-carbon-black-900"></span>
+                    <span id="display_batas_normal" class="text-base font-bold text-carbon-black-900"></span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold uppercase tracking-widest text-carbon-black-500">Satuan:</span>
-                    <span id="display_satuan" class="text-sm font-black text-carbon-black-900"></span>
+                    <span id="display_satuan" class="text-base font-bold text-carbon-black-900"></span>
                 </div>
-                <div class="mt-2 text-[10px] text-blue-700 font-semibold uppercase tracking-widest leading-relaxed flex space-x-1.5 items-start">
+                <div class="mt-2 text-xs text-blue-800 font-semibold leading-relaxed flex space-x-1.5 items-start">
                     <x-tabler-info-circle class="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     <span>Data ini terintegrasi dengan rumus kalkulasi perusahaan. Anda hanya diizinkan mengubah Tarif dan Keterangan.</span>
                 </div>

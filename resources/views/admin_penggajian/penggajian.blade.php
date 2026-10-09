@@ -16,300 +16,368 @@
         sort($bagianOptions);
     @endphp
 
-    <div class="min-h-[calc(125vh-10rem)] overflow-visible flex flex-col gap-4">
-        <div class="flex flex-shrink-0 items-start justify-between gap-6">
+    <div class="space-y-6 pb-12">
+        <!-- 1. Header & Periode Selector -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <h1
-                    class="text-2xl font-black uppercase tracking-tight text-carbon-black-900 border-l-4 border-hunter-green-500 pl-3 py-0.5">
+                <h1 class="text-2xl font-black uppercase tracking-tight text-carbon-black-900 border-l-4 border-hunter-green-500 pl-3 py-0.5">
                     PENGGAJIAN KARYAWAN
                 </h1>
+                <p class="text-xs font-semibold text-carbon-black-500 pl-4 mt-1">
+                    Kelola dan verifikasi gaji pokok, jam lembur, bonus produksi, dan potongan gaji karyawan.
+                </p>
             </div>
 
-            <div class="flex items-center gap-4">
-                <div class="relative">
+            <!-- Periode Filter Dropdowns -->
+            <div class="flex items-center gap-3">
+                <!-- Dropdown Bulan -->
+                <div class="relative flex items-center h-[42px] bg-white rounded-lg border-2 border-carbon-black-200 focus-within:border-hunter-green-400 shadow-sm transition-colors overflow-hidden">
+                    <div class="pl-3.5 pr-1 text-hunter-green-600 pointer-events-none">
+                        <x-tabler-calendar class="w-4 h-4" />
+                    </div>
                     <select id="periode-bulan-select"
-                        class="w-48 appearance-none px-4 py-3.5 bg-white border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-xl shadow-sm">
+                        class="appearance-none bg-transparent pl-2 pr-9 py-2 text-sm font-bold text-carbon-black-900 focus:outline-none cursor-pointer min-w-[130px]">
                         @foreach($months as $index => $month)
                             <option value="{{ $month }}" data-month-number="{{ $index + 1 }}" {{ $index === $currentMonthIndex ? 'selected' : '' }}>
                                 {{ $month }}
                             </option>
                         @endforeach
                     </select>
-                    <div
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-carbon-black-400">
-                        <x-tabler-chevron-down class="h-4 w-4" />
+                    <div class="pointer-events-none absolute right-0 inset-y-0 flex items-center px-2.5 text-carbon-black-400">
+                        <x-tabler-chevron-down class="w-4 h-4" />
                     </div>
                 </div>
 
-                <div class="relative">
+                <!-- Dropdown Tahun -->
+                <div class="relative flex items-center h-[42px] bg-white rounded-lg border-2 border-carbon-black-200 focus-within:border-hunter-green-400 shadow-sm transition-colors overflow-hidden">
                     <select id="periode-tahun-select"
-                        class="w-40 appearance-none px-4 py-3.5 bg-white border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-xl shadow-sm">
+                        class="appearance-none bg-transparent pl-3.5 pr-8 py-2 text-sm font-bold text-carbon-black-900 focus:outline-none cursor-pointer min-w-[90px]">
                         @for($year = $currentYear - 5; $year <= $currentYear + 5; $year++)
                             <option value="{{ $year }}" {{ $year === $currentYear ? 'selected' : '' }}>{{ $year }}</option>
                         @endfor
                     </select>
-                    <div
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-carbon-black-400">
-                        <x-tabler-chevron-down class="h-4 w-4" />
+                    <div class="pointer-events-none absolute right-0 inset-y-0 flex items-center px-2.5 text-carbon-black-400">
+                        <x-tabler-chevron-down class="w-4 h-4" />
                     </div>
+                </div>
+
+                <button type="button" id="btn-batch-process-all"
+                    class="bg-black-forest-700 text-white px-5 h-[42px] text-xs font-black rounded-lg shadow-sm hover:bg-black-forest-800 transition-all flex items-center space-x-2 active:scale-95 group uppercase tracking-wider">
+                    <x-tabler-checks class="w-4 h-4" />
+                    <span>Bayar Semua</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Executive Metric Cards (4 Cards - Inspired by Desktop Run Payroll) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Metric 1: Total Penggajian Bersih Periode -->
+            <div class="bg-white rounded-xl p-5 border border-carbon-black-200 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-hunter-green-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="flex items-center justify-between mb-2 relative z-10">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-500">Total Pengeluaran Gaji</span>
+                    <span class="p-1.5 rounded-lg bg-hunter-green-100 text-hunter-green-700">
+                        <x-tabler-wallet class="w-4 h-4" />
+                    </span>
+                </div>
+                <div class="relative z-10">
+                    <div id="stat-total-gaji-bersih" class="text-2xl font-black text-carbon-black-900 tracking-tight">
+                        Rp 0
+                    </div>
+                    <p class="text-xs font-semibold text-hunter-green-700 mt-1 flex items-center gap-1">
+                        <x-tabler-users class="w-3.5 h-3.5" />
+                        <span id="stat-total-karyawan-count">{{ count($activeKaryawans) }} Karyawan Aktif</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Metric 2: Progres Status Pembayaran -->
+            <div class="bg-white rounded-xl p-5 border border-carbon-black-200 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-emerald-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="flex items-center justify-between mb-2 relative z-10">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-500">Progres Pembayaran</span>
+                    <span class="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                        <x-tabler-circle-check class="w-4 h-4" />
+                    </span>
+                </div>
+                <div class="relative z-10">
+                    <div id="stat-progres-rasio" class="text-2xl font-black text-emerald-800 tracking-tight">
+                        0 / {{ count($activeKaryawans) }} <span class="text-xs font-bold text-carbon-black-400">Lunas</span>
+                    </div>
+                    <div class="w-full bg-carbon-black-100 h-2 rounded-full mt-2.5 overflow-hidden">
+                        <div id="stat-progres-bar" class="bg-emerald-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric 3: Total Jam Lembur -->
+            <div class="bg-white rounded-xl p-5 border border-carbon-black-200 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-amber-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="flex items-center justify-between mb-2 relative z-10">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-500">Akumulasi Lembur</span>
+                    <span class="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                        <x-tabler-clock-bolt class="w-4 h-4" />
+                    </span>
+                </div>
+                <div class="relative z-10">
+                    <div id="stat-total-jam-lembur" class="text-2xl font-black text-amber-700 tracking-tight">
+                        0 Jam
+                    </div>
+                    <p class="text-xs font-semibold text-amber-800 mt-1 flex items-center gap-1">
+                        <x-tabler-coin class="w-3.5 h-3.5" />
+                        <span id="stat-total-nominal-lembur">Rp 0 Upah Lembur</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Metric 4: Tambahan vs Potongan -->
+            <div class="bg-white rounded-xl p-5 border border-carbon-black-200 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden group">
+                <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-blue-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="flex items-center justify-between mb-2 relative z-10">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-500">Bonus & Potongan</span>
+                    <span class="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                        <x-tabler-adjustments-horizontal class="w-4 h-4" />
+                    </span>
+                </div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between">
+                        <span id="stat-total-bonus" class="text-base font-black text-hunter-green-700">+ Rp 0</span>
+                        <span class="text-xs text-carbon-black-300 font-bold">|</span>
+                        <span id="stat-total-potongan" class="text-base font-black text-rose-600">- Rp 0</span>
+                    </div>
+                    <p class="text-xs font-semibold text-carbon-black-500 mt-1.5 flex items-center justify-between">
+                        <span>Bonus Produksi</span>
+                        <span>Potongan/Wastage</span>
+                    </p>
                 </div>
             </div>
         </div>
 
-        <section id="payroll-detail-panel"
-            class="flex-shrink-0 rounded-2xl border border-carbon-black-100 bg-white p-4 shadow-sm">
-            <div class="grid grid-cols-[minmax(0,1fr)_360px] gap-4">
-                <div class="min-w-0">
-                    <div
-                        class="flex items-start justify-between gap-4 rounded-xl border border-carbon-black-100 bg-carbon-black-50 px-4 py-3">
-                        <div>
-                            <h2 id="detail-employee-name" class="mt-1 text-3xl font-black text-carbon-black-900">Pilih
-                                karyawan</h2>
-                            <p id="detail-employee-meta" class="mt-1 text-sm font-bold text-carbon-black-500">Klik salah
-                                satu baris tabel untuk melihat rincian.</p>
-                        </div>
-                        <span id="detail-status-badge"
-                            class="rounded-full border border-carbon-black-200 bg-carbon-black-50 px-4 py-1.5 text-sm font-black uppercase tracking-widest text-carbon-black-500">
-                            Belum Dibayar
-                        </span>
-                    </div>
-
-                    <div id="payroll-detail-grid" class="mt-3 grid grid-cols-3 gap-3">
-                        <div
-                            class="rounded-xl border border-carbon-black-100 bg-white p-3 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
-                            <div class="flex items-center gap-2 border-b border-carbon-black-100 pb-2">
-                                <x-tabler-id class="h-4 w-4 text-hunter-green-600" />
-                                <p class="text-sm font-black uppercase tracking-widest text-carbon-black-500">Identitas</p>
-                            </div>
-                            <div class="mt-2 space-y-2">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-black uppercase tracking-widest text-carbon-black-400">ID
-                                        Penggajian</span>
-                                    <span id="detail-id-penggajian"
-                                        class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-black uppercase tracking-widest text-carbon-black-400">ID
-                                        Karyawan</span>
-                                    <span id="detail-id-karyawan" class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Tanggal
-                                        Bayar</span>
-                                    <span id="detail-tanggal-pembayaran"
-                                        class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            class="rounded-xl border border-carbon-black-100 bg-white p-3 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
-                            <div class="flex items-center gap-2 border-b border-carbon-black-100 pb-2">
-                                <x-tabler-calendar-stats class="h-4 w-4 text-hunter-green-600" />
-                                <p class="text-sm font-black uppercase tracking-widest text-carbon-black-500">Periode &
-                                    Waktu</p>
-                            </div>
-                            <div class="mt-2 space-y-2">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Bulan</span>
-                                    <span id="detail-periode-bulan"
-                                        class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Tahun</span>
-                                    <span id="detail-periode-tahun"
-                                        class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Hari
-                                        Kerja</span>
-                                    <span id="detail-hari-kerja" class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Lembur</span>
-                                    <span id="detail-jumlah-lembur"
-                                        class="text-lg font-black text-carbon-black-900">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            class="rounded-xl border border-carbon-black-100 bg-white p-3 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
-                            <div class="flex items-center gap-2 border-b border-carbon-black-100 pb-2">
-                                <x-tabler-report-money class="h-4 w-4 text-hunter-green-600" />
-                                <p class="text-sm font-black uppercase tracking-widest text-carbon-black-500">Komponen</p>
-                            </div>
-                            <div class="mt-2 space-y-2">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Gaji
-                                        Pokok</span>
-                                    <span id="detail-gaji-pokok" class="text-lg font-black text-carbon-black-900">Rp
-                                        -</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Lembur</span>
-                                    <span id="detail-total-lembur" class="text-lg font-black text-carbon-black-900">Rp
-                                        -</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Bonus</span>
-                                    <span id="detail-total-bonus" class="text-lg font-black text-hunter-green-700">Rp
-                                        -</span>
-                                </div>
-                                <div class="flex items-center justify-between gap-3">
-                                    <span
-                                        class="text-sm font-black uppercase tracking-widest text-carbon-black-400">Potongan</span>
-                                    <span id="detail-total-potongan" class="text-lg font-black text-rose-600">Rp -</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3 flex items-center justify-between">
-                        <p class="text-sm font-black uppercase tracking-widest text-carbon-black-500">Rincian Komponen Gaji
-                        </p>
-                        <p class="text-sm font-bold text-carbon-black-400">Menyesuaikan jumlah rincian</p>
-                    </div>
-                    <div id="salary-detail-list"
-                        class="mt-2 grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-2 overflow-visible">
-                        <div
-                            class="rounded-xl border border-carbon-black-100 bg-carbon-black-50 px-4 py-2 text-sm font-bold text-carbon-black-400">
-                            Detail akan tampil setelah baris karyawan dipilih.
-                        </div>
-                    </div>
+        <!-- 3. Visual Payout Distribution Breakdown -->
+        <div class="bg-white rounded-xl border border-carbon-black-200 p-4.5 shadow-2xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2.5">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-hunter-green-600"></span>
+                    <h3 class="text-xs font-black uppercase tracking-wider text-carbon-black-900">
+                        Komposisi Biaya Penggajian Bulan Ini
+                    </h3>
                 </div>
-
-                <div
-                    class="grid h-full grid-cols-2 grid-rows-[1fr_1fr_auto_auto] gap-3 rounded-xl border border-carbon-black-100 bg-carbon-black-50 p-3">
-                    <div
-                        class="col-span-2 flex flex-col justify-center rounded-xl border border-carbon-black-100 bg-white p-4">
-                        <p class="text-base font-black uppercase tracking-widest text-carbon-black-400">Total Gaji</p>
-                        <p class="mt-2 text-2xl font-black text-carbon-black-900" id="detail-gross-total">Rp -</p>
-                    </div>
-                    <div
-                        class="col-span-2 flex flex-col justify-center rounded-xl bg-gradient-to-br from-black-forest-900 to-black-forest-800 p-4 text-white shadow-md">
-                        <p class="text-base font-black uppercase tracking-widest text-white/60">Total Gaji Bersih</p>
-                        <p class="mt-2 text-2xl font-black" id="detail-net-total">Rp -</p>
-                    </div>
-                    <button type="button" id="detail-edit-bonus"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-hunter-green-200 bg-hunter-green-50 px-4 py-3 text-xs font-black uppercase tracking-widest text-hunter-green-700 transition-colors hover:bg-hunter-green-100 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled>
-                        <x-tabler-pencil class="h-4 w-4" />
-                        Edit Bonus
-                    </button>
-                    <button type="button" id="detail-edit-potongan"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-black uppercase tracking-widest text-rose-700 transition-colors hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled>
-                        <x-tabler-pencil class="h-4 w-4" />
-                        Edit Potongan
-                    </button>
-                    <button type="button" id="detail-save-payroll"
-                        class="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-hunter-green-500 to-hunter-green-600 px-5 py-3 text-sm font-black uppercase tracking-widest text-white shadow-[0_8px_20px_rgba(98,164,91,0.3)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(98,164,91,0.5)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_20px_rgba(98,164,91,0.3)] disabled:active:scale-100">
-                        <x-tabler-check class="h-5 w-5" />
-                        Simpan
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section class="flex-none overflow-visible rounded-none border border-carbon-black-200 bg-white shadow-xl">
-            <div
-                class="flex items-center justify-between gap-4 border-b border-carbon-black-100 bg-carbon-black-50 px-4 py-2">
-                <div
-                    class="flex shadow-sm rounded-lg overflow-hidden border-2 border-carbon-black-200 focus-within:border-hunter-green-400 transition-colors bg-white w-full max-w-md">
-                    <input type="text" id="payroll-search" placeholder="Cari nama karyawan..."
-                        class="w-full px-4 py-2 focus:outline-none text-carbon-black-800 placeholder-carbon-black-300 text-sm font-semibold"
-                        autocomplete="off">
-                    <div
-                        class="grid place-items-center bg-carbon-black-50 px-4 py-2 border-l border-carbon-black-200 text-carbon-black-400">
-                        <x-tabler-search class="w-4 h-4" />
-                    </div>
-                </div>
-
-                <div class="relative w-52 shrink-0">
-                    <select id="payroll-bagian-filter"
-                        class="w-full appearance-none rounded-lg border border-carbon-black-200 bg-white px-3 py-2 pr-10 text-sm font-semibold text-carbon-black-800 transition-all focus:border-hunter-green-500 focus:outline-none focus:ring-2 focus:ring-hunter-green-500/20">
-                        <option value="">Semua Bagian</option>
-                        @foreach($bagianOptions as $bagian)
-                            <option value="{{ $bagian }}">{{ $bagian }}</option>
-                        @endforeach
-                    </select>
-                    <div
-                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-carbon-black-400">
-                        <x-tabler-chevron-down class="h-4 w-4" />
-                    </div>
+                <div class="flex flex-wrap items-center gap-3.5 text-xs font-bold">
+                    <span class="flex items-center gap-1.5 text-hunter-green-800">
+                        <span class="w-2 h-2 rounded-full bg-hunter-green-600"></span>
+                        Gaji Pokok: <span id="comp-pokok-val" class="font-black">Rp 0</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-amber-700">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        Lembur: <span id="comp-lembur-val" class="font-black">Rp 0</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-blue-700">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        Bonus: <span id="comp-bonus-val" class="font-black">Rp 0</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-rose-700">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                        Potongan: <span id="comp-potongan-val" class="font-black">Rp 0</span>
+                    </span>
                 </div>
             </div>
 
-            <div class="overflow-x-auto overflow-y-visible scrollbar-invisible">
-                <table class="min-w-[980px] w-full border-collapse">
-                    <thead
-                        class="sticky top-0 z-10 border-b border-carbon-black-200 bg-carbon-black-50 text-carbon-black-600">
+            <!-- Distribution Progress Bar -->
+            <div class="w-full h-3 rounded-lg overflow-hidden flex bg-carbon-black-100">
+                <div id="bar-pokok" class="bg-hunter-green-600 h-full transition-all duration-500" style="width: 80%" title="Gaji Pokok"></div>
+                <div id="bar-lembur" class="bg-amber-500 h-full transition-all duration-500" style="width: 10%" title="Upah Lembur"></div>
+                <div id="bar-bonus" class="bg-blue-500 h-full transition-all duration-500" style="width: 10%" title="Bonus"></div>
+            </div>
+        </div>
+
+        <!-- 4. Batch Floating Action Bar -->
+        <div id="payroll-batch-bar" class="hidden transition-all duration-300">
+            <div class="bg-carbon-black-900 text-white rounded-xl px-5 py-3 shadow-xl flex items-center justify-between border border-carbon-black-800">
+                <div class="flex items-center space-x-3">
+                    <span class="p-1 rounded-md bg-hunter-green-500 text-white">
+                        <x-tabler-checks class="w-4 h-4" />
+                    </span>
+                    <span class="text-sm font-bold">
+                        <strong id="batch-selected-count">0</strong> karyawan dipilih
+                    </span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button type="button" id="btn-batch-deselect" class="px-3.5 py-1.5 text-xs font-bold text-carbon-black-300 hover:text-white transition-colors">
+                        Batal Pilih
+                    </button>
+                    <button type="button" id="btn-batch-pay-selected" class="px-4 py-2 bg-hunter-green-600 hover:bg-hunter-green-500 text-white text-xs font-black uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1.5">
+                        <x-tabler-check class="w-3.5 h-3.5" />
+                        <span>Tandai Lunas Terpilih</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Main Table Section (Scaled to Match Data Karyawan Font Baseline) -->
+        <section class="bg-white rounded-xl border border-carbon-black-200 shadow-2xs overflow-hidden">
+            <!-- Search & Bagian Filter Toolbar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-carbon-black-100 bg-carbon-black-50/60 px-5 py-3.5">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <!-- Search Input -->
+                    <div class="flex shadow-2xs rounded-lg overflow-hidden border border-carbon-black-300 focus-within:border-hunter-green-400 bg-white transition-all w-full sm:w-80">
+                        <input type="text" id="payroll-search" placeholder="Cari nama karyawan..."
+                            class="w-full px-3.5 py-2 focus:outline-none text-carbon-black-800 placeholder-carbon-black-400 text-sm font-semibold"
+                            autocomplete="off">
+                        <div class="grid place-items-center bg-carbon-black-50 px-3.5 border-l border-carbon-black-200 text-carbon-black-400">
+                            <x-tabler-search class="w-4 h-4" />
+                        </div>
+                    </div>
+
+                    <!-- Bagian Filter -->
+                    <div class="relative w-48 shrink-0">
+                        <select id="payroll-bagian-filter"
+                            class="w-full appearance-none rounded-lg border border-carbon-black-300 bg-white px-3.5 py-2 pr-8 text-sm font-semibold text-carbon-black-800 focus:border-hunter-green-500 focus:outline-none focus:ring-1 focus:ring-hunter-green-500">
+                            <option value="">Semua Bagian</option>
+                            @foreach($bagianOptions as $bagian)
+                                <option value="{{ $bagian }}">{{ $bagian }}</option>
+                            @endforeach
+                        </select>
+                        <x-tabler-chevron-down class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-black-400" />
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 self-end sm:self-auto text-xs text-carbon-black-500 font-semibold">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Klik baris untuk buka rincian slip karyawan</span>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto scrollbar-invisible">
+                <table class="w-full border-collapse text-left">
+                    <thead class="bg-carbon-black-50 border-b border-carbon-black-200 text-carbon-black-600 text-sm font-black uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-4 text-left text-xs font-black uppercase tracking-wider">Nama Karyawan</th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Bagian</th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Periode</th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Hari Kerja</th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Total Gaji Bersih
+                            <th class="px-4 py-4 text-center w-12">
+                                <input type="checkbox" id="check-select-all" class="w-4 h-4 rounded border-carbon-black-300 text-hunter-green-600 focus:ring-hunter-green-500 cursor-pointer">
                             </th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Status Pembayaran
-                            </th>
-                            <th class="px-4 py-4 text-center text-xs font-black uppercase tracking-wider">Aksi</th>
+                            <th class="px-5 py-4">Karyawan</th>
+                            <th class="px-5 py-4 text-center">Bagian</th>
+                            <th class="px-5 py-4 text-center">Hari & Lembur</th>
+                            <th class="px-5 py-4 text-center">Penyesuaian</th>
+                            <th class="px-5 py-4 text-right">Gaji Bersih</th>
+                            <th class="px-4 py-4 text-center min-w-[140px] whitespace-nowrap">Status</th>
+                            <th class="px-5 py-4 text-center w-48">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="payroll-table-body" class="divide-y divide-carbon-black-100">
+                    <tbody id="payroll-table-body" class="divide-y divide-carbon-black-100 text-base">
                         @forelse($activeKaryawans as $index => $karyawan)
                             @php
                                 $lookup = $karyawanLookup[$karyawan['id']] ?? [];
                             @endphp
-                            <tr class="payroll-row cursor-pointer transition-colors hover:bg-hunter-green-50"
+                            <tr class="payroll-row cursor-pointer transition-colors hover:bg-hunter-green-50/60 group"
                                 data-karyawan-id="{{ $karyawan['id'] }}" data-karyawan-name="{{ $karyawan['nama'] }}"
                                 data-karyawan-bagian="{{ $lookup['bagian'] ?? ($karyawan['bagian'] ?? '-') }}"
                                 data-row-index="{{ $index + 1 }}">
-                                <td class="px-4 py-5 text-left text-base font-bold text-carbon-black-900 bg-carbon-black-50/50"
-                                    data-field="nama_karyawan">{{ $karyawan['nama'] }}</td>
-                                <td class="px-4 py-5 text-center text-base font-semibold text-carbon-black-800"
-                                    data-field="bagian">{{ $lookup['bagian'] ?? ($karyawan['bagian'] ?? '-') }}</td>
-                                <td class="px-4 py-5 text-center text-base font-semibold text-carbon-black-800"
-                                    data-field="periode">{{ $months[$currentMonthIndex] }} {{ $currentYear }}</td>
-                                <td class="px-4 py-5 text-center text-base font-semibold text-carbon-black-800"
-                                    data-field="jumlah_hari_kerja">{{ $lookup['hari_kerja'] ?? 0 }}</td>
-                                <td class="px-4 py-5 text-right text-base font-black text-carbon-black-900"
-                                    data-field="total_gaji_bersih">Rp 0</td>
-                                <td class="px-4 py-5 text-center" data-field="status_pembayaran">
-                                    <span
-                                        class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-amber-600">Belum
-                                        Dibayar</span>
+                                <!-- Checkbox -->
+                                <td class="px-4 py-4.5 text-center" onclick="event.stopPropagation()">
+                                    <input type="checkbox" class="row-checkbox w-4 h-4 rounded border-carbon-black-300 text-hunter-green-600 focus:ring-hunter-green-500 cursor-pointer" data-id="{{ $karyawan['id'] }}">
                                 </td>
-                                <td class="px-4 py-5 text-center">
+
+                                <!-- Nama Karyawan (Baseline seukuran Data Karyawan) -->
+                                <td class="px-5 py-4.5 font-semibold text-carbon-black-900 group-hover:text-black-forest-700" data-field="nama_karyawan">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-hunter-green-100 text-hunter-green-800 flex items-center justify-center font-black text-xs shrink-0">
+                                            {{ strtoupper(substr($karyawan['nama'], 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-base text-carbon-black-900">{{ $karyawan['nama'] }}</div>
+                                            <div class="mt-1">
+                                                @php
+                                                    $bNama = $lookup['nama_bank'] ?? ($karyawan['nama_bank'] ?? 'Tidak Memiliki');
+                                                    $bRek = $lookup['no_rekening'] ?? ($karyawan['no_rekening'] ?? '-');
+                                                    $isTf = !empty($bNama) && strtolower($bNama) !== 'tidak memiliki' && !empty($bRek) && $bRek !== '-';
+                                                @endphp
+                                                @if($isTf)
+                                                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-hunter-green-700 bg-hunter-green-50 px-2 py-0.5 rounded border border-hunter-green-200" title="Transfer Bank: {{ $bNama }} ({{ $bRek }})">
+                                                        <x-tabler-building-bank class="w-3 h-3 text-hunter-green-600 shrink-0" />
+                                                        <span>Transfer</span>
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-carbon-black-600 bg-carbon-black-100 px-2 py-0.5 rounded border border-carbon-black-200" title="Pembayaran Tunai">
+                                                        <x-tabler-cash class="w-3 h-3 text-carbon-black-500 shrink-0" />
+                                                        <span>Tunai</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Bagian (Badge standard data karyawan) -->
+                                <td class="px-5 py-4.5 text-center font-semibold text-carbon-black-700" data-field="bagian">
+                                    <span class="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-carbon-black-100 text-carbon-black-800 border border-carbon-black-200 shadow-2xs">
+                                        {{ $lookup['bagian'] ?? ($karyawan['bagian'] ?? '-') }}
+                                    </span>
+                                </td>
+
+                                <!-- Hari Kerja & Lembur (text-base font-semibold) -->
+                                <td class="px-5 py-4.5 text-center" data-field="hari_lembur">
+                                    <div class="inline-flex items-center gap-1.5 text-base font-semibold">
+                                        <span class="text-carbon-black-800" data-field="jumlah_hari_kerja">{{ $lookup['hari_kerja'] ?? 0 }} hari</span>
+                                        <span class="text-carbon-black-300">/</span>
+                                        <span class="text-amber-700" data-field="jam_lembur_badge">{{ $lookup['jam_lembur'] ?? 0 }} jam lembur</span>
+                                    </div>
+                                </td>
+
+                                <!-- Penyesuaian (Bonus & Potongan Pills) -->
+                                <td class="px-5 py-4.5 text-center" data-field="penyesuaian_badges">
+                                    <div class="inline-flex items-center gap-1.5 text-xs font-bold">
+                                        <span class="px-2.5 py-1 rounded bg-hunter-green-50 text-hunter-green-700 border border-hunter-green-200" data-field="bonus_badge">
+                                            + Bonus
+                                        </span>
+                                        <span class="px-2.5 py-1 rounded bg-rose-50 text-rose-700 border border-rose-200" data-field="potongan_badge">
+                                            - Potongan
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Total Gaji Bersih (text-base font-black) -->
+                                <td class="px-5 py-4.5 text-right font-black text-carbon-black-900 text-base" data-field="total_gaji_bersih">
+                                    Rp 0
+                                </td>
+
+                                <!-- Status Pembayaran -->
+                                <td class="px-4 py-4.5 text-center whitespace-nowrap" data-field="status_pembayaran">
+                                    <span class="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-700 shadow-2xs">
+                                        Belum Dibayar
+                                    </span>
+                                </td>
+
+                                <!-- Aksi (Button standard data karyawan) -->
+                                <td class="px-5 py-4.5 text-center" onclick="event.stopPropagation()">
                                     <div class="flex items-center justify-center gap-2">
                                         <button type="button" data-action="process" data-karyawan-id="{{ $karyawan['id'] }}"
-                                            class="inline-flex items-center gap-1.5 rounded-lg border border-hunter-green-200 bg-hunter-green-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-hunter-green-700 transition-colors hover:bg-hunter-green-100">
+                                            class="inline-flex items-center gap-1.5 rounded-lg border border-hunter-green-200 bg-hunter-green-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-hunter-green-700 transition-colors hover:bg-hunter-green-100 shadow-2xs" title="Tandai Bayar">
                                             <x-tabler-check class="h-4 w-4" />
-                                            Proses
+                                            <span>Bayar</span>
+                                        </button>
+                                        <button type="button" data-action="open-drawer" data-karyawan-id="{{ $karyawan['id'] }}"
+                                            class="inline-flex items-center gap-1.5 rounded-lg border border-carbon-black-200 bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-carbon-black-700 transition-colors hover:bg-carbon-black-50 hover:text-hunter-green-700 shadow-2xs" title="Rincian Detail">
+                                            <x-tabler-layout-sidebar-right-collapse class="h-4 w-4 text-hunter-green-600" />
+                                            <span>Rincian</span>
                                         </button>
                                         <button type="button" data-action="slip" data-karyawan-id="{{ $karyawan['id'] }}"
-                                            class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-amber-600 transition-colors hover:bg-amber-100">
-                                            <x-tabler-eye class="h-4 w-4" />
-                                            Slip
+                                            class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-700 transition-colors hover:bg-amber-100 shadow-2xs" title="Cetak Slip">
+                                            <x-tabler-printer class="h-4 w-4" />
+                                            <span>Slip</span>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-sm font-bold text-carbon-black-400">
+                                <td colspan="8" class="px-6 py-10 text-center text-sm font-bold text-carbon-black-400">
                                     Tidak ada karyawan aktif untuk diproses.
                                 </td>
                             </tr>
                         @endforelse
                         <tr id="payroll-empty-filter-row" class="hidden">
-                            <td colspan="7" class="px-6 py-10 text-center text-base font-bold text-carbon-black-400">
+                            <td colspan="8" class="px-6 py-8 text-center text-sm font-bold text-carbon-black-400">
                                 Tidak ada data penggajian yang sesuai dengan pencarian/filter.
                             </td>
                         </tr>
@@ -317,14 +385,148 @@
                 </table>
             </div>
 
-            <div
-                class="flex items-center justify-between gap-4 border-t border-carbon-black-100 bg-carbon-black-50 px-4 py-3">
-                <p id="payroll-pagination-info" class="text-sm font-bold text-carbon-black-500">Menampilkan 0 data</p>
-                <div id="payroll-pagination" class="flex items-center justify-end gap-2"></div>
+            <!-- Pagination Bar -->
+            <div class="bg-carbon-black-50 border-t border-carbon-black-100 px-6 py-4 flex items-center justify-between">
+                <p id="payroll-pagination-info" class="text-sm font-medium text-carbon-black-600">Menampilkan 0 data</p>
+                <div id="payroll-pagination" class="flex items-center justify-end gap-1"></div>
             </div>
         </section>
     </div>
 
+    <!-- 6. SLIDE-OVER DRAWER FOR EMPLOYEE DETAIL (Scaled typography) -->
+    <div id="payroll-drawer-backdrop" class="fixed inset-0 z-50 bg-carbon-black-900/40 backdrop-blur-xs transition-opacity duration-300 opacity-0 pointer-events-none" onclick="closePayrollDrawer()"></div>
+    
+    <div id="payroll-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-2xl bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <!-- Drawer Header -->
+        <div class="px-6 py-4.5 border-b border-carbon-black-100 flex items-center justify-between bg-carbon-black-50">
+            <div class="flex items-center space-x-3">
+                <span class="p-2 bg-hunter-green-100 text-hunter-green-700 rounded-lg">
+                    <x-tabler-receipt class="w-5 h-5" />
+                </span>
+                <div>
+                    <h3 id="detail-employee-name" class="text-lg font-black text-carbon-black-900">Pilih Karyawan</h3>
+                    <p id="detail-employee-meta" class="text-xs font-bold text-carbon-black-500 mt-0.5">-</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="detail-status-badge" class="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-carbon-black-200 bg-carbon-black-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-carbon-black-500 shadow-2xs">
+                    Belum Dibayar
+                </span>
+                <button type="button" onclick="closePayrollDrawer()" class="p-1.5 rounded-lg text-carbon-black-400 hover:text-carbon-black-800 hover:bg-carbon-black-100 transition-colors">
+                    <x-tabler-x class="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Drawer Body (Scrollable) -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-5 scrollbar-invisible">
+            <!-- Identitas & Parameter Penggajian Grid -->
+            <div class="grid grid-cols-2 gap-3.5">
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">ID Penggajian</span>
+                    <div id="detail-id-penggajian" class="font-black text-base text-carbon-black-900 mt-0.5">-</div>
+                </div>
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">ID Karyawan</span>
+                    <div id="detail-id-karyawan" class="font-black text-base text-carbon-black-900 mt-0.5">-</div>
+                </div>
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">Periode</span>
+                    <div class="font-black text-base text-carbon-black-900 mt-0.5">
+                        <span id="detail-periode-bulan">-</span> <span id="detail-periode-tahun">-</span>
+                    </div>
+                </div>
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">Tanggal Bayar</span>
+                    <div id="detail-tanggal-pembayaran" class="font-black text-base text-carbon-black-900 mt-0.5">-</div>
+                </div>
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">Metode Pembayaran</span>
+                    <div id="detail-metode-pembayaran" class="font-semibold text-sm text-carbon-black-900 mt-0.5 break-words">-</div>
+                </div>
+                <div class="p-3.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-400">Basis Perhitungan</span>
+                    <div id="detail-basis-perhitungan" class="font-semibold text-sm text-carbon-black-900 mt-0.5">-</div>
+                </div>
+            </div>
+
+            <!-- Jam Kerja & Lembur -->
+            <div class="grid grid-cols-2 gap-3.5">
+                <div class="p-4 bg-hunter-green-50/50 rounded-xl border border-hunter-green-200">
+                    <span class="text-xs font-black uppercase tracking-wider text-hunter-green-700">Hari Kerja Efektif</span>
+                    <div id="detail-hari-kerja" class="text-xl font-black text-hunter-green-900 mt-1">-</div>
+                    <div class="text-xs font-semibold text-hunter-green-600 mt-1">Tarif Pokok: <span id="detail-gaji-pokok" class="font-bold">Rp -</span> / <span id="detail-satuan-pokok">Jam</span></div>
+                </div>
+                <div class="p-4 bg-amber-50/50 rounded-xl border border-amber-200">
+                    <span class="text-xs font-black uppercase tracking-wider text-amber-700">Akumulasi Lembur</span>
+                    <div id="detail-jumlah-lembur" class="text-xl font-black text-amber-900 mt-1">-</div>
+                    <div class="text-xs font-semibold text-amber-600 mt-1">Upah Lembur: <span id="detail-total-lembur" class="font-bold">Rp -</span></div>
+                </div>
+            </div>
+
+            <!-- Rincian Komponen Gaji (Cards) -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-xs font-black uppercase tracking-wider text-carbon-black-700 whitespace-nowrap">Komponen Pendapatan & Potongan</span>
+                    <span class="text-[12.5px] text-carbon-black-400 font-medium normal-case whitespace-nowrap">Klik tombol Detail pada masing-masing</span>
+                </div>
+                <div id="salary-detail-list" class="grid grid-cols-2 gap-2.5">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Subtotal Bonus & Potongan -->
+            <div class="p-4.5 bg-carbon-black-50 rounded-xl border border-carbon-black-100 space-y-2.5 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-carbon-black-600 font-semibold">Total Bonus Tambahan:</span>
+                    <span id="detail-total-bonus" class="font-bold text-hunter-green-700">Rp -</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-carbon-black-600 font-semibold">Total Potongan Gaji:</span>
+                    <span id="detail-total-potongan" class="font-bold text-rose-600">Rp -</span>
+                </div>
+                <div class="border-t border-carbon-black-200 pt-2.5 flex justify-between items-center font-bold">
+                    <span class="text-carbon-black-700">Total Penghasilan Kotor:</span>
+                    <span id="detail-gross-total" class="text-carbon-black-900 font-black">Rp -</span>
+                </div>
+            </div>
+
+            <!-- Total Gaji Bersih Callout -->
+            <div class="bg-gradient-to-r from-black-forest-800 to-hunter-green-800 text-white rounded-xl p-5 shadow-md flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-black uppercase tracking-wider text-hunter-green-200">Gaji Bersih (Take Home Pay)</span>
+                    <div id="detail-net-total" class="text-2xl font-black text-white tracking-tight mt-1">
+                        Rp -
+                    </div>
+                </div>
+                <button type="button" onclick="printFromDrawer()" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider rounded-lg border border-white/20 transition-all flex items-center gap-1.5 active:scale-95">
+                    <x-tabler-printer class="w-4 h-4" />
+                    <span>Slip</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Drawer Footer Actions -->
+        <div class="p-4.5 bg-carbon-black-50 border-t border-carbon-black-100 grid grid-cols-3 gap-3">
+            <button type="button" id="detail-edit-bonus"
+                class="px-3.5 py-3 rounded-lg border border-hunter-green-200 bg-hunter-green-50 text-hunter-green-700 text-xs font-black uppercase tracking-wider hover:bg-hunter-green-100 transition-colors flex items-center justify-center gap-1.5">
+                <x-tabler-pencil class="h-4 w-4" />
+                <span>Bonus</span>
+            </button>
+            <button type="button" id="detail-edit-potongan"
+                class="px-3.5 py-3 rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-xs font-black uppercase tracking-wider hover:bg-rose-100 transition-colors flex items-center justify-center gap-1.5">
+                <x-tabler-pencil class="h-4 w-4" />
+                <span>Potongan</span>
+            </button>
+            <button type="button" id="detail-save-payroll"
+                class="px-3.5 py-3 rounded-lg bg-hunter-green-600 text-white text-xs font-black uppercase tracking-wider shadow-sm hover:bg-hunter-green-700 transition-colors flex items-center justify-center gap-1.5 active:scale-95">
+                <x-tabler-check class="h-4 w-4" />
+                <span>Bayar</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 7. Bonus Modal -->
     <div id="bonus-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
         <div
@@ -332,8 +534,7 @@
             <div class="px-6 py-5 border-b border-carbon-black-100 flex justify-between items-center">
                 <div>
                     <h3 class="text-xl font-black uppercase tracking-wide text-carbon-black-900">Isian Bonus Karyawan</h3>
-                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Pilih jenis bonus, lalu isi jumlah atau
-                        selisih sesuai ketentuan bonus.</p>
+                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Pilih jenis bonus, lalu isi jumlah atau selisih sesuai ketentuan bonus.</p>
                 </div>
                 <button type="button" class="text-carbon-black-400 hover:text-rose-600 transition-colors"
                     onclick="closeBonusModal(false)">
@@ -361,13 +562,13 @@
                         class="px-5 py-2.5 border border-carbon-black-300 text-carbon-black-600 text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-carbon-black-100 transition-colors"
                         onclick="closeBonusModal(false)">Batal</button>
                     <button type="button" id="save-bonus-modal"
-                        class="px-5 py-2.5 bg-hunter-green-600 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-hunter-green-700 hover:shadow-lg transition-all active:scale-95">Simpan
-                        Bonus</button>
+                        class="px-5 py-2.5 bg-hunter-green-600 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-hunter-green-700 hover:shadow-lg transition-all active:scale-95">Simpan Bonus</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 8. Potongan Modal -->
     <div id="potongan-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
         <div
@@ -375,8 +576,7 @@
             <div class="px-6 py-5 border-b border-carbon-black-100 flex justify-between items-center">
                 <div>
                     <h3 class="text-xl font-black uppercase tracking-wide text-carbon-black-900">Isian Potongan Gaji</h3>
-                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Pilih jenis potongan dari data master
-                        Potongan Gaji.</p>
+                    <p class="text-xs font-semibold text-carbon-black-500 mt-1">Pilih jenis potongan dari data master Potongan Gaji.</p>
                 </div>
                 <button type="button" class="text-carbon-black-400 hover:text-rose-600 transition-colors"
                     onclick="closePotonganModal(false)">
@@ -404,13 +604,13 @@
                         class="px-5 py-2.5 border border-carbon-black-300 text-carbon-black-600 text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-carbon-black-100 transition-colors"
                         onclick="closePotonganModal(false)">Batal</button>
                     <button type="button" id="save-potongan-modal"
-                        class="px-5 py-2.5 bg-rose-600 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-rose-700 hover:shadow-lg transition-all active:scale-95">Simpan
-                        Potongan</button>
+                        class="px-5 py-2.5 bg-rose-600 text-white text-sm font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-rose-700 hover:shadow-lg transition-all active:scale-95">Simpan Potongan</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 9. Slip Gaji Modal -->
     <div id="slip-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
         <div
@@ -450,6 +650,7 @@
         </div>
     </div>
 
+    <!-- 10. Component Detail Modal -->
     <div id="component-detail-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-carbon-black-900/50 backdrop-blur-sm transition-opacity opacity-0">
         <div
@@ -479,13 +680,12 @@
         </div>
     </div>
 
+    <!-- 11. Hidden Print Container -->
     <div id="print-container" class="hidden font-sans text-black bg-white" style="max-width: 800px; margin: 0 auto;">
-        <!-- Print Header -->
         <table style="width: 100%; border-bottom: 2px solid black; margin-bottom: 10px; padding-bottom: 10px;">
             <tr>
                 <td style="vertical-align: top;">
-                    <h1
-                        style="font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 2px;">
+                    <h1 style="font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 2px;">
                         SAHABAT TERNAK</h1>
                 </td>
                 <td style="vertical-align: bottom; text-align: right;">
@@ -494,8 +694,7 @@
             </tr>
         </table>
 
-        <h2
-            style="text-align: center; font-size: 18px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px;">
+        <h2 style="text-align: center; font-size: 18px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px;">
             SLIP GAJI KARYAWAN</h2>
 
         <table style="width: 100%; margin-bottom: 20px; font-size: 12px; font-weight: 600;">
@@ -513,35 +712,28 @@
                 <td>:</td>
                 <td id="print-bagian"></td>
 
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="width: 100px;">METODE</td>
+                <td style="width: 10px;">:</td>
+                <td id="print-metode"></td>
             </tr>
         </table>
 
-        <!-- Details Table -->
         <table style="width: 100%; border: 2px solid black; border-collapse: collapse; font-size: 12px;">
             <thead>
                 <tr>
-                    <th
-                        style="border: 2px solid black; padding: 8px; text-transform: uppercase; letter-spacing: 1px; width: 50%;">
+                    <th style="border: 2px solid black; padding: 8px; text-transform: uppercase; letter-spacing: 1px; width: 50%;">
                         PENERIMAAN</th>
-                    <th
-                        style="border: 2px solid black; padding: 8px; text-transform: uppercase; letter-spacing: 1px; width: 50%;">
+                    <th style="border: 2px solid black; padding: 8px; text-transform: uppercase; letter-spacing: 1px; width: 50%;">
                         POTONGAN</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td style="border-right: 2px solid black; padding: 12px; vertical-align: top; height: 150px;">
-                        <table style="width: 100%; border-collapse: collapse;" id="print-penerimaan-list">
-                            <!-- populated by js -->
-                        </table>
+                        <table style="width: 100%; border-collapse: collapse;" id="print-penerimaan-list"></table>
                     </td>
                     <td style="padding: 12px; vertical-align: top;">
-                        <table style="width: 100%; border-collapse: collapse;" id="print-potongan-list">
-                            <!-- populated by js -->
-                        </table>
+                        <table style="width: 100%; border-collapse: collapse;" id="print-potongan-list"></table>
                     </td>
                 </tr>
             </tbody>
@@ -567,16 +759,13 @@
             </tfoot>
         </table>
 
-        <!-- THP -->
-        <table
-            style="width: 50%; margin-top: 15px; font-size: 16px; font-weight: bold; border-top: 2px solid black; border-bottom: 2px solid black;">
+        <table style="width: 50%; margin-top: 15px; font-size: 16px; font-weight: bold; border-top: 2px solid black; border-bottom: 2px solid black;">
             <tr>
                 <td style="padding: 8px 0; width: 160px; text-transform: uppercase; letter-spacing: 1px;">TAKE HOME PAY</td>
                 <td style="padding: 8px 0;">: <span id="print-thp"></span></td>
             </tr>
         </table>
 
-        <!-- Signatures -->
         <table style="width: 100%; margin-top: 50px; text-align: center; font-size: 12px; font-weight: 600;">
             <tr>
                 <td style="width: 50%;">
@@ -632,6 +821,10 @@
                 const payrollEmptyFilterRow = document.getElementById('payroll-empty-filter-row');
                 const payrollPagination = document.getElementById('payroll-pagination');
                 const payrollPaginationInfo = document.getElementById('payroll-pagination-info');
+                
+                // Drawer Elements
+                const drawer = document.getElementById('payroll-drawer');
+                const drawerBackdrop = document.getElementById('payroll-drawer-backdrop');
                 const detailName = document.getElementById('detail-employee-name');
                 const detailMeta = document.getElementById('detail-employee-meta');
                 const detailStatusBadge = document.getElementById('detail-status-badge');
@@ -652,7 +845,35 @@
                 const detailTotalPotongan = document.getElementById('detail-total-potongan');
                 const detailPeriodeBulan = document.getElementById('detail-periode-bulan');
                 const detailPeriodeTahun = document.getElementById('detail-periode-tahun');
+                const detailMetodePembayaran = document.getElementById('detail-metode-pembayaran');
+                const detailBasisPerhitungan = document.getElementById('detail-basis-perhitungan');
+                const detailSatuanPokok = document.getElementById('detail-satuan-pokok');
 
+                // Metric Cards Elements
+                const statTotalGajiBersih = document.getElementById('stat-total-gaji-bersih');
+                const statProgresRasio = document.getElementById('stat-progres-rasio');
+                const statProgresBar = document.getElementById('stat-progres-bar');
+                const statTotalJamLembur = document.getElementById('stat-total-jam-lembur');
+                const statTotalNominalLembur = document.getElementById('stat-total-nominal-lembur');
+                const statTotalBonus = document.getElementById('stat-total-bonus');
+                const statTotalPotongan = document.getElementById('stat-total-potongan');
+                const compPokokVal = document.getElementById('comp-pokok-val');
+                const compLemburVal = document.getElementById('comp-lembur-val');
+                const compBonusVal = document.getElementById('comp-bonus-val');
+                const compPotonganVal = document.getElementById('comp-potongan-val');
+                const barPokok = document.getElementById('bar-pokok');
+                const barLembur = document.getElementById('bar-lembur');
+                const barBonus = document.getElementById('bar-bonus');
+
+                // Batch Selection Elements
+                const checkSelectAll = document.getElementById('check-select-all');
+                const batchBar = document.getElementById('payroll-batch-bar');
+                const batchSelectedCount = document.getElementById('batch-selected-count');
+                const btnBatchDeselect = document.getElementById('btn-batch-deselect');
+                const btnBatchPaySelected = document.getElementById('btn-batch-pay-selected');
+                const btnBatchProcessAll = document.getElementById('btn-batch-process-all');
+
+                // Modals
                 const bonusModal = document.getElementById('bonus-modal');
                 const bonusModalInner = bonusModal.querySelector('div');
                 const bonusRows = document.getElementById('bonus-rows');
@@ -666,11 +887,13 @@
                 const addPotonganRowButton = document.getElementById('add-potongan-row');
                 const savePotonganModalButton = document.getElementById('save-potongan-modal');
                 const potonganModalTotal = document.getElementById('potongan-modal-total');
+
                 const slipModal = document.getElementById('slip-modal');
                 const slipModalInner = slipModal.querySelector('div');
                 const slipSubtitle = document.getElementById('slip-subtitle');
                 const slipDetailList = document.getElementById('slip-detail-list');
                 const slipTotalNet = document.getElementById('slip-total-net');
+
                 const componentDetailModal = document.getElementById('component-detail-modal');
                 const componentDetailModalInner = componentDetailModal.querySelector('div');
                 const componentDetailTitle = document.getElementById('component-detail-title');
@@ -684,7 +907,7 @@
                 let editingType = null;
 
                 function formatRupiah(value) {
-                    return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+                    return 'Rp ' + Math.round(Number(value || 0)).toLocaleString('id-ID');
                 }
 
                 function formatNumber(value) {
@@ -709,21 +932,18 @@
 
                 function statusBadgeClasses(status) {
                     const normalized = String(status || '').toLowerCase();
-                    let classes = 'border-amber-200 bg-amber-50 text-amber-600';
-                    if (normalized === 'diproses') {
-                        classes = 'border-blue-200 bg-blue-50 text-blue-700';
-                    } else if (normalized === 'dibayar' || normalized === 'selesai') {
-                        classes = 'border-emerald-200 bg-emerald-50 text-emerald-700';
-                    } else if (normalized === 'ditolak') {
-                        classes = 'border-rose-200 bg-rose-50 text-rose-700';
+                    if (normalized === 'dibayar' || normalized === 'selesai') {
+                        return 'border-emerald-200 bg-emerald-50 text-emerald-700';
                     }
-
-                    return classes;
+                    if (normalized === 'diproses') {
+                        return 'border-blue-200 bg-blue-50 text-blue-700';
+                    }
+                    return 'border-amber-200 bg-amber-50 text-amber-700';
                 }
 
                 function statusBadge(status) {
                     const classes = statusBadgeClasses(status);
-                    return `<span class="rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-widest ${classes}">${escapeHtml(status)}</span>`;
+                    return `<span class="inline-flex items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-2xs ${classes}">${escapeHtml(status)}</span>`;
                 }
 
                 function statusPriority(status) {
@@ -784,7 +1004,6 @@
                         const row = rows.find(item => String(item.dataset.karyawanId) === String(id));
                         payrollState[id] = buildInitialState(id, Number(row?.dataset.rowIndex || 1) - 1);
                     }
-
                     return payrollState[id];
                 }
 
@@ -846,6 +1065,7 @@
                             });
                         });
                     }
+
                     let manualPotonganTotal = 0;
                     const manualPotonganDetails = [];
                     state.manualPotonganRows.forEach(item => {
@@ -879,9 +1099,7 @@
 
                 function setCell(row, field, value) {
                     const cell = row.querySelector(`[data-field="${field}"]`);
-                    if (cell) {
-                        cell.innerHTML = value;
-                    }
+                    if (cell) cell.innerHTML = value;
                 }
 
                 function renderTableRow(id) {
@@ -889,65 +1107,102 @@
                     const row = rows.find(item => String(item.dataset.karyawanId) === String(id));
                     if (!row) return;
 
-                    setCell(row, 'bagian', escapeHtml(karyawanLookup[id]?.bagian || getEmployee(id).bagian || '-'));
-                    setCell(row, 'periode', `${escapeHtml(state.periode_bulan)} ${escapeHtml(state.periode_tahun)}`);
-                    setCell(row, 'jumlah_hari_kerja', formatNumber(state.jumlah_hari_kerja));
+                    const data = karyawanLookup[id] || {};
+                    setCell(row, 'bagian', `<span class="inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-carbon-black-100 text-carbon-black-800 border border-carbon-black-200 shadow-2xs">${escapeHtml(data.bagian || getEmployee(id).bagian || '-')}</span>`);
                     setCell(row, 'total_gaji_bersih', formatRupiah(state.total_gaji_bersih));
                     setCell(row, 'status_pembayaran', statusBadge(state.status_pembayaran));
+
+                    const hariKerjaEl = row.querySelector('[data-field="jumlah_hari_kerja"]');
+                    if (hariKerjaEl) hariKerjaEl.textContent = `${formatNumber(state.jumlah_hari_kerja)} hari`;
+
+                    const lemburBadge = row.querySelector('[data-field="jam_lembur_badge"]');
+                    if (lemburBadge) lemburBadge.textContent = data.lembur_aktif === false ? '-' : `${formatDecimal(state.jumlah_lembur)} jam lembur`;
+
+                    const bonusBadge = row.querySelector('[data-field="bonus_badge"]');
+                    if (bonusBadge) {
+                        bonusBadge.textContent = state.total_bonus > 0 ? `+${formatRupiah(state.total_bonus)}` : 'Bonus: Rp 0';
+                        bonusBadge.className = state.total_bonus > 0
+                            ? 'px-2.5 py-1 rounded bg-hunter-green-100 text-hunter-green-800 border border-hunter-green-300 font-bold'
+                            : 'px-2.5 py-1 rounded bg-carbon-black-100 text-carbon-black-500 font-medium';
+                    }
+
+                    const potonganBadge = row.querySelector('[data-field="potongan_badge"]');
+                    if (potonganBadge) {
+                        potonganBadge.textContent = state.total_potongan > 0 ? `-${formatRupiah(state.total_potongan)}` : 'Potongan: Rp 0';
+                        potonganBadge.className = state.total_potongan > 0
+                            ? 'px-2.5 py-1 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold'
+                            : 'px-2.5 py-1 rounded bg-carbon-black-100 text-carbon-black-500 font-medium';
+                    }
 
                     const processButton = row.querySelector('[data-action="process"]');
                     if (processButton) {
                         const paid = String(state.status_pembayaran || '').toLowerCase() === 'dibayar';
                         processButton.disabled = paid;
                         processButton.className = paid
-                            ? 'inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-emerald-700 opacity-80'
-                            : 'inline-flex items-center gap-1.5 rounded-lg border border-hunter-green-200 bg-hunter-green-50 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-hunter-green-700 transition-colors hover:bg-hunter-green-100';
-                        processButton.lastChild.textContent = paid ? ' Dibayar' : ' Proses';
+                            ? 'inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 opacity-80 cursor-default shadow-2xs'
+                            : 'inline-flex items-center gap-1.5 rounded-lg border border-hunter-green-200 bg-hunter-green-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-hunter-green-700 transition-colors hover:bg-hunter-green-100 shadow-2xs';
+                        processButton.querySelector('span').textContent = paid ? 'Lunas' : 'Bayar';
                     }
                 }
 
-                function detailRow(title, description, amount, tone = 'neutral', detailType = '') {
-                    const isZero = Number(amount) <= 0;
-                    const amountClass = isZero ? 'text-carbon-black-500' : (tone === 'deduction' ? 'text-rose-600' : 'text-hunter-green-700');
-                    const accentClass = tone === 'deduction' ? 'border-l-rose-300' : 'border-l-hunter-green-300';
-                    const prefix = tone === 'deduction' && !isZero ? '- ' : '';
-                    const detailButton = detailType ? `
-                        <button type="button" data-component-detail="${detailType}" class="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-carbon-black-200 bg-carbon-black-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-carbon-black-600 transition-colors hover:border-hunter-green-300 hover:bg-hunter-green-50 hover:text-hunter-green-700">
-                            Detail
-                        </button>
-                    ` : '';
+                // Update Executive Summary Metrics Cards & Donut Breakdown
+                function updatePayrollSummaryCards() {
+                    let sumNet = 0;
+                    let sumPokok = 0;
+                    let sumLembur = 0;
+                    let sumBonus = 0;
+                    let sumPotongan = 0;
+                    let sumLemburHours = 0;
+                    let paidCount = 0;
+                    const totalEmployees = rows.length;
 
-                    return `
-                        <div class="min-w-0 rounded-xl border border-l-4 border-carbon-black-100 ${accentClass} bg-white px-3 py-2 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="truncate text-base font-black leading-tight text-carbon-black-800">${escapeHtml(title)}</p>
-                                    <p class="mt-1 text-base font-semibold leading-tight text-carbon-black-400">${escapeHtml(description)}</p>
-                                    ${detailButton}
-                                </div>
-                                <p class="shrink-0 text-right text-base font-black leading-tight ${amountClass}">${prefix}${formatRupiah(amount)}</p>
-                            </div>
-                        </div>
-                    `;
+                    rows.forEach(row => {
+                        const id = row.dataset.karyawanId;
+                        const state = recalculateState(id);
+                        sumNet += Number(state.total_gaji_bersih || 0);
+                        sumPokok += Number(state.gaji_pokok || 0);
+                        sumLembur += Number(state.total_lembur || 0);
+                        sumBonus += Number(state.total_bonus || 0);
+                        sumPotongan += Number(state.total_potongan || 0);
+                        sumLemburHours += Number(state.jumlah_lembur || 0);
+                        if (String(state.status_pembayaran || '').toLowerCase() === 'dibayar') {
+                            paidCount++;
+                        }
+                    });
+
+                    // Update DOM cards
+                    if (statTotalGajiBersih) statTotalGajiBersih.textContent = formatRupiah(sumNet);
+                    if (statProgresRasio) statProgresRasio.innerHTML = `${paidCount} / ${totalEmployees} <span class="text-xs font-bold text-carbon-black-400">Lunas</span>`;
+                    
+                    const progressPercent = totalEmployees > 0 ? (paidCount / totalEmployees) * 100 : 0;
+                    if (statProgresBar) statProgresBar.style.width = progressPercent + '%';
+
+                    if (statTotalJamLembur) statTotalJamLembur.textContent = formatDecimal(sumLemburHours) + ' Jam';
+                    if (statTotalNominalLembur) statTotalNominalLembur.textContent = formatRupiah(sumLembur) + ' Upah Lembur';
+
+                    if (statTotalBonus) statTotalBonus.textContent = '+ ' + formatRupiah(sumBonus);
+                    if (statTotalPotongan) statTotalPotongan.textContent = '- ' + formatRupiah(sumPotongan);
+
+                    // Update Breakdown Values
+                    if (compPokokVal) compPokokVal.textContent = formatRupiah(sumPokok);
+                    if (compLemburVal) compLemburVal.textContent = formatRupiah(sumLembur);
+                    if (compBonusVal) compBonusVal.textContent = formatRupiah(sumBonus);
+                    if (compPotonganVal) compPotonganVal.textContent = formatRupiah(sumPotongan);
+
+                    // Progress bar proportions
+                    const totalGross = (sumPokok + sumLembur + sumBonus) || 1;
+                    if (barPokok) barPokok.style.width = Math.round((sumPokok / totalGross) * 100) + '%';
+                    if (barLembur) barLembur.style.width = Math.round((sumLembur / totalGross) * 100) + '%';
+                    if (barBonus) barBonus.style.width = Math.round((sumBonus / totalGross) * 100) + '%';
                 }
 
                 function componentCard(title, tone = 'neutral', detailType = '') {
                     return `
-                        <div class="flex items-center justify-between gap-2 rounded-xl border border-carbon-black-100 bg-white px-4 py-3 shadow-[0_1px_0_rgba(0,0,0,0.03)] h-full">
-                            <p class="text-base font-black leading-tight text-carbon-black-800">${escapeHtml(title)}</p>
-                            <button type="button" data-component-detail="${detailType}" class="inline-flex shrink-0 items-center gap-1 rounded-md border border-carbon-black-200 bg-carbon-black-50 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-carbon-black-600 transition-colors hover:border-hunter-green-300 hover:bg-hunter-green-50 hover:text-hunter-green-700" title="Detail ${escapeHtml(title)}">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        <div class="flex items-center justify-between gap-2 rounded-xl border border-carbon-black-100 bg-white px-3.5 py-3 shadow-2xs h-full">
+                            <p class="text-sm font-bold text-carbon-black-800">${escapeHtml(title)}</p>
+                            <button type="button" data-component-detail="${detailType}" class="inline-flex shrink-0 items-center gap-1 rounded-md border border-carbon-black-200 bg-carbon-black-50 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-carbon-black-600 transition-colors hover:border-hunter-green-300 hover:bg-hunter-green-50 hover:text-hunter-green-700" title="Detail ${escapeHtml(title)}">
                                 Detail
                             </button>
-                        </div>
-                    `;
-                }
-
-                function infoRow(title, value) {
-                    return `
-                        <div class="flex items-center justify-between gap-4 rounded-xl border border-carbon-black-100 bg-carbon-black-50 px-4 py-3">
-                            <p class="text-sm font-black text-carbon-black-800">${escapeHtml(title)}</p>
-                            <p class="text-right text-sm font-black text-carbon-black-600">${escapeHtml(value)}</p>
                         </div>
                     `;
                 }
@@ -959,16 +1214,11 @@
                     const satuanGajiPokok = data.satuan_gaji_pokok || 'Jam';
                     const hariKerja = Number(data.hari_kerja || 0);
                     const tarifPokok = Number(data.gaji_pokok || 0);
-                    const jamLembur = Number(data.jam_lembur || 0);
-                    const tarifLembur = Number(data.tarif_lembur || 0);
-                    const gajiPokokDetail = satuanGajiPokok === 'Hari'
-                        ? `${formatNumber(hariKerja)} hari x ${formatRupiah(tarifPokok)}`
-                        : `${formatNumber(hariKerja)} hari x 7 jam x ${formatRupiah(tarifPokok)}`;
 
                     detailName.textContent = employee.nama || data.nama || 'Karyawan';
-                    detailMeta.textContent = `${data.bagian || employee.bagian || '-'} - ${state.periode_bulan} ${state.periode_tahun}`;
+                    detailMeta.textContent = `${data.bagian || employee.bagian || '-'} • Periode ${state.periode_bulan} ${state.periode_tahun}`;
                     detailStatusBadge.textContent = state.status_pembayaran;
-                    detailStatusBadge.className = `rounded-full border px-3 py-1 text-xs font-black uppercase tracking-widest ${statusBadgeClasses(state.status_pembayaran)}`;
+                    detailStatusBadge.className = `inline-flex items-center justify-center whitespace-nowrap rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-2xs ${statusBadgeClasses(state.status_pembayaran)}`;
                     detailGrossTotal.textContent = formatRupiah(state.total_gaji_kotor);
                     detailNetTotal.textContent = formatRupiah(state.total_gaji_bersih);
                     detailIdPenggajian.textContent = state.id_penggajian;
@@ -982,11 +1232,39 @@
                     detailTotalPotongan.textContent = formatRupiah(state.total_potongan);
                     detailPeriodeBulan.textContent = state.periode_bulan;
                     detailPeriodeTahun.textContent = state.periode_tahun;
-                    
+
+                    if (detailMetodePembayaran) {
+                        const isTransfer = data.metode_pembayaran === 'Transfer Bank';
+                        if (isTransfer) {
+                            detailMetodePembayaran.innerHTML = `
+                                <div class="font-bold text-hunter-green-700">Transfer Bank</div>
+                                <div class="text-xs font-semibold text-carbon-black-600 mt-0.5">${escapeHtml(data.nama_bank || '-')} • ${escapeHtml(data.no_rekening || '-')}</div>
+                            `;
+                        } else {
+                            detailMetodePembayaran.innerHTML = `
+                                <div class="font-bold text-carbon-black-800">Tunai</div>
+                            `;
+                        }
+                    }
+                    if (detailBasisPerhitungan) {
+                        detailBasisPerhitungan.textContent = data.satuan_gaji_pokok === 'Hari'
+                            ? 'Harian (Per Hari Kerja)'
+                            : 'Per Jam (Jam Reguler & Lembur)';
+                    }
+                    if (detailSatuanPokok) {
+                        detailSatuanPokok.textContent = data.satuan_gaji_pokok === 'Hari' ? 'Hari' : 'Jam';
+                    }
+
                     const isPaid = String(state.status_pembayaran || '').toLowerCase() === 'dibayar';
                     detailEditBonus.disabled = isPaid;
                     detailEditPotongan.disabled = isPaid;
-                    if (detailSavePayroll) detailSavePayroll.disabled = isPaid;
+                    if (detailSavePayroll) {
+                        detailSavePayroll.disabled = isPaid;
+                        detailSavePayroll.className = isPaid
+                            ? 'px-4 py-3 rounded-lg bg-emerald-600 text-white text-xs font-black uppercase tracking-wider opacity-70 cursor-not-allowed flex items-center justify-center gap-1.5'
+                            : 'px-4 py-3 rounded-lg bg-hunter-green-600 text-white text-xs font-black uppercase tracking-wider shadow-sm hover:bg-hunter-green-700 transition-colors flex items-center justify-center gap-1.5 active:scale-95';
+                        detailSavePayroll.querySelector('span').textContent = isPaid ? 'Sudah Lunas' : 'Tandai Lunas';
+                    }
 
                     const details = [
                         componentCard('Gaji Pokok', 'neutral', 'gaji_pokok'),
@@ -998,17 +1276,41 @@
                     salaryDetailList.innerHTML = details.join('');
                 }
 
+                // Drawer Controls
+                window.openPayrollDrawer = function(id) {
+                    if (id) {
+                        selectRow(id);
+                    }
+                    drawerBackdrop.classList.remove('pointer-events-none', 'opacity-0');
+                    drawerBackdrop.classList.add('opacity-100');
+                    drawer.classList.remove('translate-x-full');
+                    drawer.classList.add('translate-x-0');
+                }
+
+                window.closePayrollDrawer = function() {
+                    drawerBackdrop.classList.add('opacity-0', 'pointer-events-none');
+                    drawerBackdrop.classList.remove('opacity-100');
+                    drawer.classList.add('translate-x-full');
+                    drawer.classList.remove('translate-x-0');
+                }
+
+                window.printFromDrawer = function() {
+                    if (activeKaryawanId) {
+                        openSlipModal(activeKaryawanId);
+                    }
+                }
+
                 function componentDetailItem(title, description, amount, tone = 'neutral') {
                     const amountClass = tone === 'deduction' ? 'text-rose-600' : 'text-hunter-green-700';
                     const prefix = tone === 'deduction' && Number(amount) > 0 ? '- ' : '';
 
                     return `
-                        <div class="flex items-start justify-between gap-4 rounded-xl border border-carbon-black-100 bg-carbon-black-50 px-4 py-3">
+                        <div class="flex items-start justify-between gap-4 rounded-xl border border-carbon-black-100 bg-carbon-black-50 px-4 py-3.5">
                             <div>
-                                <p class="text-base font-black text-carbon-black-800">${escapeHtml(title)}</p>
-                                <p class="mt-1 text-sm font-semibold text-carbon-black-500">${escapeHtml(description)}</p>
+                                <p class="text-sm font-bold text-carbon-black-800">${escapeHtml(title)}</p>
+                                <p class="mt-1 text-xs font-semibold text-carbon-black-500">${escapeHtml(description)}</p>
                             </div>
-                            <p class="shrink-0 text-right text-base font-black ${amountClass}">${prefix}${formatRupiah(amount)}</p>
+                            <p class="shrink-0 text-right text-sm font-bold ${amountClass}">${prefix}${formatRupiah(amount)}</p>
                         </div>
                     `;
                 }
@@ -1086,16 +1388,16 @@
                         ? state.bonusDetails.map(item => `
                             <div class="px-5 py-4 flex justify-between items-start">
                                 <div>
-                                    <p class="text-base font-black text-carbon-black-800">${escapeHtml(item.title)}</p>
-                                    <p class="text-sm font-semibold text-carbon-black-500 mt-1">${escapeHtml(item.description)}</p>
+                                    <p class="text-base font-semibold text-carbon-black-800">${escapeHtml(item.title)}</p>
+                                    <p class="text-xs font-semibold text-carbon-black-500 mt-0.5">${escapeHtml(item.description)}</p>
                                 </div>
-                                <p class="text-lg font-black text-hunter-green-700">${formatRupiah(item.amount)}</p>
+                                <p class="text-base font-bold text-hunter-green-700">${formatRupiah(item.amount)}</p>
                             </div>
                         `).join('')
                         : `
                             <div class="px-5 py-4 flex justify-between items-center">
-                                <p class="text-base font-bold text-carbon-black-400">Bonus</p>
-                                <p class="text-lg font-bold text-carbon-black-400">Rp 0</p>
+                                <p class="text-base font-semibold text-carbon-black-400">Bonus</p>
+                                <p class="text-base font-semibold text-carbon-black-400">Rp 0</p>
                             </div>
                         `;
 
@@ -1103,90 +1405,99 @@
                         ? state.potonganDetails.map(item => `
                             <div class="px-5 py-4 flex justify-between items-start">
                                 <div>
-                                    <p class="text-base font-black text-carbon-black-800">${escapeHtml(item.title)}</p>
-                                    <p class="text-sm font-semibold text-carbon-black-500 mt-1">${escapeHtml(item.description)}</p>
+                                    <p class="text-base font-semibold text-carbon-black-800">${escapeHtml(item.title)}</p>
+                                    <p class="text-xs font-semibold text-carbon-black-500 mt-0.5">${escapeHtml(item.description)}</p>
                                 </div>
-                                <p class="text-lg font-black text-rose-600">- ${formatRupiah(item.amount)}</p>
+                                <p class="text-base font-bold text-rose-600">- ${formatRupiah(item.amount)}</p>
                             </div>
                         `).join('')
                         : `
                             <div class="px-5 py-4 flex justify-between items-center">
-                                <p class="text-base font-bold text-carbon-black-400">Potongan</p>
-                                <p class="text-lg font-bold text-carbon-black-400">Rp 0</p>
+                                <p class="text-base font-semibold text-carbon-black-400">Potongan</p>
+                                <p class="text-base font-semibold text-carbon-black-400">Rp 0</p>
                             </div>
                         `;
 
                     const html = `
-                        <div class="space-y-6">
-                            <div class="bg-carbon-black-50 rounded-xl border border-carbon-black-100 p-6 grid grid-cols-2 gap-y-5 gap-x-8">
+                        <div class="space-y-4">
+                            <div class="bg-carbon-black-50 rounded-xl border border-carbon-black-100 p-4.5 grid grid-cols-2 gap-y-3.5 gap-x-6 text-sm">
                                 <div>
-                                    <p class="text-xs font-black uppercase text-carbon-black-400 tracking-widest">ID Penggajian</p>
-                                    <p class="text-base font-black text-carbon-black-900 mt-1.5">${escapeHtml(state.id_penggajian)}</p>
+                                    <p class="text-xs font-bold uppercase text-carbon-black-400 tracking-wider">ID Penggajian</p>
+                                    <p class="text-base font-semibold text-carbon-black-900 mt-0.5">${escapeHtml(state.id_penggajian)}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-black uppercase text-carbon-black-400 tracking-widest">ID Karyawan</p>
-                                    <p class="text-base font-black text-carbon-black-900 mt-1.5">${escapeHtml(state.id_karyawan)}</p>
+                                    <p class="text-xs font-bold uppercase text-carbon-black-400 tracking-wider">ID Karyawan</p>
+                                    <p class="text-base font-semibold text-carbon-black-900 mt-0.5">${escapeHtml(state.id_karyawan)}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-black uppercase text-carbon-black-400 tracking-widest">Periode</p>
-                                    <p class="text-base font-black text-carbon-black-900 mt-1.5">${escapeHtml(state.periode_bulan)} ${escapeHtml(state.periode_tahun)}</p>
+                                    <p class="text-xs font-bold uppercase text-carbon-black-400 tracking-wider">Periode</p>
+                                    <p class="text-base font-semibold text-carbon-black-900 mt-0.5">${escapeHtml(state.periode_bulan)} ${escapeHtml(state.periode_tahun)}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-black uppercase text-carbon-black-400 tracking-widest">Status Pembayaran</p>
-                                    <div class="mt-1.5">${statusBadge(state.status_pembayaran)}</div>
+                                    <p class="text-xs font-bold uppercase text-carbon-black-400 tracking-wider">Status Pembayaran</p>
+                                    <div class="mt-0.5">${statusBadge(state.status_pembayaran)}</div>
+                                </div>
+                                <div class="col-span-2 pt-2.5 border-t border-carbon-black-200 flex justify-between items-center text-xs">
+                                    <span class="font-bold text-carbon-black-500 uppercase tracking-wider">Metode Pembayaran:</span>
+                                    <span class="font-semibold text-sm text-carbon-black-800">${escapeHtml(data.metode_pembayaran || 'Tunai')}${data.metode_pembayaran === 'Transfer Bank' ? ` (${escapeHtml(data.nama_bank)} - ${escapeHtml(data.no_rekening)})` : ''}</span>
                                 </div>
                             </div>
 
-                            <div class="border border-carbon-black-100 rounded-xl overflow-hidden shadow-sm">
-                                <div class="bg-carbon-black-50 px-6 py-4 border-b border-carbon-black-100 flex items-center justify-between">
-                                    <h4 class="text-sm font-black uppercase tracking-widest text-hunter-green-700">Pendapatan</h4>
+                            <div class="border border-carbon-black-100 rounded-xl overflow-hidden shadow-2xs">
+                                <div class="bg-carbon-black-50 px-5 py-3.5 border-b border-carbon-black-100 flex items-center justify-between">
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-hunter-green-700">Penerimaan</h4>
                                     <p class="text-sm font-black text-hunter-green-700">${formatRupiah(Number(state.gaji_pokok) + Number(state.total_lembur) + Number(state.total_bonus))}</p>
                                 </div>
-                                <div class="divide-y divide-carbon-black-50 bg-white">
-                                    <div class="px-6 py-4 flex justify-between items-start">
+                                <div class="divide-y divide-carbon-black-50 bg-white text-sm">
+                                    <div class="px-5 py-3.5 flex justify-between items-start">
                                         <div>
-                                            <p class="text-base font-black text-carbon-black-800">Gaji Pokok</p>
-                                            <p class="text-sm font-semibold text-carbon-black-500 mt-1">${formatNumber(state.jumlah_hari_kerja)} hari kerja</p>
+                                            <p class="font-bold text-carbon-black-800">Gaji Pokok</p>
+                                            <p class="text-xs font-semibold text-carbon-black-500 mt-0.5">${formatNumber(state.jumlah_hari_kerja)} hari kerja</p>
                                         </div>
-                                        <p class="text-lg font-black text-hunter-green-700">${formatRupiah(state.gaji_pokok)}</p>
+                                        <p class="font-bold text-hunter-green-700">${formatRupiah(state.gaji_pokok)}</p>
                                     </div>
 
-                                    <div class="px-6 py-4 flex justify-between items-start">
+                                    <div class="px-5 py-3.5 flex justify-between items-start">
                                         <div>
-                                            <p class="text-base font-black text-carbon-black-800">Lembur</p>
-                                            <p class="text-sm font-semibold text-carbon-black-500 mt-1">${data.lembur_aktif === false ? 'Tidak berlaku' : `${formatDecimal(state.jumlah_lembur)} jam lembur`}</p>
+                                            <p class="font-bold text-carbon-black-800">Lembur</p>
+                                            <p class="text-xs font-semibold text-carbon-black-500 mt-0.5">${data.lembur_aktif === false ? 'Tidak berlaku' : `${formatDecimal(state.jumlah_lembur)} jam lembur`}</p>
                                         </div>
-                                        <p class="text-lg font-black text-hunter-green-700">${formatRupiah(state.total_lembur)}</p>
+                                        <p class="font-bold text-hunter-green-700">${formatRupiah(state.total_lembur)}</p>
                                     </div>
 
                                     ${bonusItemsHTML}
                                 </div>
 
-                                <div class="bg-carbon-black-50 px-6 py-4 border-y border-carbon-black-100 flex items-center justify-between">
-                                    <h4 class="text-sm font-black uppercase tracking-widest text-rose-700">Potongan</h4>
+                                <div class="bg-carbon-black-50 px-5 py-3.5 border-y border-carbon-black-100 flex items-center justify-between">
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-rose-700">Potongan</h4>
                                     <p class="text-sm font-black text-rose-700">- ${formatRupiah(state.total_potongan)}</p>
                                 </div>
-                                <div class="divide-y divide-carbon-black-50 bg-white">
+                                <div class="divide-y divide-carbon-black-50 bg-white text-sm">
                                     ${potonganItemsHTML}
                                 </div>
                             </div>
                         </div>
                     `;
 
-                    slipSubtitle.textContent = `${state.id_penggajian} - ${employee.nama || data.nama || 'Karyawan'} - ${data.bagian || employee.bagian || '-'}`;
+                    slipSubtitle.textContent = `${state.id_penggajian} • ${employee.nama || data.nama || 'Karyawan'} • ${data.bagian || employee.bagian || '-'}`;
                     slipDetailList.innerHTML = html;
                     slipTotalNet.textContent = formatRupiah(state.total_gaji_bersih);
 
                     // Populate Print Template
                     const totalPenerimaan = Number(state.gaji_pokok) + Number(state.total_lembur) + Number(state.total_bonus);
-
                     document.getElementById('print-tanggal-cetak').textContent = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
                     document.getElementById('print-nama').textContent = employee.nama || data.nama || 'Karyawan';
                     document.getElementById('print-bagian').textContent = data.bagian || employee.bagian || '-';
                     document.getElementById('print-periode').textContent = `${state.periode_bulan} ${state.periode_tahun}`;
                     document.getElementById('print-sign-nama').textContent = employee.nama || data.nama || 'Karyawan';
+                    const printMetode = document.getElementById('print-metode');
+                    if (printMetode) {
+                        const metodePembayaran = data.metode_pembayaran || (data.nama_bank && data.nama_bank !== 'Tidak Memiliki' && data.no_rekening && data.no_rekening !== '-' ? 'Transfer Bank' : 'Tunai');
+                        printMetode.textContent = metodePembayaran === 'Transfer Bank'
+                            ? `${metodePembayaran} (${data.nama_bank || '-'} - ${data.no_rekening || '-'})`
+                            : 'Tunai';
+                    }
 
-                    // Print Penerimaan
                     let printPenerimaanHTML = `
                         <tr><td style="padding: 4px 0;">Gaji Pokok</td><td style="text-align: right; padding: 4px 0;">${formatRupiah(state.gaji_pokok)}</td></tr>
                         <tr><td style="padding: 4px 0;">Lembur</td><td style="text-align: right; padding: 4px 0;">${formatRupiah(state.total_lembur)}</td></tr>
@@ -1198,7 +1509,6 @@
                     }
                     document.getElementById('print-penerimaan-list').innerHTML = printPenerimaanHTML;
 
-                    // Print Potongan
                     let printPotonganHTML = '';
                     if (state.potonganDetails.length > 0) {
                         state.potonganDetails.forEach(item => {
@@ -1207,7 +1517,6 @@
                     }
                     document.getElementById('print-potongan-list').innerHTML = printPotonganHTML;
 
-                    // Print Totals
                     document.getElementById('print-total-penerimaan').textContent = formatRupiah(totalPenerimaan);
                     document.getElementById('print-total-potongan').textContent = formatRupiah(state.total_potongan);
                     document.getElementById('print-thp').textContent = formatRupiah(state.total_gaji_bersih);
@@ -1227,7 +1536,7 @@
 
                 window.printSlip = function () {
                     const container = document.getElementById('print-container');
-                    document.body.appendChild(container); // Move to body root to avoid layout issues
+                    document.body.appendChild(container);
                     window.print();
                 }
 
@@ -1247,14 +1556,14 @@
                     state.tanggal_pembayaran = new Date().toLocaleDateString('id-ID');
                     recalculateState(id);
                     renderTableRow(id);
-                    selectRow(id);
+                    renderDetail(id);
+                    updatePayrollSummaryCards();
                     sortPayrollRows();
                     applyPayrollFilters();
                 }
 
                 function sortPayrollRows() {
                     if (!payrollTableBody) return;
-
                     rows
                         .slice()
                         .sort((a, b) => {
@@ -1303,18 +1612,7 @@
                     }
 
                     renderPayrollPagination(matchedRows.length, totalPages, startIndex, currentRows.length);
-                }
-
-                function paginationButton(label, page, disabled = false, active = false) {
-                    return `
-                        <button type="button" data-payroll-page="${page}" ${disabled ? 'disabled' : ''}
-                            class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border px-3 text-sm font-black transition-colors
-                            ${active
-                            ? 'border-hunter-green-600 bg-hunter-green-600 text-white'
-                            : 'border-carbon-black-200 bg-white text-carbon-black-700 hover:border-hunter-green-300 hover:bg-hunter-green-50 disabled:cursor-not-allowed disabled:opacity-50'}">
-                            ${label}
-                        </button>
-                    `;
+                    updateBatchBar();
                 }
 
                 function renderPayrollPagination(totalRows, totalPages, startIndex, currentCount) {
@@ -1326,16 +1624,46 @@
 
                     if (!payrollPagination) return;
 
-                    if (totalRows <= payrollRowsPerPage) {
+                    if (totalRows === 0) {
                         payrollPagination.innerHTML = '';
                         return;
                     }
 
-                    let buttons = paginationButton('Sebelumnya', payrollCurrentPage - 1, payrollCurrentPage === 1);
+                    const prevDisabled = payrollCurrentPage <= 1;
+                    const nextDisabled = payrollCurrentPage >= totalPages;
+
+                    let buttons = `
+                        <button type="button" data-payroll-page="${payrollCurrentPage - 1}" ${prevDisabled ? 'disabled' : ''}
+                            class="inline-flex items-center justify-center rounded-md border border-carbon-black-200 bg-white px-3 py-2 text-sm font-medium text-carbon-black-700 shadow-sm hover:bg-carbon-black-50 transition-all space-x-2 ${prevDisabled ? 'opacity-50 pointer-events-none' : ''}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M15 6l-6 6l6 6" />
+                            </svg>
+                            <span>Sebelumnya</span>
+                        </button>
+                    `;
+
                     for (let page = 1; page <= totalPages; page++) {
-                        buttons += paginationButton(page, page, false, page === payrollCurrentPage);
+                        const isActive = page === payrollCurrentPage;
+                        buttons += `
+                            <button type="button" data-payroll-page="${page}"
+                                class="inline-flex h-9 w-9 items-center justify-center rounded-md border text-sm font-medium shadow-sm transition-all ${isActive ? 'bg-hunter-green-600 text-white shadow-hunter-green-200 border-hunter-green-600' : 'border-carbon-black-200 bg-white text-carbon-black-700 hover:bg-carbon-black-50'}">
+                                ${page}
+                            </button>
+                        `;
                     }
-                    buttons += paginationButton('Berikutnya', payrollCurrentPage + 1, payrollCurrentPage === totalPages);
+
+                    buttons += `
+                        <button type="button" data-payroll-page="${payrollCurrentPage + 1}" ${nextDisabled ? 'disabled' : ''}
+                            class="inline-flex items-center justify-center rounded-md border border-carbon-black-200 bg-white px-3 py-2 text-sm font-medium text-carbon-black-700 shadow-sm hover:bg-carbon-black-50 transition-all space-x-2 ${nextDisabled ? 'opacity-50 pointer-events-none' : ''}">
+                            <span>Berikutnya</span>
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 6l6 6l-6 6" />
+                            </svg>
+                        </button>
+                    `;
+
                     payrollPagination.innerHTML = buttons;
                 }
 
@@ -1348,6 +1676,84 @@
                         row.classList.toggle('ring-hunter-green-300', isActive);
                     });
                     renderDetail(id);
+                }
+
+                // Batch Selection Logic
+                function updateBatchBar() {
+                    const checkedBoxes = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+                    const count = checkedBoxes.length;
+                    if (count > 0) {
+                        batchBar.classList.remove('hidden');
+                        batchSelectedCount.textContent = count;
+                    } else {
+                        batchBar.classList.add('hidden');
+                    }
+                    if (checkSelectAll) {
+                        const visibleBoxes = Array.from(document.querySelectorAll('.payroll-row:not(.hidden) .row-checkbox'));
+                        checkSelectAll.checked = visibleBoxes.length > 0 && visibleBoxes.every(cb => cb.checked);
+                    }
+                }
+
+                if (checkSelectAll) {
+                    checkSelectAll.addEventListener('change', function () {
+                        const visibleBoxes = document.querySelectorAll('.payroll-row:not(.hidden) .row-checkbox');
+                        visibleBoxes.forEach(cb => cb.checked = checkSelectAll.checked);
+                        updateBatchBar();
+                    });
+                }
+
+                document.addEventListener('change', function (e) {
+                    if (e.target && e.target.classList.contains('row-checkbox')) {
+                        updateBatchBar();
+                    }
+                });
+
+                if (btnBatchDeselect) {
+                    btnBatchDeselect.addEventListener('click', function () {
+                        document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+                        if (checkSelectAll) checkSelectAll.checked = false;
+                        updateBatchBar();
+                    });
+                }
+
+                if (btnBatchPaySelected) {
+                    btnBatchPaySelected.addEventListener('click', function () {
+                        const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+                        checkedBoxes.forEach(cb => {
+                            const id = cb.dataset.id;
+                            if (id) {
+                                const state = ensureState(id);
+                                state.status_pembayaran = 'Dibayar';
+                                state.tanggal_pembayaran = new Date().toLocaleDateString('id-ID');
+                                recalculateState(id);
+                                renderTableRow(id);
+                            }
+                        });
+                        if (activeKaryawanId) renderDetail(activeKaryawanId);
+                        updatePayrollSummaryCards();
+                        sortPayrollRows();
+                        applyPayrollFilters();
+                        btnBatchDeselect.click();
+                    });
+                }
+
+                if (btnBatchProcessAll) {
+                    btnBatchProcessAll.addEventListener('click', function () {
+                        if (confirm('Apakah Anda yakin ingin memproses dan menandai Lunas seluruh gaji karyawan untuk periode ini?')) {
+                            rows.forEach(row => {
+                                const id = row.dataset.karyawanId;
+                                const state = ensureState(id);
+                                state.status_pembayaran = 'Dibayar';
+                                state.tanggal_pembayaran = new Date().toLocaleDateString('id-ID');
+                                recalculateState(id);
+                                renderTableRow(id);
+                            });
+                            if (activeKaryawanId) renderDetail(activeKaryawanId);
+                            updatePayrollSummaryCards();
+                            sortPayrollRows();
+                            applyPayrollFilters();
+                        }
+                    });
                 }
 
                 function formatUsageValue(value, satuan) {
@@ -1378,7 +1784,6 @@
 
                 function createBonusOptions(selectedId = '', currentSelect = null) {
                     const selectedIds = getSelectedIds(bonusRows, '.bonus-type', currentSelect);
-                    // ID 1-6 dan 8 adalah bonus terkait produksi/bahan baku yang sudah dihitung otomatis oleh sistem
                     const autoBonusIds = [1, 2, 3, 4, 5, 6, 8];
 
                     return bonusData.map(item => {
@@ -1386,7 +1791,6 @@
                         if (selectedIds.includes(String(item.id)) && String(item.id) !== String(selectedId)) {
                             return '';
                         }
-
                         const selected = String(item.id) === String(selectedId) ? 'selected' : '';
                         return `<option value="${item.id}" ${selected}>${escapeHtml(item.nama)}</option>`;
                     }).join('');
@@ -1462,9 +1866,7 @@
                         const bonus = getSelectedBonus(row);
                         const usage = Number(row.querySelector('.bonus-usage').value || 0);
 
-                        if (!bonus || usage <= 0) {
-                            return;
-                        }
+                        if (!bonus || usage <= 0) return;
 
                         const amount = usage * Number(bonus.tarif || 0);
                         const isFixedBonus = String(bonus.satuan || '').toLowerCase() === 'kali';
@@ -1483,17 +1885,17 @@
 
                 function addBonusRow(selectedId = '', usageValue = '') {
                     const row = document.createElement('div');
-                    row.className = 'bonus-row grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-white border border-carbon-black-100 rounded-xl p-3 shadow-sm';
+                    row.className = 'bonus-row grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-white border border-carbon-black-100 rounded-xl p-3.5 shadow-sm';
                     row.innerHTML = `
                         <div class="relative">
                             <select class="bonus-type w-full appearance-none px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-lg">
                                 <option value="" disabled ${selectedId ? '' : 'selected'}>Jenis Bonus</option>
                                 ${createBonusOptions(selectedId)}
                             </select>
-                            <p class="bonus-usage-hint text-[11px] font-semibold text-carbon-black-400 mt-1">Pilih jenis bonus terlebih dahulu.</p>
+                            <p class="bonus-usage-hint text-xs font-semibold text-carbon-black-400 mt-1">Pilih jenis bonus terlebih dahulu.</p>
                         </div>
                         <input type="number" min="0" step="0.01" class="bonus-usage w-full px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-hunter-green-500 focus:ring-2 focus:ring-hunter-green-500/20 transition-all text-sm font-semibold text-carbon-black-800 placeholder-carbon-black-400 rounded-lg" placeholder="Jumlah" disabled>
-                        <div class="px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 rounded-lg text-sm font-black text-carbon-black-800">
+                        <div class="px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 rounded-lg text-sm font-bold text-carbon-black-800">
                             <span class="bonus-subtotal">Rp 0</span>
                         </div>
                         <button type="button" class="remove-bonus-row h-11 w-11 inline-flex items-center justify-center rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 transition-colors" title="Kurangi bonus">
@@ -1533,14 +1935,14 @@
 
                     (periodBonus.details || []).forEach(item => {
                         const row = document.createElement('div');
-                        row.className = 'grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-carbon-black-50 border border-carbon-black-100 rounded-xl p-3 shadow-sm opacity-90';
+                        row.className = 'grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-carbon-black-50 border border-carbon-black-100 rounded-xl p-3.5 shadow-sm opacity-90';
                         row.innerHTML = `
                             <div class="relative">
                                 <input type="text" class="w-full px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-800 rounded-lg cursor-not-allowed" value="${escapeHtml(item.title)}" readonly>
-                                <p class="text-[11px] font-semibold text-carbon-black-400 mt-1">Bawaan sistem (Otomatis)</p>
+                                <p class="text-xs font-semibold text-carbon-black-400 mt-1">Bawaan sistem (Otomatis)</p>
                             </div>
                             <input type="text" class="w-full px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-800 rounded-lg cursor-not-allowed truncate" value="${escapeHtml(item.description)}" readonly title="${escapeHtml(item.description)}">
-                            <div class="px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 rounded-lg text-sm font-black text-carbon-black-800">
+                            <div class="px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 rounded-lg text-sm font-bold text-carbon-black-800">
                                 <span>${formatRupiah(item.amount)}</span>
                             </div>
                             <div class="h-11 w-11 inline-flex items-center justify-center rounded-lg bg-carbon-black-100 border border-carbon-black-200 text-carbon-black-400 cursor-not-allowed">
@@ -1590,7 +1992,6 @@
                         if (selectedIds.includes(String(item.id)) && String(item.id) !== String(selectedId)) {
                             return '';
                         }
-
                         const selected = String(item.id) === String(selectedId) ? 'selected' : '';
                         return `<option value="${item.id}" ${selected}>${escapeHtml(item.nama)}</option>`;
                     }).join('');
@@ -1666,12 +2067,9 @@
                         const potongan = getSelectedPotongan(row);
                         const jumlah = Number(row.querySelector('.potongan-jumlah').value || 0);
 
-                        if (!potongan || jumlah <= 0) {
-                            return;
-                        }
+                        if (!potongan || jumlah <= 0) return;
 
                         const tipe = String(potongan.tipe_potongan || '').toLowerCase();
-                        const isFixed = tipe === 'tetap' || tipe === 'persentase';
                         let amount = 0;
                         let description = '';
 
@@ -1679,7 +2077,6 @@
                             amount = Number(potongan.tarif || 0);
                             description = `Potongan tetap sebesar ${formatRupiah(potongan.tarif)}`;
                         } else if (tipe === 'persentase') {
-                            // Manual selection of persentase is normally disabled, but just in case
                             const state = activeKaryawanId ? ensureState(activeKaryawanId) : { gaji_pokok: 0 };
                             amount = Number(state.gaji_pokok || 0) * (Number(potongan.tarif || 0) / 100);
                             description = `Dihitung ${potongan.tarif}% dari Gaji Pokok`;
@@ -1701,17 +2098,17 @@
 
                 function addPotonganRow(selectedId = '', jumlahValue = '') {
                     const row = document.createElement('div');
-                    row.className = 'potongan-row grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-white border border-carbon-black-100 rounded-xl p-3 shadow-sm';
+                    row.className = 'potongan-row grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-white border border-carbon-black-100 rounded-xl p-3.5 shadow-sm';
                     row.innerHTML = `
                         <div class="relative">
                             <select class="potongan-type w-full appearance-none px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all text-sm font-semibold text-carbon-black-800 cursor-pointer rounded-lg">
                                 <option value="" disabled ${selectedId ? '' : 'selected'}>Jenis Potongan</option>
                                 ${createPotonganOptions(selectedId)}
                             </select>
-                            <p class="potongan-hint text-[11px] font-semibold text-carbon-black-400 mt-1">Pilih jenis potongan terlebih dahulu.</p>
+                            <p class="potongan-hint text-xs font-semibold text-carbon-black-400 mt-1">Pilih jenis potongan terlebih dahulu.</p>
                         </div>
                         <input type="number" min="0" step="1" class="potongan-jumlah w-full px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all text-sm font-semibold text-carbon-black-800 placeholder-carbon-black-400 rounded-lg" placeholder="Jumlah" disabled>
-                        <div class="px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 rounded-lg text-sm font-black text-carbon-black-800">
+                        <div class="px-4 py-3 bg-carbon-black-50 border border-carbon-black-200 rounded-lg text-sm font-bold text-carbon-black-800">
                             <span class="potongan-subtotal">Rp 0</span>
                         </div>
                         <button type="button" class="remove-potongan-row h-11 w-11 inline-flex items-center justify-center rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 transition-colors" title="Kurangi potongan">
@@ -1761,14 +2158,14 @@
                             }
 
                             const row = document.createElement('div');
-                            row.className = 'grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-carbon-black-50 border border-carbon-black-100 rounded-xl p-3 shadow-sm opacity-90';
+                            row.className = 'grid grid-cols-[1fr_180px_150px_44px] gap-3 items-start bg-carbon-black-50 border border-carbon-black-100 rounded-xl p-3.5 shadow-sm opacity-90';
                             row.innerHTML = `
                                 <div class="relative">
                                     <input type="text" class="w-full px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-800 rounded-lg cursor-not-allowed text-rose-700 truncate" value="${escapeHtml(p.nama)}" readonly title="${escapeHtml(p.nama)}">
-                                    <p class="text-[11px] font-semibold text-carbon-black-400 mt-1">Bawaan sistem (Otomatis)</p>
+                                    <p class="text-xs font-semibold text-carbon-black-400 mt-1">Bawaan sistem (Otomatis)</p>
                                 </div>
                                 <input type="text" class="w-full px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 text-sm font-semibold text-carbon-black-800 rounded-lg cursor-not-allowed truncate" value="${escapeHtml(descStr)}" readonly title="${escapeHtml(descStr)}">
-                                <div class="px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 rounded-lg text-sm font-black text-rose-600">
+                                <div class="px-4 py-3 bg-carbon-black-100 border border-carbon-black-200 rounded-lg text-sm font-bold text-rose-600">
                                     <span>${amountStr}</span>
                                 </div>
                                 <div class="h-11 w-11 inline-flex items-center justify-center rounded-lg bg-carbon-black-100 border border-carbon-black-200 text-carbon-black-400 cursor-not-allowed">
@@ -1810,13 +2207,20 @@
                     }, 300);
                 }
 
+                // Attach Row Handlers
                 rows.forEach(row => {
                     const id = row.dataset.karyawanId;
                     ensureState(id);
                     updatePeriodBonus(id);
                     renderTableRow(id);
-                    row.addEventListener('click', () => selectRow(id));
+                    row.addEventListener('click', (e) => {
+                        if (e.target.closest('button') || e.target.closest('input[type="checkbox"]')) return;
+                        selectRow(id);
+                        openPayrollDrawer(id);
+                    });
                 });
+
+                updatePayrollSummaryCards();
                 sortPayrollRows();
                 applyPayrollFilters();
 
@@ -1824,6 +2228,13 @@
                     button.addEventListener('click', function (event) {
                         event.stopPropagation();
                         processPayroll(this.dataset.karyawanId);
+                    });
+                });
+
+                document.querySelectorAll('[data-action="open-drawer"]').forEach(button => {
+                    button.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        openPayrollDrawer(this.dataset.karyawanId);
                     });
                 });
 
@@ -1839,6 +2250,7 @@
                         updatePeriodBonus(row.dataset.karyawanId);
                         renderTableRow(row.dataset.karyawanId);
                     });
+                    updatePayrollSummaryCards();
                     sortPayrollRows();
                     applyPayrollFilters();
                     if (activeKaryawanId) renderDetail(activeKaryawanId);
@@ -1849,6 +2261,7 @@
                         updatePeriodBonus(row.dataset.karyawanId);
                         renderTableRow(row.dataset.karyawanId);
                     });
+                    updatePayrollSummaryCards();
                     sortPayrollRows();
                     applyPayrollFilters();
                     if (activeKaryawanId) renderDetail(activeKaryawanId);
@@ -1865,6 +2278,7 @@
                     payrollCurrentPage = 1;
                     applyPayrollFilters();
                 });
+
                 payrollBagianFilter?.addEventListener('change', function () {
                     payrollCurrentPage = 1;
                     applyPayrollFilters();
@@ -1874,15 +2288,15 @@
                 detailEditPotongan.addEventListener('click', openPotonganModal);
                 detailSavePayroll.addEventListener('click', function () {
                     if (!activeKaryawanId) return;
-                    recalculateState(activeKaryawanId);
-                    renderTableRow(activeKaryawanId);
-                    renderDetail(activeKaryawanId);
+                    processPayroll(activeKaryawanId);
                 });
+
                 salaryDetailList.addEventListener('click', function (event) {
                     const button = event.target.closest('[data-component-detail]');
                     if (!button) return;
                     openComponentDetailModal(button.dataset.componentDetail);
                 });
+
                 addBonusRowButton.addEventListener('click', () => addBonusRow());
                 addPotonganRowButton.addEventListener('click', () => addPotonganRow());
 
@@ -1896,6 +2310,7 @@
                     recalculateState(activeKaryawanId);
                     renderTableRow(activeKaryawanId);
                     renderDetail(activeKaryawanId);
+                    updatePayrollSummaryCards();
                     closeBonusModal();
                 });
 
@@ -1909,11 +2324,12 @@
                     recalculateState(activeKaryawanId);
                     renderTableRow(activeKaryawanId);
                     renderDetail(activeKaryawanId);
+                    updatePayrollSummaryCards();
                     closePotonganModal();
                 });
 
                 if (activeKaryawanId) {
-                    selectRow(activeKaryawanId);
+                    renderDetail(activeKaryawanId);
                 }
             });
         </script>

@@ -21,3 +21,10 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+*.bak
+/resources/views/admin_penggajian/backup/
+/public/preview_aktivitas_solusi_baru.html
+/video_referensi/
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
